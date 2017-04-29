@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html ng-app="jamApp" ng-controller="MainController">
-  <head>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-    
-    <script src="./node_modules/angular/angular.js" type="text/javascript" ></script>
-    <link href="./bower_components/angular-material/angular-material.css" rel="stylesheet" />
-    <script src="./bower_components/angular-animate/angular-animate.js" type="text/javascript" ></script>
-    <script src="./bower_components/angular-aria/angular-aria.js" type="text/javascript" ></script>
-    <script src="./bower_components/angular-material/angular-material.js" type="text/javascript" ></script>
+	<head>
+		<title>Jam!</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
+		<script src="mainController.js"></script>
+		<scipt src="./js/index.js"></script>
+	</head>
 
-    
-    <script src="mainController.js"></script>
-    <scipt src="./js/index.js"></script>
-  </head>
-  <body>
-  <h1> Welcome to Jam! </h1>
-    
-  </body>
+	<body>
+		<h1> Welcome to Jam! </h1>
+
+		<div ng-repeat="post in posts | orderBy: '-upvotes'">
+			<span ng-click="incrementUpvotes(post)">^</span>
+			{{post.title}} - upvotes: {{post.upvotes}}
+		</div>
+
+		<form ng-submit="addPost()">
+			<input type="text" placeholder="Title" ng-model="title"></input>
+			<input type="text" placeholder="Link" ng-model="link"></input>
+			<button type="submit">Post</button>
+		</form>
+	</body>
+
 </html>
