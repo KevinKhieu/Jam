@@ -3,6 +3,7 @@
 	<head>
 		<title>Jam!</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 
 		<script src="mainController.js"></script>
@@ -10,18 +11,23 @@
 	</head>
 
 	<body>
-		<h1> Welcome to Jam! </h1>
+    <ui-view></ui-view>
 
-		<div ng-repeat="post in posts | orderBy: '-upvotes'">
-			<span ng-click="incrementUpvotes(post)">^</span>
-			{{post.title}} - upvotes: {{post.upvotes}}
-		</div>
+		<script type="text/ng-template" id="/home.html">
+			<div class="page-header">
+				<h1>Welcome to Jam!</h1>
+			</div>
 
-		<form ng-submit="addPost()">
-			<input type="text" placeholder="Title" ng-model="title"></input>
-			<input type="text" placeholder="Link" ng-model="link"></input>
-			<button type="submit">Post</button>
-		</form>
+			<div ng-repeat="song in songs | orderBy: '-upvotes'">
+				<span ng-click="incrementUpvotes(song)">^</span>
+				{{song.spotifyId}} - upvotes: {{song.upvotes}}
+			</div>
+
+			<form ng-submit="addSong()">
+				<input type="text" placeholder="Spotify Id" ng-model="sid"></input>
+				<button type="submit">Add Song</button>
+			</form>
+		</script>
 	</body>
 
 </html>

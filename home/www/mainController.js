@@ -1,35 +1,74 @@
 'use strict';
 
-var jamApp = angular.module('jamApp', []);
+var jamApp = angular.module('jamApp', ['ui.router']);
 
-jamApp.factory('posts', [function(){
+jamApp.config([
+'$stateProvider',
+'$urlRouterProvider',
+function($stateProvider, $urlRouterProvider) {
+
+	$stateProvider
+		.state('home', {
+			url: '/home',
+			templateUrl: '/home.html',
+			controller: 'MainController',
+			resolve: {
+				songPromise: ['songs', function(songs) {
+					return songs.getAll();
+				}]
+			}
+		});
+
+	$urlRouterProvider.otherwise('home');
+}]);
+
+jamApp.factory('songs', ['$http', function($http){
 	var o = {
-		posts: [
-			{title: 'post 1', upvotes: 5},
-			{title: 'post 2', upvotes: 2},
-			{title: 'post 3', upvotes: 15},
-			{title: 'post 4', upvotes: 9},
-			{title: 'post 5', upvotes: 4}
-		]
+		songs: []
 	};
+
+	o.getAll = function() {
+		return $http.get('/songs').success(function(data) {
+			angular.copy(data, o.songs);
+		});
+	};
+
+	o.create = function(song) {
+		return $http.post('/songs', song).success(function(data) {
+			o.songs.push(data);
+		});
+	};
+
+	o.upvote = function(song) {
+		return $http.post('/upvote/' + song.spotifyId, null)
+			.success(function(data) {
+				song.upvotes += 1;
+			});
+	};
+
 	return o;
 }]);
 
 jamApp.controller('MainController', [
 '$scope',
-'posts',
-function ($scope, posts) {
-	$scope.posts = posts.posts;
+'songs',
+function ($scope, songs) {
+	$scope.songs = songs.songs;
 
-	$scope.addPost = function(){
-		if(!$scope.title || $scope.title === '') { return; }
+	$scope.addSong = function(){
+		if(!$scope.sid || $scope.sid === '') { return; }
+		console.log('passed sid not empty check');
 
-		$scope.posts.push({title: $scope.title, upvotes: 0});
-		$scope.title = '';
-		$scope.link = '';
+		songs.create({
+			spotifyId: $scope.sid,
+			upvotes: 0
+		});
+		console.log('created song');
+
+		$scope.sid = '';
 	};
 
-	$scope.incrementUpvotes = function(post) {
-		post.upvotes += 1;
+	$scope.incrementUpvotes = function(song) {
+		songs.upvote(song);
 	};
 }]);
