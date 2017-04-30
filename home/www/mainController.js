@@ -40,7 +40,7 @@ jamApp.factory('songs', ['$http', function($http){
 	};
 
 	o.upvote = function(song) {
-		return $http.post('/upvote/' + song.spotifyId, null)
+		return $http.post('/upvote', {'sid': song.spotifyId} )
 			.success(function(data) {
 				song.upvotes += 1;
 			});
@@ -57,13 +57,11 @@ function ($scope, songs) {
 
 	$scope.addSong = function(){
 		if(!$scope.sid || $scope.sid === '') { return; }
-		console.log('passed sid not empty check');
 
 		songs.create({
 			spotifyId: $scope.sid,
 			upvotes: 0
 		});
-		console.log('created song');
 
 		$scope.sid = '';
 	};

@@ -86,15 +86,23 @@ app.post("/songs", function(req, res) {
   });
 });
 
-/* "/upvote/:id"
- * POST: upvote the song with the given spotify id
+/* "/upvote"
+ * POST: upvote the song whose spotifyId is given in the body as sid.
  */
-app.post("/upvote/:sid", function(req, res) {
-  req.song.upvote(function(err, song) {  // TODO: Does req have a .song field of mongoose model Song type?
+app.post("/upvote", function(req, res) {
+  Song.findOne({ 'spotifyId': req.body.sid }, function(err, song) {
     if(err) {
-      handleError(res, err.message, "Failed to upvote song.");
+      handleError(res, err.message, "Failed to retrieve song to upvote.");
+
     } else {
-      res.json(song);
+      song.upvote(function(err, song) {
+
+        if(err) {
+          handleError(res, err.message, "Failed to upvote song.");
+        } else {
+          res.json(song);
+        }
+      });
     }
   });
 });
