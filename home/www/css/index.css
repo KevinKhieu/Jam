@@ -1,0 +1,98 @@
+body {
+ 	background-color: #FFFFFF;
+}
+
+.logo {
+	width: 85px;
+	height: 100px;
+	float:left;
+	padding-left: 15px;
+	padding-top: 15px;
+}
+
+.title {
+	font-family: Eurostile;
+	font-size: 38px;
+	text-align: center;
+	color: #5d5d5d;
+	margin: auto;
+	padding-top: 80px;
+}
+
+.left {
+	width: 10%;
+	float: left;
+}
+
+.middle {
+	width: 80%;
+	float: left;
+}
+
+.right {
+	width: 10%;
+	float: left;
+}
+
+.image-cropper {
+    width: 500px;
+    height: 500px;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+    margin-top: 40px;
+    border-radius: 50%;
+}
+
+.imageHolder {
+	display: inline;
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
+	z-index: 3;
+	position: absolute;
+}
+
+.songImg {
+	display: inline;
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
+	z-index: 1;
+	position: absolute;
+}
+
+.border {
+    display: inline;
+    margin: 0 auto;
+    height: 100%;
+    width: auto;
+	z-index: 3;
+	position: absolute;
+}
+
+.songname {
+	font-family: Eurostile;
+	font-size: 50px;
+	text-align: center;
+	color: #000000;
+	margin: auto;
+	padding-top: 50px;
+}
+
+.songartist {
+	font-family: Eurostile;
+	font-size: 38px;
+	text-align: center;
+	color: #5d5d5d;
+	margin: auto;
+	padding-top: 10px;
+}
+/*.top {
+	width: 100%;
+	margin: auto;
+	text-align: center;
+	vertical-align: middle;
+	position: relative;
+	display: inline-block;
+}*/
