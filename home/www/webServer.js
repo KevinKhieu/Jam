@@ -19,7 +19,7 @@ var bodyParser = require('body-parser');
 // Hosting Mongoose/mongodb on our local server
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/Jam');
-var Song = require('./schema/Songs');
+var routes = require('./routes/index');
 
 // Open mongodb connection (make sure Mongo is running!)
 var db = mongoose.connection;
@@ -66,56 +66,16 @@ var fs = require('fs');
 
 app.use(bodyParser.json());
 
-// API ROUTES BELOW
-
-// Generic error handler
-function handleError(res, reason, message, code) {
-  console.log("ERROR: " + reason);
-  res.status(code || 500).json({"error": message});
-}
+// API routes
 
 /* "/songs"
  * GET: finds all songs (in this room)
  * POST: adds a new song (to this room)
  */
-app.get("/songs", function(req, res) {
-  Song.find(function(err, songs) {
-    if(err) {
-      handleError(res, err.message, "Failed to retrieve song list.");
-    } else {
-      res.status(200).json(songs);
-    }
-  });
-});
-
-app.post("/songs", function(req, res) {
-  var song = new Song(req.body);
-  song.save(function(err, song){
-    if(err){
-      handleError(res, err.message, "Failed to add song to list.");
-    } else {
-      res.json(song);
-    }
-  });
-});
+app.get("/songs", routes.list);
+app.post("/songs", routes.add);
 
 /* "/upvote"
  * POST: upvote the song whose spotifyId is given in the body as sid.
  */
-app.post("/upvote", function(req, res) {
-  Song.findOne({ 'spotifyId': req.body.sid }, function(err, song) {
-    if(err) {
-      handleError(res, err.message, "Failed to retrieve song to upvote.");
-
-    } else {
-      song.upvote(function(err, song) {
-
-        if(err) {
-          handleError(res, err.message, "Failed to upvote song.");
-        } else {
-          res.json(song);
-        }
-      });
-    }
-  });
-});
+app.post("/upvote", routes.upvote);
