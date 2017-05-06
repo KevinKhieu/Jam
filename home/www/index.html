@@ -31,12 +31,47 @@
         </div>
         
       </div>
-      <p class = "songname">SHAPE OF YOU</p>
-      <p class = "songartist">ED SHEERAN</p>
+      <p class = "songname">{{main.songName}}</p>
+      <p class = "songartist">{{main.artist}}</p>
 
     </div>
 
     <div class="right">
+
+      <p class = "lastPlayed">LAST PLAYED</p>
+      <div class = "lastPlayedLine"> 
+        <hr>
+      </div>
+      <div class = "lastPlayedSection"> 
+        <div class = "songInfo">
+          <p class = "lastPlayedTitle">{{main.lastPlayedTitle}}</p>
+          <p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
+        </div>
+        <div class = "likeButtonSection">  
+          <img src="img/circle.png" class = "likeButton">
+        </div>
+        
+      </div>
+
+      <div class = "searchArea">
+        <input type="text" name="search" placeholder="Search or Add Songs..." class = "style-4" >
+        <div class = "songList">
+          <div class = "songInfo" ng-repeat = "song in main.playlist">
+            <p class = "playlistSong">{{song.name}}</p>
+            <p class = "playlistArtist">{{song.artist}}</p>
+            <hr class = "fadedLine">
+          </div>
+
+<!--           <div class = "songInfo">
+            <p class = "playlistSong">{{main.lastPlayedTitle}}</p>
+            <p class = "playlistArtist">{{main.lastPlayedArtist}}</p>
+            <hr class = "fadedLine">
+          </div> -->
+        </div>
+      </div>
+      
+      
+
     </div>
   </body>
 </html>
