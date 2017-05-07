@@ -25,7 +25,7 @@ var routes = require('./routes/index');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  // we're connected!
+	// we're connected!
 });
 
 // Used for uploading photo functionality
@@ -44,19 +44,11 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-io.on('connection', function(socket) {
-  console.log('a user connected');
-  socket.on('disconnect', function() {
-    console.log('a user disconnected');
-  });
-  socket.on('upvote', function(sid) {
-    console.log('user upvoted ' + sid);
-  });
-});
+io.sockets.on('connection', routes.initSocketConnection);
 
 var portno = 3000;  // Port number to use
 http.listen(portno, function() {
-  console.log('Listening at http://localhost:' + portno + ' exporting the directory ' + __dirname);
+	console.log('Listening at http://localhost:' + portno + ' exporting the directory ' + __dirname);
 });
 
 // Sets working directory (directory loaded) to __dirname, which is "Jam/home/www"
@@ -79,3 +71,9 @@ app.post("/songs", routes.add);
  * POST: upvote the song whose spotifyId is given in the body as sid.
  */
 app.post("/upvote", routes.upvote);
+
+/* "/reset"
+ * for debugging
+ * POST: empties the database
+ */
+ app.get("/reset", routes.reset);

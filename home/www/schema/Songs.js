@@ -5,9 +5,11 @@
 
 var mongoose = require('mongoose');
 
+var upvoteSchema = new mongoose.Schema({ ip: 'String' });
+
 var songSchema = new mongoose.Schema({
 	spotifyId: String,  // TODO: Ask Manny about this
-	upvotes: Number
+	upvotes: [upvoteSchema]
 });
 
 songSchema.methods.upvote = function(cb) {

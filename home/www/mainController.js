@@ -42,8 +42,16 @@ jamApp.factory('songs', ['$http', function($http){
 	o.upvote = function(song) {
 		return $http.post('/upvote', {'sid': song.spotifyId} )
 			.success(function(data) {
-				song.upvotes += 1;
+				// song.upvotes += 1;
+				console.log("TODO: respond to upvote");
 			});
+	};
+
+	o.removeAll = function() {
+		return $http.get('/reset').success(function(data) {
+			console.log(data);
+			o.getAll();
+		});
 	};
 
 	return o;
@@ -60,7 +68,7 @@ function ($scope, songs) {
 
 		songs.create({
 			spotifyId: $scope.sid,
-			upvotes: 0
+			upvotes: []
 		});
 
 		$scope.sid = '';
@@ -68,5 +76,9 @@ function ($scope, songs) {
 
 	$scope.incrementUpvotes = function(song) {
 		songs.upvote(song);
+	};
+
+	$scope.reset = function() {
+		songs.removeAll();
 	};
 }]);

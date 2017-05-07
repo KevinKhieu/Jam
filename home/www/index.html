@@ -21,13 +21,17 @@
 
 			<div ng-repeat="song in songs | orderBy: '-upvotes'">
 				<span ng-click="incrementUpvotes(song)">^</span>
-				{{song.spotifyId}} - upvotes: {{song.upvotes}}
+				{{song.spotifyId}} - upvotes: {{song.upvotes.length}}
 			</div>
 
 			<form ng-submit="addSong()">
 				<input type="text" placeholder="Spotify Id" ng-model="sid"></input>
 				<button type="submit">Add Song</button>
 			</form>
+
+			<div>
+				<button ng-click="reset()">Reset DB</button>
+			</div>
 		</script>
 	</body>
 
