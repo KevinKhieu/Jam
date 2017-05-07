@@ -13,14 +13,7 @@ var entrySchema = new mongoose.Schema({
 	id: String,
 	author: String,
 	date: String,
-	city: String,
-	country: String,
-	lat: Number,
-	long: Number,
-	description: String,
-	water: String,
-	potable: String,
-	photoFile: String
+	lat: Number
 });
 
 // Create model for schema
