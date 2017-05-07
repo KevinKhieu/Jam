@@ -1,0 +1,33 @@
+get request: short history of songs recently played
+
+Basic API
+/songs
+  GET: queue of songs in room
+  POST: add song to room
+/upvote
+  POST: upvote song with given id
+
+Socket event API
+  upvoting
+    send:upvote (client->server) {sid}
+    ack:upvote (server->client) {songDoc}
+    upvote (server->clients) {songDoc}
+  song control
+    update current song playing
+      send:now-playing (host-client->server) {sid, timeStarted}
+      ack:now-playing (server->host-client) {sid, timeStarted}
+      now-playing (server->clients) {sid, timeStarted}
+      -remove least recent in history, push current song to history,
+        set now-playing to new one, set seek position
+    play
+      send:play (host-client->server) {sid, seekpos}
+      ack:play (server->host-client) {sid, seekpos}
+      play (server->clients) {sid, seekpos}
+    pause
+      send:pause (host-client->server) {sid, seekpos}
+      ack:pause (server->host-client) {sid, seekpos}
+      pause (server->clients) {sid, seekpos}
+
+TODO
+# Room creation #
+  post request: create a room, return a url?
