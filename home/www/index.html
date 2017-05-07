@@ -3,7 +3,7 @@
   <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-    
+
     <script src="./node_modules/angular/angular.js" type="text/javascript" ></script>
     <link href="./bower_components/angular-material/angular-material.css" rel="stylesheet" />
     <script src="./bower_components/angular-animate/angular-animate.js" type="text/javascript" ></script>
@@ -17,7 +17,7 @@
 
     <link rel="stylesheet" type="text/css" href="css/favorite.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
-    
+
     <script src="mainController.js"></script>
     <scipt src="./js/index.js"></script>
   </head>
@@ -33,7 +33,7 @@
           <img src="img/album1.jpg" class = "songImg"/>
           <img src="img/circle.png" class = "border"/>
         </div>
-        
+
       </div>
       <p class = "songname">{{main.songName}}</p>
       <p class = "songartist">{{main.artist}}</p>
@@ -43,15 +43,15 @@
     <div class="right">
 
       <p class = "lastPlayed">LAST PLAYED</p>
-      <div class = "lastPlayedLine"> 
+      <div class = "lastPlayedLine">
         <hr>
       </div>
-      <div class = "lastPlayedSection"> 
+      <div class = "lastPlayedSection">
         <div class = "songInfo">
           <p class = "lastPlayedTitle">{{main.lastPlayedTitle}}</p>
           <p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
         </div>
-        <div class = "likeButtonSection">  
+        <div class = "likeButtonSection">
           <div class='like-wrapper'>
             <a class='like-button'>
               <span class='like-icon'>
@@ -62,7 +62,7 @@
             </a>
           </div>
         </div>
-        
+
       </div>
 
       <div class = "searchArea">
@@ -83,15 +83,53 @@
           </div> -->
         </div>
       </div>
-      
-      
+
+
 
     </div>
 
 
     <h1>SoundCloud API usage &mdash; JavaScript SDK</h1>
-  
+
     <button id="embedTrack">Embed Track</button>
     <div id="player"></div>
   </body>
+
+<!--
+	<head>
+		<title>Jam!</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+
+		<script src="mainController.js"></script>
+		<scipt src="./js/index.js"></script>
+	</head>
+
+	<body>
+		<ui-view></ui-view>
+
+		<script type="text/ng-template" id="/home.html">
+			<div class="page-header">
+				<h1>Welcome to Jam!</h1>
+			</div>
+
+			<div ng-repeat="song in songs | orderBy: '-upvotes'">
+				<span ng-click="incrementUpvotes(song)">^</span>
+				{{song.spotifyId}} - upvotes: {{song.upvotes.length}}
+			</div>
+
+			<form ng-submit="addSong()">
+				<input type="text" placeholder="Spotify Id" ng-model="sid"></input>
+				<button type="submit">Add Song</button>
+			</form>
+
+			<div>
+				<button ng-click="reset()">Reset DB</button>
+			</div>
+		</script>
+	</body>
+
+-->
 </html>

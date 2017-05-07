@@ -1,2 +1,3 @@
 home/www/node_modules
+home/www/node_modules/*
 home/www/bower_components
