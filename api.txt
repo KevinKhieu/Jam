@@ -10,8 +10,8 @@ Basic API
 Socket event API
   upvoting
     send:upvote (client->server) {sid}
-    ack:upvote (server->client) {sid, nUpvotes}
-    upvote (server->clients) {sid, nUpvotes}
+    ack:upvote (server->client) {songDoc}
+    upvote (server->clients) {songDoc}
   song control
     update current song playing
       send:now-playing (host-client->server) {sid, timeStarted}

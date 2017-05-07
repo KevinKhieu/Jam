@@ -56,7 +56,10 @@ exports.reset = function(req, res) {
 };
 
 function getIP(socket) {
-	return socket.handshake.headers['x-forwarded-for'] || socket.handshake.address.address;
+	console.log('forwarded-for: ' + socket.handshake.headers['x-forwarded-for']);
+		//TODO: The above may be obsolete and nonfunctional.
+	console.log('socket.request.connection.remoteAddress: ' + socket.request.connection.remoteAddress);
+	return socket.handshake.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
 }
 
 exports.initSocketConnection = function(socket) {
@@ -70,6 +73,23 @@ exports.initSocketConnection = function(socket) {
 		var sid = data.sid;
 		var ip = getIP(socket);
 		console.log('user at ip ' + ip + ' upvoted ' + sid);
+
+		Song.findOne({'spotifyId': sid}, function(err, song) { //TODO: make sure calling findOne correctly
+			if(err) {
+				handleError(res, err.message, "Failed to find song with given sid to upvote.");
+			} else {
+
+				song.upvote(ip, function(err, doc) {
+					if(err) {
+						handleError(res, err.message, "Failed to save song after upvoting it.");
+
+					} else {
+						socket.emit('ack:upvote', doc);
+						socket.broadcast.emit('upvote', doc);
+					}
+				});
+			}
+		});
 
 	});
 };

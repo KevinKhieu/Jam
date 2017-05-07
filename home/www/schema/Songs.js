@@ -9,11 +9,12 @@ var upvoteSchema = new mongoose.Schema({ ip: 'String' });
 
 var songSchema = new mongoose.Schema({
 	spotifyId: String,  // TODO: Ask Manny about this
+		//TODO: Make this a required field
 	upvotes: [upvoteSchema]
 });
 
-songSchema.methods.upvote = function(cb) {
-	this.upvotes += 1;
+songSchema.methods.upvote = function(ip, cb) {
+	this.upvotes.push({ip: ip});
 	this.save(cb);
 };
 
