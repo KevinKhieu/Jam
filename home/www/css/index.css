@@ -67,9 +67,14 @@ input[type=text]:focus {
 }
 
 .likeButtonSection {
-	width: 10%;
+	position: relative;
+	width: 9%;
 	height: auto;
+	-webkit-transform: translateY(10%);
+	-ms-transform: translateY(10%);
+	transform: translateY(10%);
 	float: right;
+	margin: auto;
 	display: inline-block;
 
   	vertical-align: middle;
