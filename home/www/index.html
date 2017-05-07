@@ -9,11 +9,14 @@
     <script src="./bower_components/angular-animate/angular-animate.js" type="text/javascript" ></script>
     <script src="./bower_components/angular-aria/angular-aria.js" type="text/javascript" ></script>
     <script src="./bower_components/angular-material/angular-material.js" type="text/javascript" ></script>
+    <script src="//connect.soundcloud.com/sdk.js"></script>
 
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="css/favorite.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
+    
     <script src="mainController.js"></script>
     <scipt src="./js/index.js"></script>
   </head>
@@ -48,7 +51,15 @@
           <p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
         </div>
         <div class = "likeButtonSection">  
-          <img src="img/circle.png" class = "likeButton">
+          <div class='like-wrapper'>
+            <a class='like-button'>
+              <span class='like-icon'>
+                <div class='heart-animation-1'></div>
+                <div class='heart-animation-2'></div>
+
+              </span>
+            </a>
+          </div>
         </div>
         
       </div>
@@ -57,9 +68,11 @@
         <input type="text" name="search" placeholder="Search or Add Songs..." class = "style-4" >
         <div class = "songList">
           <div class = "songInfo" ng-repeat = "song in main.playlist">
-            <p class = "playlistSong">{{song.name}}</p>
-            <p class = "playlistArtist">{{song.artist}}</p>
-            <hr class = "fadedLine">
+            <div id = "song-{{$index}}">
+              <p class = "playlistSong">{{song.name}}</p>
+              <p class = "playlistArtist">{{song.artist}}</p>
+              <hr class = "fadedLine">
+            </div>
           </div>
 
 <!--           <div class = "songInfo">
