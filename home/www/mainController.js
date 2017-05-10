@@ -69,6 +69,13 @@ jamApp.factory('songs', ['$http', function($http) {
 		});
 	};
 
+	o.removeAll = function() {
+		return $http.get('/reset').then(function(res) {
+			console.log(res.data);
+			o.getAll();
+		});
+	};
+
 	return o;
 }]);
 
@@ -86,12 +93,7 @@ jamApp.controller('MainController', [
 
 
 		$scope.main.lastPlayedArtist = "The Chainsmokers";
-		$scope.main.lastPlayedTitle = "Paris"
-
-
-		$scope.main.playlist = [
-			{name: "Yellow", artist: "Coldplay", spotifyId: 9}
-		];
+		$scope.main.lastPlayedTitle = "Paris";
 
 		/* EVENT HANDLERS */
 
@@ -100,6 +102,7 @@ jamApp.controller('MainController', [
 		});
 
 		/** Angular event handlers **/
+		$scope.main.playlist = songs.songs;
 
 		$scope.addSong = function() {
 			$scope.sid = 'qq1337';  // TEMP - until addSong() is called from search results
@@ -107,10 +110,16 @@ jamApp.controller('MainController', [
 
 			songs.add({
 				spotifyId: $scope.sid,
-				upvotes: []
+				upvotes: [],
+				name: 'Yellow',
+				artist: 'Coldplay'
 			});
 
 			$scope.sid = '';
+		};
+
+		$scope.reset = function() {
+			songs.removeAll();
 		};
 
 }]);
