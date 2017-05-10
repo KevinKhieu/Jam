@@ -27,13 +27,39 @@ $(document).ready(function() {
 	SC.stream('/tracks/293').then(function(player){
 		player.play();
 	});
-})
+});
 
-var jamApp = angular.module('jamApp', ['ngRoute', 'ngMaterial', 'ngResource']);
+var jamApp = angular.module('jamApp', ['ui.router']);
+
+jamApp.config([
+'$stateProvider',
+'$urlRouterProvider',
+function($stateProvider, $urlRouterProvider) {
+
+	$stateProvider
+		.state('home', {
+			url: '/home',
+			templateUrl: '/home.html',
+			controller: 'MainController',
+			resolve: {
+				songPromise: ['songs', function(songs) {
+					return songs.getAll();
+				}]
+			}
+		});
+
+	$urlRouterProvider.otherwise('home');
+}]);
 
 jamApp.factory('songs', ['$http', function($http) {
 	var o = {
 		songs: []
+	};
+
+	o.getAll = function() {
+		return $http.get('/songs').then(function(res) {
+			angular.copy(res.data, o.songs);
+		});
 	};
 
 	o.add = function(song) {
@@ -76,7 +102,7 @@ jamApp.controller('MainController', [
 		/** Angular event handlers **/
 
 		$scope.addSong = function() {
-			$scope.sid = 'qq1337';  // TEMP FOR DEBUGGING
+			$scope.sid = 'qq1337';  // TEMP - until addSong() is called from search results
 			if(!$scope.sid || $scope.sid === '') { return; }
 
 			songs.add({
