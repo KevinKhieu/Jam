@@ -1,3 +1,5 @@
+'use strict';
+
 var Song = require('../schema/Songs');
 
 // Generic error handler

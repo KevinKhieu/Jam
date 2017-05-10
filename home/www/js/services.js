@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('songServices', [])
 .factory('songs', ['$http', function($http) {
 	var o = {
@@ -26,3 +28,68 @@ angular.module('songServices', [])
 
 	return o;
 }]);
+
+
+//
+// jamApp.factory('songs', ['$http', 'socket', function($http, socket){
+// 	var o = {
+// 		songs: []
+// 	};
+//
+// 	o.getAll = function() {
+// 		return $http.get('/songs').success(function(data) {
+// 			angular.copy(data, o.songs);
+// 		});
+// 	};
+//
+// 	o.create = function(song) {
+// 		return $http.post('/songs', song).success(function(data) {
+// 			o.songs.push(data);
+// 		});
+// 	};
+//
+// 	o.upvote = function(song) {
+// 		socket.emit('send:upvote', {'sid': song.spotifyId} );
+// 	};
+//
+// 	o.updateOne = function(sid, upvotes) {
+// 		var i = o.songs.findIndex(function(song) {
+// 			return song.spotifyId == sid;  // TODO: double or triple equals?
+// 		});
+// 		o.songs[i].upvotes = upvotes;
+// 	};
+//
+// 	o.removeAll = function() {
+// 		return $http.get('/reset').success(function(data) {
+// 			console.log(data);
+// 			o.getAll();
+// 		});
+// 	};
+//
+// 	return o;
+// }]);
+
+//
+// jamApp.factory('socket', ['$rootScope', function($rootScope) {
+// 	var socket = io.connect();
+// 	var o = {};
+// 	o.on = function (eventName, callback) {
+//     socket.on(eventName, function () {
+//       var args = arguments;
+//       $rootScope.$apply(function () {
+//         callback.apply(socket, args);
+//       });
+//     });
+//   };
+//   o.emit = function (eventName, data, callback) {
+//     socket.emit(eventName, data, function () {
+//       var args = arguments;
+//       $rootScope.$apply(function () {
+//         if (callback) {
+//           callback.apply(socket, args);
+//         }
+//       });
+//     });
+//   };
+// 	return o;
+// }]);
