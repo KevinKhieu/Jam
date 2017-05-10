@@ -31,11 +31,29 @@ $(document).ready(function() {
 
 var jamApp = angular.module('jamApp', ['ngRoute', 'ngMaterial', 'ngResource']);
 
-jamApp.controller('MainController', ['$scope', '$rootScope', '$location', '$http', '$routeParams', '$resource', '$mdDialog', '$mdMedia',
-	function ($scope, $rootScope, $location, $http, $routeParams, $resource, $mdDialog, $mdMedia) {
+jamApp.factory('songs', ['$http', function($http) {
+	var o = {
+		songs: []
+	};
+
+	o.add = function(song) {
+		return $http.post('/songs', song).then(function(res) {
+			o.songs.push(res.data);
+			console.log("successfully posted to /songs and pushed data onto local songs object.");
+		});
+	};
+
+	return o;
+}]);
+
+jamApp.controller('MainController', [
+	'$scope',
+	'songs',
+	function ($scope, songs) {
+
+		/* DEBUGGING CONSTANTS */
 
 		$scope.main = {};
-
 
 		$scope.main.songName = "SHAPE OF YOU";
 		$scope.main.artist = "ED SHEERAN";
@@ -49,11 +67,25 @@ jamApp.controller('MainController', ['$scope', '$rootScope', '$location', '$http
 			{name: "Yellow", artist: "Coldplay", spotifyId: 9}
 		];
 
+		/* EVENT HANDLERS */
 
-			$('a.like-button').on('click', function() {
-				$(this).toggleClass('liked');
+		$('a.like-button').on('click', function() {
+			$(this).toggleClass('liked');
+		});
+
+		/** Angular event handlers **/
+
+		$scope.addSong = function() {
+			$scope.sid = 'qq1337';  // TEMP FOR DEBUGGING
+			if(!$scope.sid || $scope.sid === '') { return; }
+
+			songs.add({
+				spotifyId: $scope.sid,
+				upvotes: []
 			});
 
+			$scope.sid = '';
+		};
 
 }]);
 

@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 var upvoteSchema = new mongoose.Schema({ ip: 'String' });
 
 var songSchema = new mongoose.Schema({
-	spotifyId: String,  // TODO: Ask Manny about this
+	spotifyId: String,  // TODO: Figure out based on which API we are using
 		//TODO: Make this a required field
 	upvotes: [upvoteSchema]
 });
