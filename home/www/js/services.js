@@ -19,15 +19,12 @@ angular.module('songServices', [])
 		});
 	};
 
-	o.upvote = function(song) {
-		socket.emit('send:upvote', {'sid': song.spotifyId} );
-	};
-
-	o.updateOne = function(sid, upvotes) {
+	o.setUpvotes = function(sid, upvotes) {
 		var i = o.songs.findIndex(function(song) {
-			return song.spotifyId === sid;  // TODO: double or triple equals?
+			return song.spotifyId === sid;
 		});
 		o.songs[i].upvotes = upvotes;
+		console.log(sid + ' has ' + upvotes.length + ' upvotes.');
 	};
 
 	o.removeAll = function() {
@@ -84,22 +81,22 @@ angular.module('songServices', [])
 	var socket = io.connect();
 	var o = {};
 	o.on = function (eventName, callback) {
-    socket.on(eventName, function () {
-      var args = arguments;
-      $rootScope.$apply(function () {
-        callback.apply(socket, args);
-      });
-    });
-  };
-  o.emit = function (eventName, data, callback) {
-    socket.emit(eventName, data, function () {
-      var args = arguments;
-      $rootScope.$apply(function () {
-        if (callback) {
-          callback.apply(socket, args);
-        }
-      });
-    });
-  };
+		socket.on(eventName, function () {
+			var args = arguments;
+			$rootScope.$apply(function () {
+				callback.apply(socket, args);
+			});
+		});
+	};
+	o.emit = function (eventName, data, callback) {
+		socket.emit(eventName, data, function () {
+			var args = arguments;
+			$rootScope.$apply(function () {
+				if (callback) {
+					callback.apply(socket, args);
+				}
+			});
+		});
+	};
 	return o;
 }]);

@@ -41,25 +41,24 @@ angular.module('controller', ['songServices'])
 			$scope.sid = '';
 		};
 
-		$scope.upvote = function(song) {
-			console.log("Incrementing upvotes on " + song.spotifyId);
-			songs.upvote(song);
-		};
-
 		$scope.reset = function() {
 			songs.removeAll();
+		};
+
+		$scope.upvote = function(song) {
+			console.log("Incrementing upvotes on " + song.spotifyId);
+			socket.emit('send:upvote', {'sid': song.spotifyId} );
 		};
 
 		socket.on('ack:upvote', function(data) {
 			console.log('received ack:upvote event for ' + data.spotifyId);
 			// console.dir(data);
-			songs.updateOne(data.spotifyId, data.upvotes);
+			songs.setUpvotes(data.spotifyId, data.upvotes);
 		});
 
 		socket.on('push:upvote', function(data) {
 			console.log('received push:upvote event for ' + data.spotifyId);
-			// console.dir(data);
-			songs.updateOne(data.spotifyId, data.upvotes);
+			songs.setUpvotes(data.spotifyId, data.upvotes);
 		});
 
 }]);
