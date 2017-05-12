@@ -234,6 +234,7 @@ html {
 	padding-right: 0px;
 	margin-bottom: 1px;
 	float: right;
+	cursor: pointer;
 }
 
 .playlistArtist {

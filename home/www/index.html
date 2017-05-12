@@ -3,6 +3,7 @@
 	<head>
 		<title>Jam!</title>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
 
 		<script src="./node_modules/angular/angular.js" type="text/javascript" ></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
@@ -83,12 +84,13 @@
 						<input type="submit" name="search" placeholder="Search or Add Songs..." class = "style-4" >
 					</form>
 					<div class = "songList">
-						<div class = "songInfo" ng-repeat = "song in main.playlist">
+						<div class = "songInfo" ng-repeat = "song in main.playlist | orderBy: '-upvotes.length'">
 							<div id = "song-{{$index}}">
-								<p class = "playlistSong">{{song.name}}</p>
+								<p class = "playlistSong" ng-click="upvote(song)">{{song.name}}</p>
 								<p class = "playlistArtist">{{song.artist}}</p>
 								<hr class = "fadedLine">
 							</div>
+
 						</div>
 
 	<!--           <div class = "songInfo">

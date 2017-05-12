@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('songServices', [])
-.factory('songs', ['$http', function($http) {
+.factory('songs', ['$http', 'socket', function($http, socket) {
 	var o = {
-		songs: []
+		songs: []  // unsorted -- the html does the sorting
 	};
 
 	o.getAll = function() {
@@ -19,6 +19,17 @@ angular.module('songServices', [])
 		});
 	};
 
+	o.upvote = function(song) {
+		socket.emit('send:upvote', {'sid': song.spotifyId} );
+	};
+
+	o.updateOne = function(sid, upvotes) {
+		var i = o.songs.findIndex(function(song) {
+			return song.spotifyId === sid;  // TODO: double or triple equals?
+		});
+		o.songs[i].upvotes = upvotes;
+	};
+
 	o.removeAll = function() {
 		return $http.get('/reset').then(function(res) {
 			console.log(res.data);
@@ -27,7 +38,7 @@ angular.module('songServices', [])
 	};
 
 	return o;
-}]);
+}])
 
 
 //
@@ -69,27 +80,26 @@ angular.module('songServices', [])
 // 	return o;
 // }]);
 
-//
-// jamApp.factory('socket', ['$rootScope', function($rootScope) {
-// 	var socket = io.connect();
-// 	var o = {};
-// 	o.on = function (eventName, callback) {
-//     socket.on(eventName, function () {
-//       var args = arguments;
-//       $rootScope.$apply(function () {
-//         callback.apply(socket, args);
-//       });
-//     });
-//   };
-//   o.emit = function (eventName, data, callback) {
-//     socket.emit(eventName, data, function () {
-//       var args = arguments;
-//       $rootScope.$apply(function () {
-//         if (callback) {
-//           callback.apply(socket, args);
-//         }
-//       });
-//     });
-//   };
-// 	return o;
-// }]);
+.factory('socket', ['$rootScope', function($rootScope) {
+	var socket = io.connect();
+	var o = {};
+	o.on = function (eventName, callback) {
+    socket.on(eventName, function () {
+      var args = arguments;
+      $rootScope.$apply(function () {
+        callback.apply(socket, args);
+      });
+    });
+  };
+  o.emit = function (eventName, data, callback) {
+    socket.emit(eventName, data, function () {
+      var args = arguments;
+      $rootScope.$apply(function () {
+        if (callback) {
+          callback.apply(socket, args);
+        }
+      });
+    });
+  };
+	return o;
+}]);

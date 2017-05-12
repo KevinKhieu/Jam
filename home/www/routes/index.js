@@ -87,7 +87,7 @@ exports.initSocketConnection = function(socket) {
 
 					} else {
 						socket.emit('ack:upvote', doc);
-						socket.broadcast.emit('upvote', doc);
+						socket.broadcast.emit('push:upvote', doc);
 					}
 				});
 			}
