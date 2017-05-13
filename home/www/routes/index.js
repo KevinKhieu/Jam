@@ -8,16 +8,15 @@ function handleError(res, reason, message, code) {
 	res.status(code || 500).json({"error": message});
 }
 
-function pushQueue(socket, all) {
+function pushQueue(transport) {
+	/* Gets the entire song queue from the database and emits it via the given
+	 * transport as a push:queue. The transport should either be a socket, or the
+	 * io object itself. A socket to send to that socket; io to send to all sockets. */
 	Song.find(function(err, songs) {
 		if(err) {
 			handleError(res, err.message, "Failed to retrieve song list.");
 		} else {
-
-			socket.emit('push:queue', songs);
-			if(all) {
-				socket.broadcast.emit('push:queue', songs);
-			}
+			transport.emit('push:queue', songs);
 		}
 	});
 }
@@ -33,11 +32,12 @@ function getIP(socket) {
 	return socket.handshake.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
 }
 
-exports.initSocketConnection = function(socket) {
+exports.initSocketConnection = function(io) {
+io.sockets.on('connection', function(socket) {
 	console.log('a user connected - sending room data');
 
 	// socket.emit('push:now-playing', getNowPlaying());
-	pushQueue(socket, false);
+	pushQueue(socket);
 	// socket.emit('push:last-played', getLastPlayed());
 
 	socket.on('disconnect', function() {
@@ -52,8 +52,9 @@ exports.initSocketConnection = function(socket) {
 				handleError(res, err.message, "Failed to add song to list.");
 			} else {
 				console.log("Broadcasting push:add-song...");
-				socket.emit('push:add-song', song);
-				socket.broadcast.emit('push:add-song', song);
+				// socket.emit('push:add-song', song);
+				// socket.broadcast.emit('push:add-song', song);
+				io.emit('push:add-song', song);
 			}
 		});
 	});
@@ -75,23 +76,24 @@ exports.initSocketConnection = function(socket) {
 
 					} else {
 						console.log("Broadcasting push:upvote...");
-						socket.emit('push:upvote', doc);
-						socket.broadcast.emit('push:upvote', doc);
-						// io.emit('push:upvote', doc);
+						// socket.emit('push:upvote', doc);
+						// socket.broadcast.emit('push:upvote', doc);
+						io.emit('push:upvote', doc);  //TODO: abstract this out like pushQueue()
 					}
 				});
 			}
 		});
 	});
 
+	// RESET
 	socket.on('send:reset', function() {
 		Song.remove({}, function(err) {
 			if (err) {
 				handleError(res, err.message, "Failed to remove all songs from database.");
 			} else {
 				console.log('successfully removed all songs from database.');
-				pushQueue(socket, true);
+				pushQueue(io);
 			}
 		});
 	})
-};
+})};

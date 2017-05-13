@@ -44,8 +44,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-// routes.initSocketConnection(io);
-io.sockets.on('connection', routes.initSocketConnection);
+routes.initSocketConnection(io);
 
 var portno = 3000;  // Port number to use
 http.listen(portno, function() {
