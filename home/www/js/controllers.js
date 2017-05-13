@@ -5,7 +5,8 @@ angular.module('controller', ['songServices'])
 	'$scope',
 	'songs',
 	'socket',
-	function($scope, songs, socket) {
+	'socket-controller',
+	function($scope, songs, socket, socket_controller) {
 
 		/* DEBUGGING CONSTANTS */
 
@@ -47,23 +48,12 @@ angular.module('controller', ['songServices'])
 			$scope.sid = '';
 		};
 
-		socket.on('push:add-song', function(data) {
-			songs.add(data);
-		});
-
 		// UPVOTING //
 
 		$scope.upvote = function(song) {
 			console.log("Incrementing upvotes on " + song.spotifyId);
 			socket.emit('send:upvote', {'sid': song.spotifyId} );
 		};
-
-		socket.on('push:upvote', function(data) {
-			console.log('received push:upvote event for ' + data.spotifyId);
-			// console.dir(data);
-			songs.setUpvotes(data.spotifyId, data.upvotes);
-		});
-
 }]);
 
 

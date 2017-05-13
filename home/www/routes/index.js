@@ -77,6 +77,7 @@ exports.initSocketConnection = function(socket) {
 			if(err){
 				handleError(res, err.message, "Failed to add song to list.");
 			} else {
+				console.log("Broadcasting push:add-song...");
 				socket.emit('push:add-song', song);
 				socket.broadcast.emit('push:add-song', song);
 			}
@@ -99,6 +100,7 @@ exports.initSocketConnection = function(socket) {
 						handleError(res, err.message, "Failed to save song after upvoting it.");
 
 					} else {
+						console.log("Broadcasting push:upvote...");
 						socket.emit('push:upvote', doc);
 						socket.broadcast.emit('push:upvote', doc);
 						// io.emit('push:upvote', doc);

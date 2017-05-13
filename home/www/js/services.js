@@ -97,4 +97,22 @@ angular.module('songServices', [])
 		});
 	};
 	return o;
+}])
+
+.factory('socket-controller', ['socket', 'songs', function(socket, songs) {
+	/* The part of the controller that responds to socket events. Don't know better
+	 * place to register with socket.on - can't do it in the controller because
+	 * it gets called twice there. */
+
+	socket.on('push:add-song', function(data) {
+		songs.add(data);
+	});
+
+	socket.on('push:upvote', function(data) {
+		console.log('received push:upvote event for ' + data.spotifyId);
+		// console.dir(data);
+		songs.setUpvotes(data.spotifyId, data.upvotes);
+	});
+
+	return {};
 }]);
