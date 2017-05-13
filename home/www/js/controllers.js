@@ -27,11 +27,17 @@ angular.module('controller', ['songServices'])
 		/** Angular event handlers **/
 		$scope.main.playlist = songs.songs;
 
+		$scope.reset = function() {
+			songs.removeAll();
+		};
+
+		// ADDING SONG //
+
 		$scope.addSong = function() {
 			$scope.sid = 'qq1337';  // TEMP - until addSong() is called from search results
 			if(!$scope.sid || $scope.sid === '') { return; }
 
-			songs.add({
+			socket.emit('send:add-song', {
 				spotifyId: $scope.sid,
 				upvotes: [],
 				name: 'Yellow',
@@ -41,23 +47,20 @@ angular.module('controller', ['songServices'])
 			$scope.sid = '';
 		};
 
-		$scope.reset = function() {
-			songs.removeAll();
-		};
+		socket.on('push:add-song', function(data) {
+			songs.add(data);
+		});
+
+		// UPVOTING //
 
 		$scope.upvote = function(song) {
 			console.log("Incrementing upvotes on " + song.spotifyId);
 			socket.emit('send:upvote', {'sid': song.spotifyId} );
 		};
 
-		socket.on('ack:upvote', function(data) {
-			console.log('received ack:upvote event for ' + data.spotifyId);
-			// console.dir(data);
-			songs.setUpvotes(data.spotifyId, data.upvotes);
-		});
-
 		socket.on('push:upvote', function(data) {
 			console.log('received push:upvote event for ' + data.spotifyId);
+			// console.dir(data);
 			songs.setUpvotes(data.spotifyId, data.upvotes);
 		});
 

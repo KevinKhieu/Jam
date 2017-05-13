@@ -70,6 +70,19 @@ exports.initSocketConnection = function(socket) {
 		console.log('a user disconnected');
 	});
 
+	// ADDING SONG //
+	socket.on('send:add-song', function(data) {
+		var song = new Song(data);
+		song.save(function(err, song){
+			if(err){
+				handleError(res, err.message, "Failed to add song to list.");
+			} else {
+				socket.emit('push:add-song', song);
+				socket.broadcast.emit('push:add-song', song);
+			}
+		});
+	});
+
 	// UPVOTING //
 	socket.on('send:upvote', function(data) {
 		var sid = data.sid;
@@ -86,8 +99,9 @@ exports.initSocketConnection = function(socket) {
 						handleError(res, err.message, "Failed to save song after upvoting it.");
 
 					} else {
-						socket.emit('ack:upvote', doc);
+						socket.emit('push:upvote', doc);
 						socket.broadcast.emit('push:upvote', doc);
+						// io.emit('push:upvote', doc);
 					}
 				});
 			}

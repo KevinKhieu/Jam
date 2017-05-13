@@ -13,10 +13,8 @@ angular.module('songServices', [])
 	};
 
 	o.add = function(song) {
-		return $http.post('/songs', song).then(function(res) {
-			o.songs.push(res.data);
-			console.log("successfully posted to /songs and pushed data onto local songs object.");
-		});
+		o.songs.push(song);
+		console.log("successfully sent add-song and pushed data onto local songs object.");
 	};
 
 	o.setUpvotes = function(sid, upvotes) {

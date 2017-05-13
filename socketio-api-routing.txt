@@ -1,10 +1,7 @@
 Socket IO API and routing
 
-TODO: Do we need acknowledgement from the server? If a client makes a change to
-the model, we could have them wait until the server receives the change and
-sends back an acknowledgement, for the client to update the view to reflect the
-model change they made. Alternatively, the client could update the view before
-even sending the change to the server.
+pushes are from server to client. They push to all clients, including the client
+that initiated the change.
 
 /****** API ******/
 
@@ -19,8 +16,6 @@ push:add-song (server -> clients) {song}
 // Upvote Song
 send:upvote (client -> server) {sid}
 push:upvote (server -> clients) {song}
-ack:upvote (server -> client) {song}
-	// We need this for convenience in adding the newly-upvoted client's IP to the upvote array.
 
 /** Music control with host-client **/
 
