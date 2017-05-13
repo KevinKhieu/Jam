@@ -8,45 +8,6 @@ function handleError(res, reason, message, code) {
 	res.status(code || 500).json({"error": message});
 }
 
-exports.list = function(req, res) {
-	Song.find(function(err, songs) {
-		if(err) {
-			handleError(res, err.message, "Failed to retrieve song list.");
-		} else {
-			res.status(200).json(songs);
-		}
-	});
-};
-
-exports.add = function(req, res) {
-	var song = new Song(req.body);
-	song.save(function(err, song){
-		if(err){
-			handleError(res, err.message, "Failed to add song to list.");
-		} else {
-			res.json(song);
-		}
-	});
-};
-
-exports.upvote = function(req, res) {
-	Song.findOne({ 'spotifyId': req.body.sid }, function(err, song) {
-		if(err) {
-			handleError(res, err.message, "Failed to retrieve song to upvote.");
-
-		} else {
-			song.upvote(function(err, song) {
-
-				if(err) {
-					handleError(res, err.message, "Failed to upvote song.");
-				} else {
-					res.json(song);
-				}
-			});
-		}
-	});
-};
-
 exports.reset = function(req, res) {
 	Song.remove({}, function(err) {
 		if (err) {
@@ -57,6 +18,20 @@ exports.reset = function(req, res) {
 	});
 };
 
+function pushQueue(socket) {
+	Song.find(function(err, songs) {
+		if(err) {
+			handleError(res, err.message, "Failed to retrieve song list.");
+		} else {
+			socket.emit('push:queue', songs);
+		}
+	});
+}
+
+function getNowPlaying() {}
+
+function getLastPlayed() {}
+
 function getIP(socket) {
 	console.log('forwarded-for: ' + socket.handshake.headers['x-forwarded-for']);
 		//TODO: The above may be obsolete and nonfunctional.
@@ -65,7 +40,12 @@ function getIP(socket) {
 }
 
 exports.initSocketConnection = function(socket) {
-	console.log('a user connected');
+	console.log('a user connected - sending room data');
+
+	// socket.emit('push:now-playing', getNowPlaying());
+	pushQueue(socket);
+	// socket.emit('push:last-played', getLastPlayed());
+
 	socket.on('disconnect', function() {
 		console.log('a user disconnected');
 	});

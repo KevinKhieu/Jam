@@ -35,46 +35,6 @@ angular.module('songServices', [])
 	return o;
 }])
 
-
-//
-// jamApp.factory('songs', ['$http', 'socket', function($http, socket){
-// 	var o = {
-// 		songs: []
-// 	};
-//
-// 	o.getAll = function() {
-// 		return $http.get('/songs').success(function(data) {
-// 			angular.copy(data, o.songs);
-// 		});
-// 	};
-//
-// 	o.create = function(song) {
-// 		return $http.post('/songs', song).success(function(data) {
-// 			o.songs.push(data);
-// 		});
-// 	};
-//
-// 	o.upvote = function(song) {
-// 		socket.emit('send:upvote', {'sid': song.spotifyId} );
-// 	};
-//
-// 	o.updateOne = function(sid, upvotes) {
-// 		var i = o.songs.findIndex(function(song) {
-// 			return song.spotifyId == sid;  // TODO: double or triple equals?
-// 		});
-// 		o.songs[i].upvotes = upvotes;
-// 	};
-//
-// 	o.removeAll = function() {
-// 		return $http.get('/reset').success(function(data) {
-// 			console.log(data);
-// 			o.getAll();
-// 		});
-// 	};
-//
-// 	return o;
-// }]);
-
 .factory('socket', ['$rootScope', function($rootScope) {
 	var socket = io.connect();
 	var o = {};
@@ -112,6 +72,11 @@ angular.module('songServices', [])
 		console.log('received push:upvote event for ' + data.spotifyId);
 		// console.dir(data);
 		songs.setUpvotes(data.spotifyId, data.upvotes);
+	});
+
+	socket.on('push:queue', function(data) {
+		console.log('received push:queue event');
+		angular.copy(data, songs.songs);
 	});
 
 	return {};

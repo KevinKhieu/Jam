@@ -13,12 +13,7 @@ function($stateProvider, $urlRouterProvider) {
 		.state('home', {
 			url: '/home',
 			templateUrl: '/home.html',
-			controller: 'MainController',
-			resolve: {
-				songPromise: ['songs', function(songs) {
-					return songs.getAll();
-				}]
-			}
+			controller: 'MainController'
 		});
 
 	$urlRouterProvider.otherwise('home');

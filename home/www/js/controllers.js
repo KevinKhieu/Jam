@@ -28,10 +28,6 @@ angular.module('controller', ['songServices'])
 		/** Angular event handlers **/
 		$scope.main.playlist = songs.songs;
 
-		$scope.reset = function() {
-			songs.removeAll();
-		};
-
 		// ADDING SONG //
 
 		$scope.addSong = function() {
@@ -54,46 +50,8 @@ angular.module('controller', ['songServices'])
 			console.log("Incrementing upvotes on " + song.spotifyId);
 			socket.emit('send:upvote', {'sid': song.spotifyId} );
 		};
+
+		$scope.reset = function() {
+			songs.removeAll();
+		};
 }]);
-
-
-
-// jamApp.controller('MainController', [
-// '$scope',
-// 'songs',
-// 'socket',
-// function ($scope, songs, socket) {
-// 	$scope.songs = songs.songs;
-//
-// 	$scope.addSong = function(){
-// 		if(!$scope.sid || $scope.sid === '') { return; }
-//
-// 		songs.create({
-// 			spotifyId: $scope.sid,
-// 			upvotes: []
-// 		});
-//
-// 		$scope.sid = '';
-// 	};
-//
-// 	$scope.incrementUpvotes = function(song) {
-// 		songs.upvote(song);
-// 	};
-//
-// 	$scope.reset = function() {
-// 		songs.removeAll();
-// 	};
-//
-// 	socket.on('ack:upvote', function(data) {
-// 		console.log('received ack:upvote event');
-// 		// console.dir(data);
-// 		songs.updateOne(data.spotifyId, data.upvotes);
-// 	});
-//
-// 	socket.on('upvote', function(data) {
-// 		console.log('received upvote event');
-// 		// console.dir(data);
-// 		songs.updateOne(data.spotifyId, data.upvotes);
-// 	});
-//
-// }]);
