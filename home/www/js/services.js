@@ -6,12 +6,6 @@ angular.module('songServices', [])
 		songs: []  // unsorted -- the html does the sorting
 	};
 
-	o.getAll = function() {
-		return $http.get('/songs').then(function(res) {
-			angular.copy(res.data, o.songs);
-		});
-	};
-
 	o.add = function(song) {
 		o.songs.push(song);
 		console.log("successfully sent add-song and pushed data onto local songs object.");
@@ -23,13 +17,6 @@ angular.module('songServices', [])
 		});
 		o.songs[i].upvotes = upvotes;
 		console.log(sid + ' has ' + upvotes.length + ' upvotes.');
-	};
-
-	o.removeAll = function() {
-		return $http.get('/reset').then(function(res) {
-			console.log(res.data);
-			o.getAll();
-		});
 	};
 
 	return o;

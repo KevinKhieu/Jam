@@ -44,6 +44,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+// routes.initSocketConnection(io);
 io.sockets.on('connection', routes.initSocketConnection);
 
 var portno = 3000;  // Port number to use
@@ -57,11 +58,3 @@ app.use(express.static(__dirname));
 var fs = require('fs');
 
 app.use(bodyParser.json());
-
-// API routes
-
-/* "/reset"
- * for debugging
- * POST: empties the database
- */
- app.get("/reset", routes.reset);

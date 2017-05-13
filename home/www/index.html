@@ -80,7 +80,7 @@
 				</div>
 
 				<div class = "searchArea">
-					<form ng-submit="addSong()">
+					<form ng-submit="reset()">
 						<input type="submit" name="search" placeholder="Search or Add Songs..." class = "style-4" >
 					</form>
 					<div class = "songList">
@@ -101,10 +101,7 @@
 					</div>
 				</div>
 
-
-
 			</div>
-
 
 			<h1>SoundCloud API usage &mdash; JavaScript SDK</h1>
 
@@ -113,41 +110,4 @@
 		</script>
 	</body>
 
-<!--
-	<head>
-		<title>Jam!</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
-		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-		<script src="/socket.io/socket.io.js"></script>
-
-		<script src="mainController.js"></script>
-		<scipt src="./js/index.js"></script>
-	</head>
-
-	<body>
-		<ui-view></ui-view>
-
-		<script type="text/ng-template" id="/home.html">
-			<div class="page-header">
-				<h1>Welcome to Jam!</h1>
-			</div>
-
-			<div ng-repeat="song in songs | orderBy: '-upvotes'">
-				<span ng-click="incrementUpvotes(song)">^</span>
-				{{song.spotifyId}} - upvotes: {{song.upvotes.length}}
-			</div>
-
-			<form ng-submit="addSong()">
-				<input type="text" placeholder="Spotify Id" ng-model="sid"></input>
-				<button type="submit">Add Song</button>
-			</form>
-
-			<div>
-				<button ng-click="reset()">Reset DB</button>
-			</div>
-		</script>
-	</body>
-
--->
 </html>

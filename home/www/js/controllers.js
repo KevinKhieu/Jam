@@ -51,7 +51,8 @@ angular.module('controller', ['songServices'])
 			socket.emit('send:upvote', {'sid': song.spotifyId} );
 		};
 
+		// RESET
 		$scope.reset = function() {
-			songs.removeAll();
+			socket.emit('send:reset');
 		};
 }]);

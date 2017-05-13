@@ -31,6 +31,10 @@ push:play (server -> clients) {sid, seekpos}
 send:pause (host-client -> server) {sid, seekpos}
 push:pause (server -> clients) {sid, seekpos}
 
+/** Debugging **/
+send:reset (client -> server) {}
+	Clears all songs from queue. Server responds by broadcasting a push:queue that should be empty.
+
 
 /****** Routes ******/
 

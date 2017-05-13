@@ -8,22 +8,16 @@ function handleError(res, reason, message, code) {
 	res.status(code || 500).json({"error": message});
 }
 
-exports.reset = function(req, res) {
-	Song.remove({}, function(err) {
-		if (err) {
-			handleError(res, err.message, "Failed to remove all songs from database.");
-		} else {
-			res.send('successfully removed all songs from database.');
-		}
-	});
-};
-
-function pushQueue(socket) {
+function pushQueue(socket, all) {
 	Song.find(function(err, songs) {
 		if(err) {
 			handleError(res, err.message, "Failed to retrieve song list.");
 		} else {
+
 			socket.emit('push:queue', songs);
+			if(all) {
+				socket.broadcast.emit('push:queue', songs);
+			}
 		}
 	});
 }
@@ -43,7 +37,7 @@ exports.initSocketConnection = function(socket) {
 	console.log('a user connected - sending room data');
 
 	// socket.emit('push:now-playing', getNowPlaying());
-	pushQueue(socket);
+	pushQueue(socket, false);
 	// socket.emit('push:last-played', getLastPlayed());
 
 	socket.on('disconnect', function() {
@@ -88,6 +82,16 @@ exports.initSocketConnection = function(socket) {
 				});
 			}
 		});
-
 	});
+
+	socket.on('send:reset', function() {
+		Song.remove({}, function(err) {
+			if (err) {
+				handleError(res, err.message, "Failed to remove all songs from database.");
+			} else {
+				console.log('successfully removed all songs from database.');
+				pushQueue(socket, true);
+			}
+		});
+	})
 };
