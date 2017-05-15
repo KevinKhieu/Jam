@@ -1,0 +1,60 @@
+Socket IO API and routing
+
+pushes are from server to client. They push to all clients, including the client
+that initiated the change.
+
+/****** API ******/
+
+// Push Songs
+send:queue (server -> client) {queue_songs}
+send:last-played (server -> client) {song}
+
+// Add Song
+send:add-song (client -> server) {song}
+push:add-song (server -> clients) {song}
+
+// Upvote Song
+send:upvote (client -> server) {sid}
+push:upvote (server -> clients) {song}
+
+/** Music control with host-client **/
+
+// Now Playing
+send:now-playing (host-client -> server) {sid, timeStarted}
+push:now-playing (server -> client(s)) {sid, name, artist, timeStarted, playState}
+
+// Play
+send:play (host-client -> server) {sid, seekpos}
+push:play (server -> clients) {sid, seekpos}
+
+// Pause
+send:pause (host-client -> server) {sid, seekpos}
+push:pause (server -> clients) {sid, seekpos}
+
+/** Debugging **/
+send:reset (client -> server) {}
+	Clears all songs from queue. Server responds by broadcasting a push:queue that should be empty.
+
+
+/****** Routes ******/
+
+on client connect:
+	push now playing
+	push queue
+	push last played
+
+on add song:
+	add song to queue
+
+on upvote:
+	upvote song
+
+
+// Song control //
+
+on play:
+	play
+on pause:
+	pause
+on next song:
+	send now playing

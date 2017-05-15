@@ -44,7 +44,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-io.sockets.on('connection', routes.initSocketConnection);
+routes.initSocketConnection(io);
 
 var portno = 3000;  // Port number to use
 http.listen(portno, function() {
@@ -57,23 +57,3 @@ app.use(express.static(__dirname));
 var fs = require('fs');
 
 app.use(bodyParser.json());
-
-// API routes
-
-/* "/songs"
- * GET: finds all songs (in this room)
- * POST: adds a new song (to this room)
- */
-app.get("/songs", routes.list);
-app.post("/songs", routes.add);
-
-/* "/upvote"
- * POST: upvote the song whose spotifyId is given in the body as sid.
- */
-app.post("/upvote", routes.upvote);
-
-/* "/reset"
- * for debugging
- * POST: empties the database
- */
- app.get("/reset", routes.reset);

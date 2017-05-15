@@ -1,5 +1,5 @@
 body {
- 	background-color: #FFFFFF;
+	 background-color: #FFFFFF;
 }
 
 .songStuff {
@@ -68,15 +68,15 @@ body {
 }
 
 input[type=text] {
-    width: 96%;
-    float: right;
-    font-family: Eurostile;
-    font-size: 16px;
-    color: #777777;
-    -webkit-transition: width 0.4s ease-in-out;
-    transition: width 0.4s ease-in-out;
+		width: 96%;
+		float: right;
+		font-family: Eurostile;
+		font-size: 16px;
+		color: #777777;
+		-webkit-transition: width 0.4s ease-in-out;
+		transition: width 0.4s ease-in-out;
 
-    padding: 5px;
+		padding: 5px;
 	border: none;
 	border-bottom: solid 2px #c9c9c9;
 	transition: border 0.3s;
@@ -84,10 +84,10 @@ input[type=text] {
 
 /* When the input field gets focus, change its width to 100% */
 input[type=text]:focus {
-    width: 96%;
-    color: #5d5d5d;
-    font-family: Eurostile;
-    border-bottom: solid 2px #969696;
+		width: 96%;
+		color: #5d5d5d;
+		font-family: Eurostile;
+		border-bottom: solid 2px #969696;
 }
 
 .likeButtonSection {
@@ -101,7 +101,7 @@ input[type=text]:focus {
 	margin: auto;
 	display: inline-block;
 
-  	vertical-align: middle;
+		vertical-align: middle;
 }
 
 .likeButton {
@@ -135,7 +135,7 @@ input[type=text]:focus {
 	color: #000000;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-  	overflow: hidden;
+		overflow: hidden;
 	padding-top: 0px;
 	margin-top: 1px;
 	padding-right: 35px;
@@ -151,7 +151,7 @@ input[type=text]:focus {
 	padding-top: 0px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-  	overflow: hidden;	
+		overflow: hidden;
 	margin-top: 3px;
 	padding-right: 35px;
 	float: right;
@@ -174,38 +174,38 @@ input[type=text]:focus {
 }
 
 .image-cropper {
-    width: 500px;
-    height: 500px;
-    margin: auto;
-    position: relative;
-    overflow: hidden;
-    margin-top: 40px;
-    border-radius: 50%;
+		width: 500px;
+		height: 500px;
+		margin: auto;
+		position: relative;
+		overflow: hidden;
+		margin-top: 40px;
+		border-radius: 50%;
 }
 
 .imageHolder {
 	display: inline;
-    margin: 0 auto;
-    height: 100%;
-    width: auto;
+		margin: 0 auto;
+		height: 100%;
+		width: auto;
 	z-index: 3;
 	position: absolute;
 }
 
 .songImg {
 	display: inline;
-    margin: 0 auto;
-    height: 100%;
-    width: auto;
+		margin: 0 auto;
+		height: 100%;
+		width: auto;
 	z-index: 1;
 	position: absolute;
 }
 
 .border {
-    display: inline;
-    margin: 0 auto;
-    height: 100%;
-    width: auto;
+		display: inline;
+		margin: 0 auto;
+		height: 100%;
+		width: auto;
 	z-index: 3;
 	position: absolute;
 }
@@ -252,12 +252,13 @@ html {
 	color: #000000;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-  	overflow: hidden;
+		overflow: hidden;
 	padding-top: 0px;
 	margin-top: 10px;
 	padding-right: 0px;
 	margin-bottom: 1px;
 	float: right;
+	cursor: pointer;
 }
 
 .playlistArtist {
@@ -269,7 +270,7 @@ html {
 	padding-top: 0px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-  	overflow: hidden;	
+		overflow: hidden;
 	margin-top: 3px;
 	padding-right: 0px;
 	float: right;

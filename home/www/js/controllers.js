@@ -1,8 +1,12 @@
 'use strict';
 
-
 angular.module('controller', ['songServices'])
-	.controller('MainController', ['$scope', 'songs', function($scope, songs) {
+.controller('MainController', [
+	'$scope',
+	'songs',
+	'socket',
+	'socket-controller',
+	function($scope, songs, socket, socket_controller) {
 
 		/* DEBUGGING CONSTANTS */
 
@@ -35,11 +39,13 @@ angular.module('controller', ['songServices'])
 		/** Angular event handlers **/
 		$scope.main.playlist = songs.songs;
 
+		// ADDING SONG //
+
 		$scope.addSong = function() {
 			$scope.sid = 'qq1337';  // TEMP - until addSong() is called from search results
 			if(!$scope.sid || $scope.sid === '') { return; }
 
-			songs.add({
+			socket.emit('send:add-song', {
 				spotifyId: $scope.sid,
 				upvotes: [],
 				name: 'Yellow',
@@ -49,8 +55,11 @@ angular.module('controller', ['songServices'])
 			$scope.sid = '';
 		};
 
-		$scope.reset = function() {
-			songs.removeAll();
+		// UPVOTING //
+
+		$scope.upvote = function(song) {
+			console.log("Incrementing upvotes on " + song.spotifyId);
+			socket.emit('send:upvote', {'sid': song.spotifyId} );
 		};
 
 		$("#search_bar").on('keyup', function (e) {
@@ -58,47 +67,8 @@ angular.module('controller', ['songServices'])
 		        $scope.addSong();
 		    }
 		});
-
+		// RESET
+		$scope.reset = function() {
+			socket.emit('send:reset');
+		};
 }]);
-
-
-
-// jamApp.controller('MainController', [
-// '$scope',
-// 'songs',
-// 'socket',
-// function ($scope, songs, socket) {
-// 	$scope.songs = songs.songs;
-//
-// 	$scope.addSong = function(){
-// 		if(!$scope.sid || $scope.sid === '') { return; }
-//
-// 		songs.create({
-// 			spotifyId: $scope.sid,
-// 			upvotes: []
-// 		});
-//
-// 		$scope.sid = '';
-// 	};
-//
-// 	$scope.incrementUpvotes = function(song) {
-// 		songs.upvote(song);
-// 	};
-//
-// 	$scope.reset = function() {
-// 		songs.removeAll();
-// 	};
-//
-// 	socket.on('ack:upvote', function(data) {
-// 		console.log('received ack:upvote event');
-// 		// console.dir(data);
-// 		songs.updateOne(data.spotifyId, data.upvotes);
-// 	});
-//
-// 	socket.on('upvote', function(data) {
-// 		console.log('received upvote event');
-// 		// console.dir(data);
-// 		songs.updateOne(data.spotifyId, data.upvotes);
-// 	});
-//
-// }]);
