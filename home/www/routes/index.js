@@ -1,6 +1,6 @@
 'use strict';
 
-var Song = require('../schema/Songs');
+var Queue = require('../schema/Queue');
 
 // Generic error handler
 function handleError(res, reason, message, code) {
@@ -36,9 +36,7 @@ exports.initSocketConnection = function(io) {
 io.sockets.on('connection', function(socket) {
 	console.log('a user connected - sending room data');
 
-	// socket.emit('push:now-playing', getNowPlaying());
 	pushQueue(socket);
-	// socket.emit('push:last-played', getLastPlayed());
 
 	socket.on('disconnect', function() {
 		console.log('a user disconnected');
@@ -52,8 +50,6 @@ io.sockets.on('connection', function(socket) {
 				handleError(res, err.message, "Failed to add song to list.");
 			} else {
 				console.log("Broadcasting push:add-song...");
-				// socket.emit('push:add-song', song);
-				// socket.broadcast.emit('push:add-song', song);
 				io.emit('push:add-song', song);
 			}
 		});
@@ -76,8 +72,6 @@ io.sockets.on('connection', function(socket) {
 
 					} else {
 						console.log("Broadcasting push:upvote...");
-						// socket.emit('push:upvote', doc);
-						// socket.broadcast.emit('push:upvote', doc);
 						io.emit('push:upvote', doc);  //TODO: abstract this out like pushQueue()
 					}
 				});

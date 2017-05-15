@@ -16,6 +16,8 @@ push:add-song (server -> clients) {song}
 // Upvote Song
 send:upvote (client -> server) {sid}
 push:upvote (server -> clients) {song}
+send:unvote (client -> server) {sid}
+push:unvote (server -> clients) {song}
 
 /** Music control with host-client **/
 
@@ -30,6 +32,10 @@ push:play (server -> clients) {sid, seekpos}
 // Pause
 send:pause (host-client -> server) {sid, seekpos}
 push:pause (server -> clients) {sid, seekpos}
+
+/** Music API Search **/
+get:search (client -> server) {search_term}
+send:search_results (server -> client) {results}
 
 /** Debugging **/
 send:reset (client -> server) {}

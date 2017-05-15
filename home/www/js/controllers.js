@@ -55,4 +55,11 @@ angular.module('controller', ['songServices'])
 		$scope.reset = function() {
 			socket.emit('send:reset');
 		};
+
+		//// MEDIA CONTROLS ////
+		// PLAY
+		$scope.play = function() {
+			console.log("playing song")
+			// TODO
+		}
 }]);
