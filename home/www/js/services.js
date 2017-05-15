@@ -61,6 +61,11 @@ angular.module('songServices', [])
 		songs.setUpvotes(data.spotifyId, data.upvotes);
 	});
 
+	socket.on('push:downvote', function(data) {
+		console.log('received push:downvote event for ' + data.spotifyId);
+		songs.setUpvotes(data.spotifyId, data.upvotes);
+	});
+
 	socket.on('push:queue', function(data) {
 		console.log('received push:queue event');
 		angular.copy(data, songs.songs);
