@@ -112,7 +112,15 @@ input[type=text]:focus {
 }
 
 .songInfo {
-	width: 72%;
+	width: 67%;
+	float: right;
+	word-wrap: break-word;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.songInfo2 {
+	width: 90%;
 	float: right;
 	word-wrap: break-word;
 	display: inline-block;
