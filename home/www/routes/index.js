@@ -85,6 +85,30 @@ io.sockets.on('connection', function(socket) {
 		});
 	});
 
+	// DOWNVOTING //
+	socket.on('send:downvote', function(data) {
+		var sid = data.sid;
+		var ip = getIP(socket);
+		console.log('user at ip ' + ip + ' downvoted ' + sid);
+
+		Song.findOne({'spotifyId': sid}, function(err, song) {
+			if(err) {
+				handleError(res, err.message, "Failed to find song with given sid to upvote.");
+			} else {
+
+				song.downvote(ip, function(err, doc) {
+					if(err) {
+						handleError(res, err.message, "Failed to save song after downvoting it.");
+
+					} else {
+						console.log("Broadcasting push:downvote...");
+						io.emit('push:downvote', doc);  //TODO: abstract this out like pushQueue()
+					}
+				});
+			}
+		});
+	});
+
 	// RESET
 	socket.on('send:reset', function() {
 		Song.remove({}, function(err) {

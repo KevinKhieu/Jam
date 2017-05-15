@@ -17,6 +17,11 @@ push:add-song (server -> clients) {song}
 send:upvote (client -> server) {sid}
 push:upvote (server -> clients) {song}
 
+// Downvote Song
+send:downvote (client -> server) {sid}
+push:downvote (server -> clients) {song}
+
+
 /** Music control with host-client **/
 
 // Now Playing

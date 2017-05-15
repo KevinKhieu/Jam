@@ -78,10 +78,11 @@ angular.module('controller', ['songServices'])
 			$event.target.parentElement.classList.toggle('liked');
 			console.log(id);
 			if ($event.target.parentElement.classList.contains('liked')) {
-				console.log("LIKED")
+				console.log("LIKED");
 				socket.emit('send:upvote', {'sid': id} );
 			} else {
-				console.log("UNLIKED")
+				console.log("UNLIKED");
+				socket.emit('send:downvote', {'sid': id} );
 			}
 		}
 
@@ -126,15 +127,21 @@ angular.module('controller', ['songServices'])
 
 		// UPVOTING //
 
-		$scope.upvote = function(song) {
-			console.log("Incrementing upvotes on " + song.spotifyId);
-			socket.emit('send:upvote', {'sid': song.spotifyId} );
-		};
+		// $scope.upvote = function(song) {
+		// 	console.log("Upvoting song " + song.spotifyId);
+		// 	socket.emit('send:upvote', {'sid': song.spotifyId} );
+		// };
+		//
+		// $scope.downvote = function(song) {
+		// 	console.log("Downvoting song " + song.spotifyId);
+		// 	socket.emit('send:downvote', {'sid': song.spotifyId} );
+		// }
 
 		$("#search_bar").on('keyup', function (e) {
-		    if (e.keyCode == 13) {
+				if (e.keyCode == 13) {
 		        $scope.addSong();
 		        // $scope.search();
+						// $scope.reset();
 		    }
 		});
 		// RESET
