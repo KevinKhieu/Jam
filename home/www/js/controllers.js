@@ -25,12 +25,12 @@ angular.module('controller', ['songServices'])
 			$(this).toggleClass('liked');
 		});
 
-		$scope.main.toggleClick = function($event, id) {
+		$scope.main.toggleClick = function($event, id, votes) {
 			$event.target.parentElement.classList.toggle('liked');
-
+			console.log(id);
 			if ($event.target.parentElement.classList.contains('liked')) {
 				console.log("LIKED")
-				
+				socket.emit('send:upvote', {'sid': id} );
 			} else {
 				console.log("UNLIKED")
 			}
