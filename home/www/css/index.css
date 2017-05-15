@@ -2,6 +2,30 @@ body {
  	background-color: #FFFFFF;
 }
 
+.songStuff {
+	display: inline-block;
+	float: right;
+	width:100%;
+}
+
+.playlistSongInfoArea {
+	float: right;
+	width: 90%;
+}
+
+.playlistSongLikeArea {
+	float: left;
+	width: 9%;
+	height: auto;
+	-webkit-transform: translateY(10%);
+	-ms-transform: translateY(10%);
+	transform: translateY(10%);
+	position: relative;
+	margin: auto;
+	display: inline-block;
+	vertical-align: middle;
+}
+
 .logo {
 	width: 85px;
 	height: 100px;

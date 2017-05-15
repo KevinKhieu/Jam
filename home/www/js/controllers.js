@@ -17,9 +17,20 @@ angular.module('controller', ['songServices'])
 
 		/* EVENT HANDLERS */
 
-		$('a.like-button').on('click', function() {
+		$('.like-button').on('click', function() {
 			$(this).toggleClass('liked');
 		});
+
+		$scope.main.toggleClick = function($event, id) {
+			$event.target.parentElement.classList.toggle('liked');
+
+			if ($event.target.parentElement.classList.contains('liked')) {
+				console.log("LIKED")
+				
+			} else {
+				console.log("UNLIKED")
+			}
+		}
 
 		/** Angular event handlers **/
 		$scope.main.playlist = songs.songs;
@@ -41,6 +52,12 @@ angular.module('controller', ['songServices'])
 		$scope.reset = function() {
 			songs.removeAll();
 		};
+
+		$("#search_bar").on('keyup', function (e) {
+		    if (e.keyCode == 13) {
+		        $scope.addSong();
+		    }
+		});
 
 }]);
 
