@@ -21,9 +21,20 @@ angular.module('controller', ['songServices'])
 
 		/* EVENT HANDLERS */
 
-		$('a.like-button').on('click', function() {
+		$('.like-button').on('click', function() {
 			$(this).toggleClass('liked');
 		});
+
+		$scope.main.toggleClick = function($event, id, votes) {
+			$event.target.parentElement.classList.toggle('liked');
+			console.log(id);
+			if ($event.target.parentElement.classList.contains('liked')) {
+				console.log("LIKED")
+				socket.emit('send:upvote', {'sid': id} );
+			} else {
+				console.log("UNLIKED")
+			}
+		}
 
 		/** Angular event handlers **/
 		$scope.main.playlist = songs.songs;
@@ -51,6 +62,11 @@ angular.module('controller', ['songServices'])
 			socket.emit('send:upvote', {'sid': song.spotifyId} );
 		};
 
+		$("#search_bar").on('keyup', function (e) {
+		    if (e.keyCode == 13) {
+		        $scope.addSong();
+		    }
+		});
 		// RESET
 		$scope.reset = function() {
 			socket.emit('send:reset');
