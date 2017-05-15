@@ -8,54 +8,22 @@ function handleError(res, reason, message, code) {
 	res.status(code || 500).json({"error": message});
 }
 
-exports.list = function(req, res) {
+function pushQueue(transport) {
+	/* Gets the entire song queue from the database and emits it via the given
+	 * transport as a push:queue. The transport should either be a socket, or the
+	 * io object itself. A socket to send to that socket; io to send to all sockets. */
 	Song.find(function(err, songs) {
 		if(err) {
 			handleError(res, err.message, "Failed to retrieve song list.");
 		} else {
-			res.status(200).json(songs);
+			transport.emit('push:queue', songs);
 		}
 	});
-};
+}
 
-exports.add = function(req, res) {
-	var song = new Song(req.body);
-	song.save(function(err, song){
-		if(err){
-			handleError(res, err.message, "Failed to add song to list.");
-		} else {
-			res.json(song);
-		}
-	});
-};
+function getNowPlaying() {}
 
-exports.upvote = function(req, res) {
-	Song.findOne({ 'spotifyId': req.body.sid }, function(err, song) {
-		if(err) {
-			handleError(res, err.message, "Failed to retrieve song to upvote.");
-
-		} else {
-			song.upvote(function(err, song) {
-
-				if(err) {
-					handleError(res, err.message, "Failed to upvote song.");
-				} else {
-					res.json(song);
-				}
-			});
-		}
-	});
-};
-
-exports.reset = function(req, res) {
-	Song.remove({}, function(err) {
-		if (err) {
-			handleError(res, err.message, "Failed to remove all songs from database.");
-		} else {
-			res.send('successfully removed all songs from database.');
-		}
-	});
-};
+function getLastPlayed() {}
 
 function getIP(socket) {
 	console.log('forwarded-for: ' + socket.handshake.headers['x-forwarded-for']);
@@ -64,10 +32,31 @@ function getIP(socket) {
 	return socket.handshake.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
 }
 
-exports.initSocketConnection = function(socket) {
-	console.log('a user connected');
+exports.initSocketConnection = function(io) {
+io.sockets.on('connection', function(socket) {
+	console.log('a user connected - sending room data');
+
+	// socket.emit('push:now-playing', getNowPlaying());
+	pushQueue(socket);
+	// socket.emit('push:last-played', getLastPlayed());
+
 	socket.on('disconnect', function() {
 		console.log('a user disconnected');
+	});
+
+	// ADDING SONG //
+	socket.on('send:add-song', function(data) {
+		var song = new Song(data);
+		song.save(function(err, song){
+			if(err){
+				handleError(res, err.message, "Failed to add song to list.");
+			} else {
+				console.log("Broadcasting push:add-song...");
+				// socket.emit('push:add-song', song);
+				// socket.broadcast.emit('push:add-song', song);
+				io.emit('push:add-song', song);
+			}
+		});
 	});
 
 	// UPVOTING //
@@ -86,12 +75,25 @@ exports.initSocketConnection = function(socket) {
 						handleError(res, err.message, "Failed to save song after upvoting it.");
 
 					} else {
-						socket.emit('ack:upvote', doc);
-						socket.broadcast.emit('upvote', doc);
+						console.log("Broadcasting push:upvote...");
+						// socket.emit('push:upvote', doc);
+						// socket.broadcast.emit('push:upvote', doc);
+						io.emit('push:upvote', doc);  //TODO: abstract this out like pushQueue()
 					}
 				});
 			}
 		});
-
 	});
-};
+
+	// RESET
+	socket.on('send:reset', function() {
+		Song.remove({}, function(err) {
+			if (err) {
+				handleError(res, err.message, "Failed to remove all songs from database.");
+			} else {
+				console.log('successfully removed all songs from database.');
+				pushQueue(io);
+			}
+		});
+	})
+})};
