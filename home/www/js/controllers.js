@@ -114,9 +114,10 @@ angular.module('controller', ['songServices'])
 		$scope.addSong = function() {
 			$scope.sid = 'qq1337';  // TEMP - until addSong() is called from search results
 			if(!$scope.sid || $scope.sid === '') { return; }
-
+			var num = '' + $scope.main.playlist.length;
+			var name = $scope.sid + num;
 			socket.emit('send:add-song', {
-				spotifyId: $scope.sid,
+				spotifyId: name,
 				upvotes: [],
 				name: 'Yellow',
 				artist: 'Coldplay'
