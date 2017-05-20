@@ -126,7 +126,18 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.addSong = function() {
 			$scope.FetchModel('/songList/', function(data) {
 			  	console.log(data);
-			  })
+			  	// var dataSongs = [];
+			  	// for (var i = 0; i < data.length; i++) {
+			  	// 	var currSong = {
+			  	// 		name: data.songName,
+			  	// 		artist: data.artist,
+
+			  	// 	}
+			  	// }
+			  	$scope.$apply(function() {
+			  		$scope.main.playlist = data;
+		  		});
+			 })
 			// $scope.sid = 'qq1337';  // TEMP - until addSong() is called from search results
 			// if(!$scope.sid || $scope.sid === '') { return; }
 			// var num = '' + $scope.main.playlist.length;
