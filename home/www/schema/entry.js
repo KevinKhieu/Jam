@@ -11,9 +11,11 @@ var mongoose = require('mongoose');
 // Entry Scheme used in webServer.js
 var entrySchema = new mongoose.Schema({
 	id: String,
-	author: String,
-	date: String,
-	lat: Number
+	songName: String,
+	artist: String,
+	upvotes: Number,
+	link: String,
+	userAdded: String
 });
 
 // Create model for schema

@@ -1,62 +1,12 @@
 'use strict';
 
-angular.module('controller', ['songServices'])
-.controller('MainController', [
+angular.module('controller', ['songServices', 'ngResource']).controller('MainController', [
 	'$scope',
 	'songs',
 	'socket',
 	'socket-controller',
-	function($scope, songs, socket, socket_controller) {
-
-		/* DEBUGGING CONSTANTS */
-		// 29kK_62LJV5bCprwtwIR1cKy
-		// var OAUTH2_CLIENT_ID = '19440559455-6fb0ug0s2usen2ruv8eg3phcrfv97322.apps.googleusercontent.com';
-		// var OAUTH2_SCOPES = [
-		//   'https://www.googleapis.com/auth/youtube'
-		// ];
-		// // googleApiClientReady = function() {
-		// //   gapi.auth.init(function() {
-		// //     window.setTimeout(checkAuth, 1);
-		// //   });
-		// // }
-
-		// function checkAuth() {
-		//   gapi.auth.authorize({
-		//     client_id: OAUTH2_CLIENT_ID,
-		//     scope: OAUTH2_SCOPES,
-		//     immediate: true
-		//   }, handleAuthResult);
-		// }
-
-		// // Handle the result of a gapi.auth.authorize() call.
-		// function handleAuthResult(authResult) {
-		//   if (authResult && !authResult.error) {
-		//     // Authorization was successful. Hide authorization prompts and show
-		//     // content that should be visible after authorization succeeds.
-		//     $('.pre-auth').hide();
-		//     $('.post-auth').show();
-		//     loadAPIClientInterfaces();
-		//   } else {
-		//     // Make the #login-link clickable. Attempt a non-immediate OAuth 2.0
-		//     // client flow. The current function is called when that flow completes.
-		//     $('#login-link').click(function() {
-		//       gapi.auth.authorize({
-		//         client_id: OAUTH2_CLIENT_ID,
-		//         scope: OAUTH2_SCOPES,
-		//         immediate: false
-		//         }, handleAuthResult);
-		//     });
-		//   }
-		// }
-
-		// // Load the client interfaces for the YouTube Analytics and Data APIs, which
-		// // are required to use the Google APIs JS client. More info is available at
-		// // https://developers.google.com/api-client-library/javascript/dev/dev_jscript#loading-the-client-library-and-the-api
-		// function loadAPIClientInterfaces() {
-		//   gapi.client.load('youtube', 'v3', function() {
-		//     handleAPILoaded();
-		//   });
-		// }
+	'$resource',
+	function($scope, songs, socket, socket_controller, $resource) {
 
 
 		$scope.main = {};
@@ -67,6 +17,65 @@ angular.module('controller', ['songServices'])
 
 		$scope.main.lastPlayedArtist = "The Chainsmokers";
 		$scope.main.lastPlayedTitle = "Paris";
+
+		$scope.FetchModel = function(url, callback) {
+			
+			// Create XMLHttpRequest and assign handler
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = xhrHandler;
+			xhr.open("GET", url);
+  			xhr.send();
+  			
+  			
+			function xhrHandler(){	
+				// If we have an invalid state or status, log and return. 
+				if (this.readyState != 4 || this.status != 200) {
+ 					console.log("ERROR Status " + this.status + " state: " + this.readyState);
+ 					return;
+ 				}
+ 				
+ 				// Otherwise call callback with model
+ 				var model = JSON.parse(this.responseText);
+ 				callback(model);
+			};
+ 		};
+
+ 		$scope.FetchModel('/firstData/', function(dbCount) {
+ 			console.log("DB COUNT: " + dbCount);
+ 			$scope.FetchModel('/clearMongo/', function(model) {
+	            var data = model;
+	            var funcs = [];
+	            console.log(data.length);
+	            // For each entry in data.json, create an Entry document in our entries database
+	            for (var i = 0; i < data.length; i++) {
+	              funcs[i] = (function (i) {
+	              	console.log(data[i]);
+	                // Set proper parameters as specified in data.json
+	                var currentReq = $resource('/entry');
+	                var songName = data[i].songName;
+	                var artist = data[i].artist;
+	                var link = data[i].link;
+	                var numVotes = data[i].numVotes;
+	                var songId = data[i].songId;
+	                if (numVotes == null) {
+	                  numVotes = 0;
+	                }
+
+	                // Save request.
+	                currentReq.save({
+	                	songName: data[i].songName,
+	                	artist: data[i].artist,
+	                	link: data[i].link,
+	                	upvotes: data[i].numVotes,
+	                	songId: data[i].songId,
+	                	userAdded: "Kevin"
+	                }, function(ret) {
+	                  console.log("Done");
+	                });
+	              }(i));
+	            }
+			})
+		});
 
 		/* EVENT HANDLERS */
 
@@ -92,18 +101,21 @@ angular.module('controller', ['songServices'])
 
 		// Search for a specified string.
 		$scope.search = function () {
-		  var q = $('#search_bar').val();
-		  console.log(gapi);
-		  var request = gapi.client.youtube.search.list({
-		    q: q,
-		    part: 'snippet'
-		  });
+		  // var q = $('#search_bar').val();
+		  // console.log(gapi);
+		  // var request = gapi.client.youtube.search.list({
+		  //   q: q,
+		  //   part: 'snippet'
+		  // });
 
 
-		  request.execute(function(response) {
-		    var str = JSON.stringify(response.result);
-		    $('#search-container').html('<pre>' + str + '</pre>');
-		  });
+		  // request.execute(function(response) {
+		  //   var str = JSON.stringify(response.result);
+		  //   $('#search-container').html('<pre>' + str + '</pre>');
+		  // });
+		  $scope.FetchModel('/songList/', function(data) {
+		  	console.log(data);
+		  })
 		}
 
 		/** Angular event handlers **/
@@ -112,18 +124,21 @@ angular.module('controller', ['songServices'])
 		// ADDING SONG //
 
 		$scope.addSong = function() {
-			$scope.sid = 'qq1337';  // TEMP - until addSong() is called from search results
-			if(!$scope.sid || $scope.sid === '') { return; }
-			var num = '' + $scope.main.playlist.length;
-			var name = $scope.sid + num;
-			socket.emit('send:add-song', {
-				spotifyId: name,
-				upvotes: [],
-				name: 'Yellow',
-				artist: 'Coldplay'
-			});
+			$scope.FetchModel('/songList/', function(data) {
+			  	console.log(data);
+			  })
+			// $scope.sid = 'qq1337';  // TEMP - until addSong() is called from search results
+			// if(!$scope.sid || $scope.sid === '') { return; }
+			// var num = '' + $scope.main.playlist.length;
+			// var name = $scope.sid + num;
+			// socket.emit('send:add-song', {
+			// 	spotifyId: name,
+			// 	upvotes: [],
+			// 	name: 'Yellow',
+			// 	artist: 'Coldplay'
+			// });
 
-			$scope.sid = '';
+			// $scope.sid = '';
 		};
 
 		// UPVOTING //
@@ -139,12 +154,13 @@ angular.module('controller', ['songServices'])
 		// }
 
 		$("#search_bar").on('keyup', function (e) {
-				if (e.keyCode == 13) {
+			if (e.keyCode == 13) {
 		        $scope.addSong();
 		        // $scope.search();
-						// $scope.reset();
+				// $scope.reset();
 		    }
 		});
+
 		// RESET
 		$scope.reset = function() {
 			socket.emit('send:reset');

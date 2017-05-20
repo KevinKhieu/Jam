@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="jamApp" ng-controller="MainController">
+<html ng-app="jamApp">
   <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -29,128 +29,85 @@
   <body>
   	<ui-view></ui-view>
   	<script type="text/ng-template" id = "/home.html">
-    <div class = "left">
-      <img src="img/logo.png" class="logo">
-    </div>
-    <div class = "middle">
-      <p class = "title">NOW PLAYING</p>
-      <div class="image-cropper">
-        <div class="imageHolder">
-          <img src="img/album1.jpg" class = "songImg"/>
-          <img src="img/circle.png" class = "border"/>
-        </div>
-        
+      <div class = "left">
+        <img src="img/logo.png" class="logo">
       </div>
-      <p class = "songname">{{main.songName}}</p>
-      <p class = "songartist">{{main.artist}}</p>
-
-    </div>
-
-    <div class="right">
-
-      <p class = "lastPlayed">LAST PLAYED</p>
-      <div class = "lastPlayedLine"> 
-        <hr>
-      </div>
-      <div class = "lastPlayedSection"> 
-        <div class = "songInfo">
-          <p class = "lastPlayedTitle">{{main.lastPlayedTitle}}</p>
-          <p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
-        </div>
-        <div class = "likeButtonSection">  
-          <div class='like-wrapper'>
-            <a class='like-button'>
-              <span class='like-icon'>
-                <div class='heart-animation-1'></div>
-                <div class='heart-animation-2'></div>
-
-              </span>
-            </a>
+      <div class = "middle">
+        <p class = "title">NOW PLAYING</p>
+        <div class="image-cropper">
+          <div class="imageHolder">
+            <img src="img/album1.jpg" class = "songImg"/>
+            <img src="img/circle.png" class = "border"/>
           </div>
+          
         </div>
-        
+        <p class = "songname">{{main.songName}}</p>
+        <p class = "songartist">{{main.artist}}</p>
+
       </div>
 
-      <div class = "searchArea">
-        <input type="text" name="search" placeholder="Search or Add Songs..." class = "style-4" id="search_bar">
-        <div class = "songList">
-          <div class = "songInfo2" ng-repeat = "song in main.playlist">
-            <div id = "song-{{$index}}" class = "listSongWrapper">
-            	<div class = "songStuff">
-		            <div class = 'playlistSongInfoArea'>
-						<p class = "playlistSong">{{song.name}}</p>
-						<p class = "playlistArtist">{{song.artist}}</p>
-					</div>
-					<div class = 'playlistSongLikeArea'>
-						<div class='like-wrapper'>
-			            	<a class='like-button' ng-click = "main.toggleClick($event, song.spotifyId, song.upvotes.length)">
-								<span class='like-icon'>
-			                		<div class='heart-animation-1'></div>
-			                		<div class='heart-animation-2'></div>
-			              		</span>
-			            	</a>
-						</div>
-					</div>
-					<p>{{song.upvotes.length}}</p>
-				</div>
-          		<hr class = "fadedLine">
+      <div class="right">
+
+        <p class = "lastPlayed">LAST PLAYED</p>
+        <div class = "lastPlayedLine"> 
+          <hr>
+        </div>
+        <div class = "lastPlayedSection"> 
+          <div class = "songInfo">
+            <p class = "lastPlayedTitle">{{main.lastPlayedTitle}}</p>
+            <p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
+          </div>
+          <div class = "likeButtonSection">  
+            <div class='like-wrapper'>
+              <a class='like-button'>
+                <span class='like-icon'>
+                  <div class='heart-animation-1'></div>
+                  <div class='heart-animation-2'></div>
+
+                </span>
+              </a>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class = "searchArea">
+          <input type="text" name="search" placeholder="Search or Add Songs..." class = "style-4" id="search_bar">
+          <div class = "songList">
+            <div class = "songInfo2" ng-repeat = "song in main.playlist">
+              <div id = "song-{{$index}}" class = "listSongWrapper">
+              	<div class = "songStuff">
+  		            <div class = 'playlistSongInfoArea'>
+  						<p class = "playlistSong">{{song.name}}</p>
+  						<p class = "playlistArtist">{{song.artist}}</p>
+  					</div>
+  					<div class = 'playlistSongLikeArea'>
+  						<div class='like-wrapper'>
+  			            	<a class='like-button' ng-click = "main.toggleClick($event, song.spotifyId, song.upvotes.length)">
+  								<span class='like-icon'>
+  			                		<div class='heart-animation-1'></div>
+  			                		<div class='heart-animation-2'></div>
+  			              		</span>
+  			            	</a>
+  						</div>
+  					</div>
+  					<p>{{song.upvotes.length}}</p>
+  				</div>
+            		<hr class = "fadedLine">
+              </div>
             </div>
           </div>
         </div>
+
       </div>
-
-    </div>
-    <div id="player"></div>
-    <button onclick="stopVideo()">Stop</button>
-  	<button onclick="playVideo()">Play</button>
+<!--       <div id="player"></div> -->
+<!--       <button onclick="stopVideo()">Stop</button>
+    	<button onclick="playVideo()">Play</button> -->
     </script>
-
-    <script>
-      // 2. This code loads the IFrame Player API code asynchronously.
-      var tag = document.createElement('script');
-
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
-      var player;
-      function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-          height: '1',
-          width: '1',
-          videoId: 'XZDyMJhd4Bo',
-          events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-          }
-        });
-      }
-
-      // 4. The API will call this function when the video player is ready.
-      function onPlayerReady(event) {
-        event.target.playVideo();
-      }
-
-      // 5. The API calls this function when the player's state changes.
-      //    The function indicates that when playing a video (state=1),
-      //    the player should play for six seconds and then stop.
-      var done = false;
-      function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING && !done) {
-          done = true;
-        }
-      }
-      function stopVideo() {
-        player.pauseVideo();
-      }
-
-		function playVideo() {
-			player.playVideo();
-		}
-
-    </script>
+    <audio id = "audioElement" autoplay="true">
+      Oh No! You're browser doesn't support audio
+      <source src="music/Alive.mp3" type="audio/mp3">
+    </audio>
   </body>
 
 </html>
