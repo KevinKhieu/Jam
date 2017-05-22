@@ -15,8 +15,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.artist = "ED SHEERAN";
 
 
-		$scope.main.lastPlayedArtist = "The Chainsmokers";
-		$scope.main.lastPlayedTitle = "Paris";
+		$scope.main.lastPlayedArtist = "No Previous Song";
+		$scope.main.lastPlayedTitle = "";
+		$scope.main.currentSong = "";
 
 		$scope.FetchModel = function(url, callback) {
 			
@@ -118,8 +119,54 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		  })
 		}
 
+		function getRandomInt(min, max) {
+		    return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+
+		$scope.getNextSong = function() {
+			var len = $scope.main.playlist.length;
+			var song = $scope.main.playlist[getRandomInt(0, len)];
+			return song;
+		}
+
 		/** Angular event handlers **/
-		$scope.main.playlist = songs.songs;
+		$scope.FetchModel('/songList/', function(data) {
+		  	console.log(data);
+		  	// var dataSongs = [];
+		  	// for (var i = 0; i < data.length; i++) {
+		  	// 	var currSong = {
+		  	// 		name: data.songName,
+		  	// 		artist: data.artist,
+
+		  	// 	}
+		  	// }
+		  	$scope.$apply(function() {
+		  		$scope.main.playlist = data;
+		  		console.log($scope.main.playlist);
+		  		var aud = document.getElementById("audioElement");
+		  		var song = $scope.getNextSong();
+			    var songString = "music/" + song.link;
+			    aud.src = songString;
+			    $scope.main.songName = song.songName.toUpperCase();
+				$scope.main.artist = song.artist.toUpperCase();
+				$scope.main.currentSong = song;
+			    aud.play();
+
+				aud.onended = function() {
+					$scope.$apply(function() {
+					    var song = $scope.getNextSong();
+					    var songString = "music/" + song.link;
+					    $scope.main.lastPlayedArtist = $scope.main.currentSong.songName;
+						$scope.main.lastPlayedTitle = $scope.main.currentSong.artist;
+					    aud.src = songString;
+					    aud.play();
+					    $scope.main.songName = song.songName.toUpperCase();
+						$scope.main.artist = song.artist.toUpperCase();
+					});
+				};
+  			});
+		 });		
+		// $scope.main.playlist = songs.songs;
 
 		// ADDING SONG //
 

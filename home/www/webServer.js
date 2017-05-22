@@ -156,8 +156,6 @@ app.post('/entry', function(request, response) {
             	// Set the unique ID of the object.
             	userObj.id = userObj._id;
             	userObj.save();
-            	
-            	console.log("HIHIHI");
         	}
     	});
     	
