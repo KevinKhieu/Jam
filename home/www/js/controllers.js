@@ -20,63 +20,63 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.currentSong = "";
 
 		$scope.FetchModel = function(url, callback) {
-			
+
 			// Create XMLHttpRequest and assign handler
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = xhrHandler;
 			xhr.open("GET", url);
   			xhr.send();
-  			
-  			
-			function xhrHandler(){	
-				// If we have an invalid state or status, log and return. 
+
+
+			function xhrHandler(){
+				// If we have an invalid state or status, log and return.
 				if (this.readyState != 4 || this.status != 200) {
  					console.log("ERROR Status " + this.status + " state: " + this.readyState);
  					return;
  				}
- 				
+
  				// Otherwise call callback with model
  				var model = JSON.parse(this.responseText);
  				callback(model);
 			};
  		};
 
- 		$scope.FetchModel('/firstData/', function(dbCount) {
- 			console.log("DB COUNT: " + dbCount);
- 			$scope.FetchModel('/clearMongo/', function(model) {
-	            var data = model;
-	            var funcs = [];
-	            console.log(data.length);
-	            // For each entry in data.json, create an Entry document in our entries database
-	            for (var i = 0; i < data.length; i++) {
-	              funcs[i] = (function (i) {
-	              	console.log(data[i]);
-	                // Set proper parameters as specified in data.json
-	                var currentReq = $resource('/entry');
-	                var songName = data[i].songName;
-	                var artist = data[i].artist;
-	                var link = data[i].link;
-	                var numVotes = data[i].numVotes;
-	                var songId = data[i].songId;
-	                if (numVotes == null) {
-	                  numVotes = 0;
-	                }
-
-	                // Save request.
-	                currentReq.save({
-	                	songName: data[i].songName,
-	                	artist: data[i].artist,
-	                	link: data[i].link,
-	                	upvotes: data[i].numVotes,
-	                	songId: data[i].songId,
-	                	userAdded: "Kevin"
-	                }, function(ret) {
-	                  console.log("Done");
-	                });
-	              }(i));
-	            }
-			})
-		});
+ 	// 	$scope.FetchModel('/firstData/', function(dbCount) {
+ 	// 		console.log("DB COUNT: " + dbCount);
+ 	// 		$scope.FetchModel('/clearMongo/', function(model) {
+	  //           var data = model;
+	  //           var funcs = [];
+	  //           console.log(data.length);
+	  //           // For each entry in data.json, create an Entry document in our entries database
+	  //           for (var i = 0; i < data.length; i++) {
+	  //             funcs[i] = (function (i) {
+	  //             	console.log(data[i]);
+	  //               // Set proper parameters as specified in data.json
+	  //               var currentReq = $resource('/entry');
+	  //               var songName = data[i].songName;
+	  //               var artist = data[i].artist;
+	  //               var link = data[i].link;
+	  //               var numVotes = data[i].numVotes;
+	  //               var songId = data[i].songId;
+	  //               if (numVotes == null) {
+	  //                 numVotes = 0;
+	  //               }
+		//
+	  //               // Save request.
+	  //               currentReq.save({
+	  //               	songName: data[i].songName,
+	  //               	artist: data[i].artist,
+	  //               	link: data[i].link,
+	  //               	upvotes: data[i].numVotes,
+	  //               	songId: data[i].songId,
+	  //               	userAdded: "Kevin"
+	  //               }, function(ret) {
+	  //                 console.log("Done");
+	  //               });
+	  //             }(i));
+	  //           }
+		// 	})
+		// });
 
 		/* EVENT HANDLERS */
 
@@ -130,43 +130,44 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		}
 
 		/** Angular event handlers **/
-		$scope.FetchModel('/songList/', function(data) {
-		  	console.log(data);
-		  	// var dataSongs = [];
-		  	// for (var i = 0; i < data.length; i++) {
-		  	// 	var currSong = {
-		  	// 		name: data.songName,
-		  	// 		artist: data.artist,
+		// $scope.FetchModel('/songList/', function(data) {
+		//   	console.log(data);
+		//   	// var dataSongs = [];
+		//   	// for (var i = 0; i < data.length; i++) {
+		//   	// 	var currSong = {
+		//   	// 		name: data.songName,
+		//   	// 		artist: data.artist,
+		//
+		//   	// 	}
+		//   	// }
+		//   	$scope.$apply(function() {
+		//   		$scope.main.playlist = data;
+		//   		console.log($scope.main.playlist);
+		//   		var aud = document.getElementById("audioElement");
+		//   		var song = $scope.getNextSong();
+		// 	    var songString = "music/" + song.link;
+		// 	    aud.src = songString;
+		// 	    $scope.main.songName = song.songName.toUpperCase();
+		// 		$scope.main.artist = song.artist.toUpperCase();
+		// 		$scope.main.currentSong = song;
+		// 	    aud.play();
+		//
+		// 		aud.onended = function() {
+		// 			$scope.$apply(function() {
+		// 			    var song = $scope.getNextSong();
+		// 			    var songString = "music/" + song.link;
+		// 			    $scope.main.lastPlayedArtist = $scope.main.currentSong.songName;
+		// 				$scope.main.lastPlayedTitle = $scope.main.currentSong.artist;
+		// 			    aud.src = songString;
+		// 			    aud.play();
+		// 			    $scope.main.songName = song.songName.toUpperCase();
+		// 				$scope.main.artist = song.artist.toUpperCase();
+		// 			});
+		// 		};
+  	// 		});
+		//  });
 
-		  	// 	}
-		  	// }
-		  	$scope.$apply(function() {
-		  		$scope.main.playlist = data;
-		  		console.log($scope.main.playlist);
-		  		var aud = document.getElementById("audioElement");
-		  		var song = $scope.getNextSong();
-			    var songString = "music/" + song.link;
-			    aud.src = songString;
-			    $scope.main.songName = song.songName.toUpperCase();
-				$scope.main.artist = song.artist.toUpperCase();
-				$scope.main.currentSong = song;
-			    aud.play();
-
-				aud.onended = function() {
-					$scope.$apply(function() {
-					    var song = $scope.getNextSong();
-					    var songString = "music/" + song.link;
-					    $scope.main.lastPlayedArtist = $scope.main.currentSong.songName;
-						$scope.main.lastPlayedTitle = $scope.main.currentSong.artist;
-					    aud.src = songString;
-					    aud.play();
-					    $scope.main.songName = song.songName.toUpperCase();
-						$scope.main.artist = song.artist.toUpperCase();
-					});
-				};
-  			});
-		 });		
-		// $scope.main.playlist = songs.songs;
+		$scope.main.playlist = songs.songs;
 
 		// ADDING SONG //
 

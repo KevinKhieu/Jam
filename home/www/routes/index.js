@@ -1,6 +1,7 @@
 'use strict';
 
-var Song = require('../schema/Songs');
+// var Song = require('../schema/Songs');
+var Entry = require('../schema/entry');
 
 // Generic error handler
 function handleError(res, reason, message, code) {
@@ -12,7 +13,7 @@ function pushQueue(transport) {
 	/* Gets the entire song queue from the database and emits it via the given
 	 * transport as a push:queue. The transport should either be a socket, or the
 	 * io object itself. A socket to send to that socket; io to send to all sockets. */
-	Song.find(function(err, songs) {
+	Entry.find(function(err, songs) {
 		if(err) {
 			handleError(res, err.message, "Failed to retrieve song list.");
 		} else {

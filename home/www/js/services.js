@@ -68,6 +68,7 @@ angular.module('songServices', [])
 
 	socket.on('push:queue', function(data) {
 		console.log('received push:queue event');
+		console.dir(data);
 		angular.copy(data, songs.songs);
 	});
 
