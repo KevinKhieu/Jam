@@ -5,7 +5,7 @@ that initiated the change.
 
 /****** API ******/
 
-// Push Songs
+// Push song info to client
 send:queue (server -> client) {queue_songs}
 send:last-played (server -> client) {song}
 
@@ -35,6 +35,11 @@ push:play (server -> clients) {sid, seekpos}
 // Pause
 send:pause (host-client -> server) {sid, seekpos}
 push:pause (server -> clients) {sid, seekpos}
+
+
+/** Google Music Proxy API **/
+
+// TODO: search functionality and get streaming url
 
 /** Debugging **/
 send:reset (client -> server) {}

@@ -50,17 +50,19 @@ io.sockets.on('connection', function(socket) {
 
 	// ADDING SONG //
 	socket.on('send:add-song', function(data) {
-		var song = new Song(data);
-		song.save(function(err, song){
-			if(err){
-				handleError(socket, err.message, "Failed to add song to list.");
-			} else {
-				console.log("Broadcasting push:add-song...");
-				// socket.emit('push:add-song', song);
-				// socket.broadcast.emit('push:add-song', song);
-				io.emit('push:add-song', song);
-			}
-		});
+		console.log("received send:add-song: ");
+		console.dir(data);
+		// var song = new Entry(data);
+		// song.save(function(err, song){
+		// 	if(err){
+		// 		handleError(socket, err.message, "Failed to add song to list.");
+		// 	} else {
+		// 		console.log("Broadcasting push:add-song...");
+		// 		// socket.emit('push:add-song', song);
+		// 		// socket.broadcast.emit('push:add-song', song);
+		// 		io.emit('push:add-song', song);
+		// 	}
+		// });
 	});
 
 	// UPVOTING //

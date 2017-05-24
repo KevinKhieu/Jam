@@ -41,43 +41,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			};
  		};
 
- 	// 	$scope.FetchModel('/firstData/', function(dbCount) {
- 	// 		console.log("DB COUNT: " + dbCount);
- 	// 		$scope.FetchModel('/clearMongo/', function(model) {
-	  //           var data = model;
-	  //           var funcs = [];
-	  //           console.log(data.length);
-	  //           // For each entry in data.json, create an Entry document in our entries database
-	  //           for (var i = 0; i < data.length; i++) {
-	  //             funcs[i] = (function (i) {
-	  //             	console.log(data[i]);
-	  //               // Set proper parameters as specified in data.json
-	  //               var currentReq = $resource('/entry');
-	  //               var songName = data[i].songName;
-	  //               var artist = data[i].artist;
-	  //               var link = data[i].link;
-	  //               var numVotes = data[i].numVotes;
-	  //               var songId = data[i].songId;
-	  //               if (numVotes == null) {
-	  //                 numVotes = 0;
-	  //               }
-		//
-	  //               // Save request.
-	  //               currentReq.save({
-	  //               	songName: data[i].songName,
-	  //               	artist: data[i].artist,
-	  //               	link: data[i].link,
-	  //               	upvotes: data[i].numVotes,
-	  //               	songId: data[i].songId,
-	  //               	userAdded: "Kevin"
-	  //               }, function(ret) {
-	  //                 console.log("Done");
-	  //               });
-	  //             }(i));
-	  //           }
-		// 	})
-		// });
-
 		/* EVENT HANDLERS */
 
 		$('.like-button').on('click', function() {
@@ -102,21 +65,8 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		// Search for a specified string.
 		$scope.search = function () {
-		  // var q = $('#search_bar').val();
-		  // console.log(gapi);
-		  // var request = gapi.client.youtube.search.list({
-		  //   q: q,
-		  //   part: 'snippet'
-		  // });
-
-
-		  // request.execute(function(response) {
-		  //   var str = JSON.stringify(response.result);
-		  //   $('#search-container').html('<pre>' + str + '</pre>');
-		  // });
-		  $scope.FetchModel('/songList/', function(data) {
-		  	console.log(data);
-		  })
+		  var q = $('#search_bar').val();
+			//TODO: make a socketio route for search
 		}
 
 		function getRandomInt(min, max) {
@@ -140,7 +90,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		//
 		//   	// 	}
 		//   	// }
-		//   	$scope.$apply(function() {
+		//   	$scope.$apply(function() { // TODO: play music like this
 		//   		$scope.main.playlist = data;
 		//   		console.log($scope.main.playlist);
 		//   		var aud = document.getElementById("audioElement");
@@ -172,32 +122,17 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		// ADDING SONG //
 
 		$scope.addSong = function() {
-			$scope.FetchModel('/songList/', function(data) {
-			  	console.log(data);
-			  	// var dataSongs = [];
-			  	// for (var i = 0; i < data.length; i++) {
-			  	// 	var currSong = {
-			  	// 		name: data.songName,
-			  	// 		artist: data.artist,
+			console.log("Adding song " + $scope.searchString);
+			if(!$scope.searchString || $scope.searchString === '') { return; }
+			socket.emit('send:add-song', {
+				id: '' + $scope.main.playlist.length,
+				songName: $scope.searchString,
+				artist: $scope.searchString,
+				upvotes: [],
+				userAdded: "lucas-testing"
+			});
 
-			  	// 	}
-			  	// }
-			  	$scope.$apply(function() {
-			  		$scope.main.playlist = data;
-		  		});
-			 })
-			// $scope.sid = 'qq1337';  // TEMP - until addSong() is called from search results
-			// if(!$scope.sid || $scope.sid === '') { return; }
-			// var num = '' + $scope.main.playlist.length;
-			// var name = $scope.sid + num;
-			// socket.emit('send:add-song', {
-			// 	spotifyId: name,
-			// 	upvotes: [],
-			// 	name: 'Yellow',
-			// 	artist: 'Coldplay'
-			// });
-
-			// $scope.sid = '';
+			$scope.searchString = '';
 		};
 
 		// UPVOTING //

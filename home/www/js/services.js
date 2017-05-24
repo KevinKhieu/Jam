@@ -8,7 +8,7 @@ angular.module('songServices', [])
 
 	o.add = function(song) {
 		o.songs.push(song);
-		console.log("successfully sent add-song and pushed data onto local songs object.");
+		console.log("received push:add-song and pushed data onto local songs object.");
 	};
 
 	o.setUpvotes = function(sid, upvotes) {

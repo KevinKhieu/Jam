@@ -69,9 +69,11 @@
 				</div>
 
 				<div class = "searchArea">
-					<input type="text" name="search" placeholder="Search or Add Songs..." class = "style-4" id="search_bar">
+					<input type="text" name="search" placeholder="Search or Add Songs..."
+								ng-model="searchString" class="style-4" id="search_bar">
 					<div class = "songList">
-						<div class = "songInfo2" ng-repeat = "song in main.playlist">
+						<div class = "songInfo2"
+										ng-repeat = "song in main.playlist | orderBy: '-upvotes.length'">
 							<div id = "song-{{$index}}" class = "listSongWrapper">
 								<div class = "songStuff">
 									<div class = 'playlistSongInfoArea'>
