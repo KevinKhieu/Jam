@@ -11,8 +11,8 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		$scope.main = {};
 
-		$scope.main.songName = "SHAPE OF YOU";
-		$scope.main.artist = "ED SHEERAN";
+		$scope.main.songName = "";
+		$scope.main.artist = "";
 
 
 		$scope.main.lastPlayedArtist = "No Previous Song";
@@ -25,21 +25,20 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = xhrHandler;
 			xhr.open("GET", url);
-  			xhr.send();
-
+			xhr.send();
 
 			function xhrHandler(){
 				// If we have an invalid state or status, log and return.
 				if (this.readyState != 4 || this.status != 200) {
- 					console.log("ERROR Status " + this.status + " state: " + this.readyState);
- 					return;
- 				}
+					console.log("ERROR Status " + this.status + " state: " + this.readyState);
+					return;
+				}
 
- 				// Otherwise call callback with model
- 				var model = JSON.parse(this.responseText);
- 				callback(model);
+				// Otherwise call callback with model
+				var model = JSON.parse(this.responseText);
+				callback(model);
 			};
- 		};
+		};
 
 		/* EVENT HANDLERS */
 
@@ -60,62 +59,14 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		}
 
 		function handleAPILoaded() {
-		  $('#search-button').attr('disabled', false);
+			$('#search-button').attr('disabled', false);
 		}
 
 		// Search for a specified string.
 		$scope.search = function () {
-		  var q = $('#search_bar').val();
+			var q = $('#search_bar').val();
 			//TODO: make a socketio route for search
 		}
-
-		function getRandomInt(min, max) {
-		    return Math.floor(Math.random() * (max - min + 1)) + min;
-		}
-
-		$scope.getNextSong = function() {
-			var len = $scope.main.playlist.length;
-			var song = $scope.main.playlist[getRandomInt(0, len)];
-			return song;
-		}
-
-		/** Angular event handlers **/
-		// $scope.FetchModel('/songList/', function(data) {
-		//   	console.log(data);
-		//   	// var dataSongs = [];
-		//   	// for (var i = 0; i < data.length; i++) {
-		//   	// 	var currSong = {
-		//   	// 		name: data.songName,
-		//   	// 		artist: data.artist,
-		//
-		//   	// 	}
-		//   	// }
-		//   	$scope.$apply(function() { // TODO: play music like this
-		//   		$scope.main.playlist = data;
-		//   		console.log($scope.main.playlist);
-		//   		var aud = document.getElementById("audioElement");
-		//   		var song = $scope.getNextSong();
-		// 	    var songString = "music/" + song.link;
-		// 	    aud.src = songString;
-		// 	    $scope.main.songName = song.songName.toUpperCase();
-		// 		$scope.main.artist = song.artist.toUpperCase();
-		// 		$scope.main.currentSong = song;
-		// 	    aud.play();
-		//
-		// 		aud.onended = function() {
-		// 			$scope.$apply(function() {
-		// 			    var song = $scope.getNextSong();
-		// 			    var songString = "music/" + song.link;
-		// 			    $scope.main.lastPlayedArtist = $scope.main.currentSong.songName;
-		// 				$scope.main.lastPlayedTitle = $scope.main.currentSong.artist;
-		// 			    aud.src = songString;
-		// 			    aud.play();
-		// 			    $scope.main.songName = song.songName.toUpperCase();
-		// 				$scope.main.artist = song.artist.toUpperCase();
-		// 			});
-		// 		};
-  	// 		});
-		//  });
 
 		$scope.main.playlist = songs.songs;
 
@@ -133,6 +84,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			});
 
 			$scope.searchString = '';
+			console.log("TODO: searchString should be empty now...");
 		};
 
 		// UPVOTING //
@@ -149,11 +101,46 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		$("#search_bar").on('keyup', function (e) {
 			if (e.keyCode == 13) {
-		        $scope.addSong();
-		        // $scope.search();
+						$scope.addSong();
+						// $scope.search();
 						// $scope.reset();
-		    }
+				}
 		});
+
+		// PLAYBACK SECTION
+
+		function _playNow(song) {
+			if($scope.main.currentSong) {  // Set last played, if applicable
+				$scope.main.lastPlayedArtist = $scope.main.currentSong.artist;
+				$scope.main.lastPlayedTitle = $scope.main.currentSong.songName;
+			}
+
+			// set now playing
+			$scope.main.songName = song.songName.toUpperCase();
+			$scope.main.artist = song.artist.toUpperCase();
+			$scope.main.currentSong = song;
+			//TODO: album artwork
+
+			var aud = document.getElementById("audioElement");
+			aud.src =  "music/" + song.link;
+			var timestamp = undefined;
+			aud.play();
+
+			return timestamp;
+		};
+
+		function beginNextSong() {
+			var song = songs.getNext();
+			var timeStarted = _playNow(song);
+			socket.emit('send:now-playing', song.id, timeStarted);
+		}
+
+		$scope.main.beginPlayback = function() {
+			var aud = document.getElementById("audioElement");
+			aud.onended = function() { $scope.$apply(beginNextSong) };
+
+			beginNextSong();
+		};
 
 		// RESET
 		$scope.main.reset = function() {

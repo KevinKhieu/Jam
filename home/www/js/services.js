@@ -1,9 +1,17 @@
 'use strict';
 
+function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 angular.module('songServices', [])
 .factory('songs', ['$http', 'socket', function($http, socket) {
 	var o = {
-		songs: []  // unsorted -- the html does the sorting
+		songs: []
+		/* songs should be sorted by number of upvotes, but the sorting happens on
+		 * the backend, no need to worry about it here.
+		 * The song at the front of the queue has the most upvotes and will
+		 * accordingly be played next. */
 	};
 
 	o.add = function(song) {
@@ -17,6 +25,14 @@ angular.module('songServices', [])
 		});
 		o.songs[i].upvotes = upvotes;
 		console.log(sid + ' has ' + upvotes.length + ' upvotes.');
+	};
+
+	o.getNext = function() {
+		// Currently just gets a random song from the list.
+		console.log("TODO: choose song with most upvotes");
+		var len = o.songs.length;
+		var song = o.songs[getRandomInt(0, len)];
+		return song;
 	};
 
 	return o;
