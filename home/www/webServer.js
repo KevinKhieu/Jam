@@ -75,7 +75,7 @@ app.get('/firstData/', function(request, response) {
 
 /* GET: /clearMongo/
  * Returns objects in data.json in json object format.
- * 
+ *
  * Called only if mongoDB doesnt match data.json.
  * CLEARS Mongo Database. Expects user to rewrite entire database after.
  */
@@ -93,7 +93,7 @@ app.get('/clearMongo/', function (request, response) {
 					console.log("FAILURE Removal of " + entry._id);
 				}
 			})
-			
+
 		});
 		response.status(200).send(JSON.stringify(data));
 	})
@@ -137,7 +137,7 @@ app.post('/entry', function(request, response) {
 	var currSongId = request.body.songId;
 	var currUserAdded = request.body.userAdded;
 	var currSongName = request.body.songName;
-	
+
 	// If we have valid paramters, create new Well Entry
 	if (currSongName != null && currArtist != null && currLink != null) {
 
@@ -145,7 +145,7 @@ app.post('/entry', function(request, response) {
 		Entry.create({
         	songName: currSongName,
         	artist: currArtist,
-        	upvotes: currUpvotes,
+        	// upvotes: currUpvotes,
         	songId: currSongId,
         	userAdded: currUserAdded,
         	link: currLink
@@ -158,8 +158,8 @@ app.post('/entry', function(request, response) {
             	userObj.save();
         	}
     	});
-    	
-    // Error Handling 
+
+    // Error Handling
 	}
 	response.end("Complete Registration");
 });

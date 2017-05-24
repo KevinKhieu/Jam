@@ -2,11 +2,13 @@
 
 // var Song = require('../schema/Songs');
 var Entry = require('../schema/entry');
+var hardcodedMusicData = require('../data.json');
 
 // Generic error handler
-function handleError(res, reason, message, code) {
-	console.log("ERROR: " + reason);
-	res.status(code || 500).json({"error": message});
+function handleError(transport, reason, message, code) {
+	console.log("ERROR: " + message);
+	console.log("\t" + reason);
+	transport.emit('server-error', {"reason": reason, "message": message, "code": code});
 }
 
 function pushQueue(transport) {
@@ -15,7 +17,7 @@ function pushQueue(transport) {
 	 * io object itself. A socket to send to that socket; io to send to all sockets. */
 	Entry.find(function(err, songs) {
 		if(err) {
-			handleError(res, err.message, "Failed to retrieve song list.");
+			handleError(transport, err.message, "Failed to retrieve song list.");
 		} else {
 			transport.emit('push:queue', songs);
 		}
@@ -50,7 +52,7 @@ io.sockets.on('connection', function(socket) {
 		var song = new Song(data);
 		song.save(function(err, song){
 			if(err){
-				handleError(res, err.message, "Failed to add song to list.");
+				handleError(socket, err.message, "Failed to add song to list.");
 			} else {
 				console.log("Broadcasting push:add-song...");
 				// socket.emit('push:add-song', song);
@@ -62,18 +64,18 @@ io.sockets.on('connection', function(socket) {
 
 	// UPVOTING //
 	socket.on('send:upvote', function(data) {
-		var sid = data.sid;
+		var songId = data.id;
 		var ip = getIP(socket);
-		console.log('user at ip ' + ip + ' upvoted ' + sid);
+		console.log('user at ip ' + ip + ' upvoted ' + songId);
 
-		Song.findOne({'spotifyId': sid}, function(err, song) { //TODO: make sure calling findOne correctly
+		Entry.findOne({'id': songId}, function(err, song) { //TODO: make sure calling findOne correctly
 			if(err) {
-				handleError(res, err.message, "Failed to find song with given sid to upvote.");
+				handleError(socket, err.message, "Failed to find song with given songId to upvote.");
 			} else {
 
 				song.upvote(ip, function(err, doc) {
 					if(err) {
-						handleError(res, err.message, "Failed to save song after upvoting it.");
+						handleError(socket, err.message, "Failed to save song after upvoting it.");
 
 					} else {
 						console.log("Broadcasting push:upvote...");
@@ -94,12 +96,12 @@ io.sockets.on('connection', function(socket) {
 
 		Song.findOne({'spotifyId': sid}, function(err, song) {
 			if(err) {
-				handleError(res, err.message, "Failed to find song with given sid to upvote.");
+				handleError(socket, err.message, "Failed to find song with given sid to upvote.");
 			} else {
 
 				song.downvote(ip, function(err, doc) {
 					if(err) {
-						handleError(res, err.message, "Failed to save song after downvoting it.");
+						handleError(socket, err.message, "Failed to save song after downvoting it.");
 
 					} else {
 						console.log("Broadcasting push:downvote...");
@@ -112,13 +114,34 @@ io.sockets.on('connection', function(socket) {
 
 	// RESET
 	socket.on('send:reset', function() {
-		Song.remove({}, function(err) {
+		// clear
+		Entry.remove({}, function(err) {
 			if (err) {
-				handleError(res, err.message, "Failed to remove all songs from database.");
+				handleError(transport, err.message, "Failed to remove all songs from database.");
 			} else {
 				console.log('successfully removed all songs from database.');
 				pushQueue(io);
 			}
 		});
-	})
+
+		// re-add hardcoded data
+		for(var i=0; i<hardcodedMusicData.length; i++) {
+			Entry.create({
+				id: hardcodedMusicData[i].songId,
+				songName: hardcodedMusicData[i].songName,
+				artist: hardcodedMusicData[i].artist,
+				upvotes: [],
+				link: hardcodedMusicData[i].link,
+				userAdded: ''
+			}, function(err, userObj) {
+				if(err) {
+					console.error('Error creating', err);
+				} else {
+					userObj.id = userObj._id;
+					userObj.save();
+				}
+			});
+		}
+
+	});
 })};

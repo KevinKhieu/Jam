@@ -3,7 +3,7 @@
   <head>
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-    
+
     <script src="./node_modules/angular/angular.js" type="text/javascript" ></script>
     <link href="./bower_components/angular-material/angular-material.css" rel="stylesheet" />
     <script src="./bower_components/angular-animate/angular-animate.js" type="text/javascript" ></script>
@@ -19,7 +19,7 @@
 
     <link rel="stylesheet" type="text/css" href="css/favorite.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
-    
+
     <script src="./js/controllers.js"></script>
     <script src="./js/services.js"></script>
     <script src="./js/soundcloud.js"></script>
@@ -39,7 +39,7 @@
             <img src="img/noImg.png" class = "songImg"/>
             <img src="img/circle.png" class = "border"/>
           </div>
-          
+
         </div>
         <p class = "songname">{{main.songName}}</p>
         <p class = "songartist">{{main.artist}}</p>
@@ -49,15 +49,15 @@
       <div class="right">
 
         <p class = "lastPlayed">LAST PLAYED</p>
-        <div class = "lastPlayedLine"> 
+        <div class = "lastPlayedLine">
           <hr>
         </div>
-        <div class = "lastPlayedSection"> 
+        <div class = "lastPlayedSection">
           <div class = "songInfo">
             <p class = "lastPlayedTitle">{{main.lastPlayedTitle}}</p>
             <p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
           </div>
-          <div class = "likeButtonSection">  
+          <div class = "likeButtonSection">
             <div class='like-wrapper'>
               <a class='like-button'>
                 <span class='like-icon'>
@@ -68,7 +68,7 @@
               </a>
             </div>
           </div>
-          
+
         </div>
 
         <div class = "searchArea">
@@ -83,7 +83,7 @@
   					</div>
   					<div class = 'playlistSongLikeArea'>
   						<div class='like-wrapper'>
-  			            	<a class='like-button' ng-click = "main.toggleClick($event, song.spotifyId, song.upvotes.length)">
+  			            	<a class='like-button' ng-click = "main.toggleClick($event, song.id)">
   								<span class='like-icon'>
   			                		<div class='heart-animation-1'></div>
   			                		<div class='heart-animation-2'></div>
@@ -91,7 +91,7 @@
   			            	</a>
   						</div>
   					</div>
-  					<p>{{song.upvotes}}</p>
+  					<p>{{song.upvotes.length}}</p>
   				</div>
             		<hr class = "fadedLine">
               </div>
@@ -103,11 +103,13 @@
 <!--       <div id="player"></div> -->
 <!--       <button onclick="stopVideo()">Stop</button>
     	<button onclick="playVideo()">Play</button> -->
+    <button ng-click="main.reset()">Reset</button>
     </script>
     <audio id = "audioElement" autoplay="true">
       Oh No! You're browser doesn't support audio
       <source src="music/Alive.mp3" type="audio/mp3">
     </audio>
+
   </body>
 
 </html>

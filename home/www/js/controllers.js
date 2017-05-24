@@ -84,15 +84,15 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			$(this).toggleClass('liked');
 		});
 
-		$scope.main.toggleClick = function($event, id, votes) {
+		$scope.main.toggleClick = function($event, id) {
 			$event.target.parentElement.classList.toggle('liked');
 			console.log(id);
 			if ($event.target.parentElement.classList.contains('liked')) {
 				console.log("LIKED");
-				socket.emit('send:upvote', {'sid': id} );
+				socket.emit('send:upvote', {'id': id} );
 			} else {
 				console.log("UNLIKED");
-				socket.emit('send:downvote', {'sid': id} );
+				socket.emit('send:downvote', {'id': id} );
 			}
 		}
 
@@ -216,12 +216,13 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			if (e.keyCode == 13) {
 		        $scope.addSong();
 		        // $scope.search();
-				// $scope.reset();
+						// $scope.reset();
 		    }
 		});
 
 		// RESET
-		$scope.reset = function() {
+		$scope.main.reset = function() {
+			console.log("sending reset");
 			socket.emit('send:reset');
 		};
 }]);
