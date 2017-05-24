@@ -19,6 +19,7 @@ function pushQueue(transport) {
 		if(err) {
 			handleError(transport, err.message, "Failed to retrieve song list.");
 		} else {
+			console.log('emitting push:queue: ' + songs.length);
 			transport.emit('push:queue', songs);
 		}
 	});
@@ -114,34 +115,24 @@ io.sockets.on('connection', function(socket) {
 
 	// RESET
 	socket.on('send:reset', function() {
+		console.log("RESETTING DB...");
+
 		// clear
 		Entry.remove({}, function(err) {
 			if (err) {
-				handleError(transport, err.message, "Failed to remove all songs from database.");
-			} else {
-				console.log('successfully removed all songs from database.');
-				pushQueue(io);
+				return handleError(socket, err.message, "Failed to remove all songs from database.");
 			}
-		});
+			console.log('  successfully removed all songs from database');
 
-		// re-add hardcoded data
-		for(var i=0; i<hardcodedMusicData.length; i++) {
-			Entry.create({
-				id: hardcodedMusicData[i].songId,
-				songName: hardcodedMusicData[i].songName,
-				artist: hardcodedMusicData[i].artist,
-				upvotes: [],
-				link: hardcodedMusicData[i].link,
-				userAdded: ''
-			}, function(err, userObj) {
+			// re-add hardcoded data
+			Entry.create(hardcodedMusicData, function(err) {
 				if(err) {
-					console.error('Error creating', err);
-				} else {
-					userObj.id = userObj._id;
-					userObj.save();
+					return handleError(socket, err.message, "Failed to add hardcoded data to database.");
 				}
+				console.log('  successfully re-added hardcoded music data');
+				pushQueue(io);
 			});
-		}
+		});
 
 	});
 })};
