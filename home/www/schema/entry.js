@@ -8,13 +8,41 @@
 
 var mongoose = require('mongoose');
 
-// Entry Scheme used in webServer.js
+var upvoteSchema = new mongoose.Schema({ ip: 'String' });
+
+// Entry Schema used in webServer.js
 var entrySchema = new mongoose.Schema({
 	id: String,
-	author: String,
-	date: String,
-	lat: Number
+	songName: String,
+	artist: String,
+	upvotes: [upvoteSchema],
+	link: String,
+	userAdded: String
 });
+
+entrySchema.methods.upvote = function(ip, callback) {
+	var i = this.upvotes.findIndex(function(upvote) {
+		return upvote.ip === ip;
+	});
+	if(i === -1) {
+		this.upvotes.push({ip: ip});
+		this.save(callback);
+	} else {
+		callback({message: "The given ip already upvoted this song."});
+	}
+};
+
+entrySchema.methods.downvote = function(ip, callback) {
+	var i = this.upvotes.findIndex(function(upvote) {
+		return upvote.ip === ip;
+	});
+	if(i === -1) {
+		callback({message: "Couldn't find upvote with given ip to remove."});
+	} else {
+		this.upvotes.splice(i, 1);
+		this.save(callback);
+	}
+};
 
 // Create model for schema
 var Entry = mongoose.model('Entry', entrySchema);

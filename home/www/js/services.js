@@ -1,22 +1,56 @@
 'use strict';
 
+function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function didIUpvote(upvotes, myIP) {
+	var i = upvotes.findIndex(function(upvote) {
+		return upvote.ip === myIP;
+	});
+	if(i === -1) { return false; }
+	return true;
+}
+
 angular.module('songServices', [])
 .factory('songs', ['$http', 'socket', function($http, socket) {
 	var o = {
-		songs: []  // unsorted -- the html does the sorting
+		songs: [],  // songs are sorted by number of upvotes, in the html, not here.
 	};
 
-	o.add = function(song) {
-		o.songs.push(song);
-		console.log("successfully sent add-song and pushed data onto local songs object.");
+	/* Call to completely replace songs with A COPY OF the song data given in database format. */
+	o.set = function(songDBDatas) {
+		// We need to figure out if we upvoted each song
+		songDBDatas.forEach(function(songData) {
+			songData.iUpvoted = didIUpvote(songData.upvotes, socket.myIP);
+		});
+
+		angular.copy(songDBDatas, o.songs);
 	};
 
-	o.setUpvotes = function(sid, upvotes) {
+	/* Call to add a single song, given in database format, to songs. */
+	o.add = function(songDBData) {
+		songDBData.iUpvoted = didIUpvote(songDBData.upvotes, socket.myIP);
+
+		o.songs.push(songDBData);
+		console.log("received push:add-song and pushed data onto local songs object.");
+	};
+
+	o.setUpvotes = function(id, upvotes) {
 		var i = o.songs.findIndex(function(song) {
-			return song.spotifyId === sid;
+			return song.id === id;
 		});
 		o.songs[i].upvotes = upvotes;
-		console.log(sid + ' has ' + upvotes.length + ' upvotes.');
+		o.songs[i].iUpvoted = didIUpvote(upvotes, socket.myIP);
+		console.log(id + ' has ' + upvotes.length + ' upvotes.');
+	};
+
+	o.getNext = function() {
+		// Currently just gets a random song from the list.
+		console.log("TODO: choose song with most upvotes");
+		var len = o.songs.length;
+		var song = o.songs[getRandomInt(0, len)];
+		return song;
 	};
 
 	return o;
@@ -43,6 +77,7 @@ angular.module('songServices', [])
 			});
 		});
 	};
+
 	return o;
 }])
 
@@ -51,24 +86,28 @@ angular.module('songServices', [])
 	 * place to register with socket.on - can't do it in the controller because
 	 * it gets called twice there. */
 
+	socket.on('send:your-ip', function(ip) {
+		socket.myIP = ip;
+	});
+
 	socket.on('push:add-song', function(data) {
 		songs.add(data);
 	});
 
 	socket.on('push:upvote', function(data) {
-		console.log('received push:upvote event for ' + data.spotifyId);
+		console.log('received push:upvote event for ' + data.id);
 		// console.dir(data);
-		songs.setUpvotes(data.spotifyId, data.upvotes);
+		songs.setUpvotes(data.id, data.upvotes);
 	});
 
 	socket.on('push:downvote', function(data) {
-		console.log('received push:downvote event for ' + data.spotifyId);
-		songs.setUpvotes(data.spotifyId, data.upvotes);
+		console.log('received push:downvote event for ' + data.id);
+		songs.setUpvotes(data.id, data.upvotes);
 	});
 
 	socket.on('push:queue', function(data) {
 		console.log('received push:queue event');
-		angular.copy(data, songs.songs);
+		songs.set(data);
 	});
 
 	return {};

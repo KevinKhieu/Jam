@@ -5,8 +5,11 @@ that initiated the change.
 
 /****** API ******/
 
-// Push Songs
-send:queue (server -> client) {queue_songs}
+// Send client's IP to client
+send:your-ip (server -> client) {ip}
+
+// Push song info to client
+push:queue (server -> client(s)) {queue_songs}
 send:last-played (server -> client) {song}
 
 // Add Song
@@ -36,9 +39,15 @@ push:play (server -> clients) {sid, seekpos}
 send:pause (host-client -> server) {sid, seekpos}
 push:pause (server -> clients) {sid, seekpos}
 
+
+/** Google Music Proxy API **/
+
+// TODO: search functionality and get streaming url
+
 /** Debugging **/
 send:reset (client -> server) {}
 	Clears all songs from queue. Server responds by broadcasting a push:queue that should be empty.
+server-error (server -> client(s)) {}
 
 
 /****** Routes ******/

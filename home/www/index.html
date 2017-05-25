@@ -1,156 +1,115 @@
 <!DOCTYPE html>
-<html ng-app="jamApp" ng-controller="MainController">
-  <head>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-    
-    <script src="./node_modules/angular/angular.js" type="text/javascript" ></script>
-    <link href="./bower_components/angular-material/angular-material.css" rel="stylesheet" />
-    <script src="./bower_components/angular-animate/angular-animate.js" type="text/javascript" ></script>
-    <script src="./bower_components/angular-aria/angular-aria.js" type="text/javascript" ></script>
-    <script src="./bower_components/angular-material/angular-material.js" type="text/javascript" ></script>
-    <script src="//connect.soundcloud.com/sdk.js"></script>
-    <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+<html ng-app="jamApp">
+	<head>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
+		<script src="./node_modules/angular/angular.js" type="text/javascript" ></script>
+		<link href="./bower_components/angular-material/angular-material.css" rel="stylesheet" />
+		<script src="./bower_components/angular-animate/angular-animate.js" type="text/javascript" ></script>
+		<script src="./bower_components/angular-aria/angular-aria.js" type="text/javascript" ></script>
+		<script src="./bower_components/angular-material/angular-material.js" type="text/javascript" ></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="css/favorite.css">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
-    
-    <script src="./js/controllers.js"></script>
-    <script src="./js/services.js"></script>
-    <script src="./js/soundcloud.js"></script>
-    <script src="./js/app.js"></script>
-  </head>
+		<script src="bower_components/angular-route/angular-route.js"></script>
+		<script src="bower_components/angular-resource/angular-resource.js"></script>
 
-  <body>
-  	<ui-view></ui-view>
-  	<script type="text/ng-template" id = "/home.html">
-    <div class = "left">
-      <img src="img/logo.png" class="logo">
-    </div>
-    <div class = "middle">
-      <p class = "title">NOW PLAYING</p>
-      <div class="image-cropper">
-        <div class="imageHolder">
-          <img src="img/album1.jpg" class = "songImg"/>
-          <img src="img/circle.png" class = "border"/>
-        </div>
-        
-      </div>
-      <p class = "songname">{{main.songName}}</p>
-      <p class = "songartist">{{main.artist}}</p>
+		<link rel="stylesheet" type="text/css" href="css/favorite.css">
+		<link rel="stylesheet" type="text/css" href="css/index.css">
 
-    </div>
+		<script src="./js/controllers.js"></script>
+		<script src="./js/services.js"></script>
+		<script src="./js/app.js"></script>
+	</head>
 
-    <div class="right">
-
-      <p class = "lastPlayed">LAST PLAYED</p>
-      <div class = "lastPlayedLine"> 
-        <hr>
-      </div>
-      <div class = "lastPlayedSection"> 
-        <div class = "songInfo">
-          <p class = "lastPlayedTitle">{{main.lastPlayedTitle}}</p>
-          <p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
-        </div>
-        <div class = "likeButtonSection">  
-          <div class='like-wrapper'>
-            <a class='like-button'>
-              <span class='like-icon'>
-                <div class='heart-animation-1'></div>
-                <div class='heart-animation-2'></div>
-
-              </span>
-            </a>
-          </div>
-        </div>
-        
-      </div>
-
-      <div class = "searchArea">
-        <input type="text" name="search" placeholder="Search or Add Songs..." class = "style-4" id="search_bar">
-        <div class = "songList">
-          <div class = "songInfo2" ng-repeat = "song in main.playlist">
-            <div id = "song-{{$index}}" class = "listSongWrapper">
-            	<div class = "songStuff">
-		            <div class = 'playlistSongInfoArea'>
-						<p class = "playlistSong">{{song.name}}</p>
-						<p class = "playlistArtist">{{song.artist}}</p>
+	<body>
+		<ui-view></ui-view>
+		<script type="text/ng-template" id = "/home.html">
+			<div class = "left">
+				<img src="img/logo.png" class="logo">
+			</div>
+			<div class = "middle">
+				<p class = "title">NOW PLAYING</p>
+				<div class="image-cropper">
+					<div class="imageHolder">
+						<img src="img/noImg.png" class = "songImg"/>
+						<img src="img/circle.png" class = "border"/>
 					</div>
-					<div class = 'playlistSongLikeArea'>
+
+				</div>
+				<p class = "songname">{{main.songName}}</p>
+				<p class = "songartist">{{main.artist}}</p>
+
+			</div>
+
+			<div class="right">
+
+				<p class = "lastPlayed">LAST PLAYED</p>
+				<div class = "lastPlayedLine">
+					<hr>
+				</div>
+				<div class = "lastPlayedSection">
+					<div class = "songInfo">
+						<p class = "lastPlayedTitle">{{main.lastPlayedTitle}}</p>
+						<p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
+					</div>
+					<div class = "likeButtonSection">
 						<div class='like-wrapper'>
-			            	<a class='like-button' ng-click = "main.toggleClick($event, song.spotifyId, song.upvotes.length)">
+							<a class='like-button'>
 								<span class='like-icon'>
-			                		<div class='heart-animation-1'></div>
-			                		<div class='heart-animation-2'></div>
-			              		</span>
-			            	</a>
+									<div class='heart-animation-1'></div>
+									<div class='heart-animation-2'></div>
+
+								</span>
+							</a>
 						</div>
 					</div>
-					<p>{{song.upvotes.length}}</p>
+
 				</div>
-          		<hr class = "fadedLine">
-            </div>
-          </div>
-        </div>
-      </div>
 
-    </div>
-    <div id="player"></div>
-    <button onclick="stopVideo()">Stop</button>
-  	<button onclick="playVideo()">Play</button>
-    </script>
+				<div class = "searchArea">
+					<input type="text" name="search" placeholder="Search or Add Songs..."
+								ng-model="searchString" class="style-4" id="search_bar">
+					<div class = "songList">
+						<div class = "songInfo2"
+										ng-repeat = "song in main.playlist | orderBy: '-upvotes.length'">
+							<div id = "song-{{$index}}" class = "listSongWrapper">
+								<div class = "songStuff">
+									<div class = 'playlistSongInfoArea'>
+										<p class = "playlistSong">{{song.songName}}</p>
+										<p class = "playlistArtist">{{song.artist}}</p>
+									</div>
+									<div class = 'playlistSongLikeArea'>
+										<div class='like-wrapper'>
+											<a class='like-button'
+												ng-class = "{liked: song.iUpvoted}"
+												ng-click = "main.toggleClick($event, song.id)">
+												<span class='like-icon'>
+													<div class='heart-animation-1'></div>
+													<div class='heart-animation-2'></div>
+												</span>
+											</a>
+										</div>
+									</div>
+									<p>{{song.upvotes.length}}</p>
+								</div>
+								<hr class = "fadedLine">
+							</div>
+						</div>
+					</div>
+				</div>
 
-    <script>
-      // 2. This code loads the IFrame Player API code asynchronously.
-      var tag = document.createElement('script');
+			</div>
 
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+			<button ng-click="main.reset()">Reset DB</button>
+			<button ng-click="main.beginPlayback()">Begin Playback</button>
+			<button ng-click="main.test()">Test</button>
+		</script>
+		<audio id = "audioElement" autoplay="false">
+			Oh No! Your browser doesn't support audioj
+		</audio>
 
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
-      var player;
-      function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-          height: '1',
-          width: '1',
-          videoId: 'XZDyMJhd4Bo',
-          events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-          }
-        });
-      }
-
-      // 4. The API will call this function when the video player is ready.
-      function onPlayerReady(event) {
-        event.target.playVideo();
-      }
-
-      // 5. The API calls this function when the player's state changes.
-      //    The function indicates that when playing a video (state=1),
-      //    the player should play for six seconds and then stop.
-      var done = false;
-      function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING && !done) {
-          done = true;
-        }
-      }
-      function stopVideo() {
-        player.pauseVideo();
-      }
-
-		function playVideo() {
-			player.playVideo();
-		}
-
-    </script>
-  </body>
+	</body>
 
 </html>
