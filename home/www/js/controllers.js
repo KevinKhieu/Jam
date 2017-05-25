@@ -19,20 +19,18 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		/* EVENT HANDLERS */
 
-		$('.like-button').on('click', function() {
-			$(this).toggleClass('liked');
-		});
-
 		$scope.main.toggleClick = function($event, id) {
-			$event.target.parentElement.classList.toggle('liked');
-			console.log(id);
+
 			if ($event.target.parentElement.classList.contains('liked')) {
-				console.log("LIKED");
-				socket.emit('send:upvote', {'id': id} );
-			} else {
-				console.log("UNLIKED");
+				// we will 'unlike' it
 				socket.emit('send:downvote', {'id': id} );
+			} else {
+				// we will 'like' it
+				socket.emit('send:upvote', {'id': id} );
 			}
+
+			$event.target.parentElement.classList.toggle('liked');
+			console.log("heart clicked for " + id);
 		}
 
 	//TODO: Kevin, is there a #search-button anywhere anymore? This code may not be doing anything.

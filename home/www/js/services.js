@@ -8,9 +8,7 @@ angular.module('songServices', [])
 .factory('songs', ['$http', 'socket', function($http, socket) {
 	var o = {
 		songs: []
-		/* songs are sorted by number of upvotes.
-		 * The song at the front of the queue has the most upvotes and will
-		 * accordingly be played next (and removed from the queue). */
+		/* songs are sorted by number of upvotes, in the html, not here. */
 	};
 
 	o.add = function(song) {
@@ -18,12 +16,12 @@ angular.module('songServices', [])
 		console.log("received push:add-song and pushed data onto local songs object.");
 	};
 
-	o.setUpvotes = function(sid, upvotes) {
+	o.setUpvotes = function(id, upvotes) {
 		var i = o.songs.findIndex(function(song) {
-			return song.spotifyId === sid;
+			return song.id === id;
 		});
 		o.songs[i].upvotes = upvotes;
-		console.log(sid + ' has ' + upvotes.length + ' upvotes.');
+		console.log(id + ' has ' + upvotes.length + ' upvotes.');
 	};
 
 	o.getNext = function() {
@@ -71,14 +69,14 @@ angular.module('songServices', [])
 	});
 
 	socket.on('push:upvote', function(data) {
-		console.log('received push:upvote event for ' + data.spotifyId);
+		console.log('received push:upvote event for ' + data.id);
 		// console.dir(data);
-		songs.setUpvotes(data.spotifyId, data.upvotes);
+		songs.setUpvotes(data.id, data.upvotes);
 	});
 
 	socket.on('push:downvote', function(data) {
-		console.log('received push:downvote event for ' + data.spotifyId);
-		songs.setUpvotes(data.spotifyId, data.upvotes);
+		console.log('received push:downvote event for ' + data.id);
+		songs.setUpvotes(data.id, data.upvotes);
 	});
 
 	socket.on('push:queue', function(data) {

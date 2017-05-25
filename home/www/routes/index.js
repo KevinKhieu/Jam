@@ -19,7 +19,7 @@ function pushQueue(transport) {
 		if(err) {
 			handleError(transport, err.message, "Failed to retrieve song list.");
 		} else {
-			console.log('emitting push:queue: ' + songs.length);
+			console.log('emitting push:queue: ' + songs.length + ' items in queue');
 			transport.emit('push:queue', songs);
 		}
 	});
@@ -71,19 +71,17 @@ io.sockets.on('connection', function(socket) {
 		var ip = getIP(socket);
 		console.log('user at ip ' + ip + ' upvoted ' + songId);
 
-		Entry.findOne({'id': songId}, function(err, song) { //TODO: make sure calling findOne correctly
+		Entry.findOne({'id': songId}, function(err, song) {
 			if(err) {
-				handleError(socket, err.message, "Failed to find song with given songId to upvote.");
+				handleError(socket, err.message, "Failed to find song with given id to upvote.");
 			} else {
 
 				song.upvote(ip, function(err, doc) {
 					if(err) {
-						handleError(socket, err.message, "Failed to save song after upvoting it.");
+						handleError(socket, err.message, "Failed to upvote song.");
 
 					} else {
 						console.log("Broadcasting push:upvote...");
-						// socket.emit('push:upvote', doc);
-						// socket.broadcast.emit('push:upvote', doc);
 						io.emit('push:upvote', doc);  //TODO: abstract this out like pushQueue()
 					}
 				});
@@ -93,18 +91,18 @@ io.sockets.on('connection', function(socket) {
 
 	// DOWNVOTING //
 	socket.on('send:downvote', function(data) {
-		var sid = data.sid;
+		var id = data.id;
 		var ip = getIP(socket);
-		console.log('user at ip ' + ip + ' downvoted ' + sid);
+		console.log('user at ip ' + ip + ' downvoted ' + id);
 
-		Song.findOne({'spotifyId': sid}, function(err, song) {
+		Entry.findOne({'id': id}, function(err, song) {
 			if(err) {
-				handleError(socket, err.message, "Failed to find song with given sid to upvote.");
+				handleError(socket, err.message, "Failed to find song with given id to upvote.");
 			} else {
 
 				song.downvote(ip, function(err, doc) {
 					if(err) {
-						handleError(socket, err.message, "Failed to save song after downvoting it.");
+						handleError(socket, err.message, "Failed to downvote song.");
 
 					} else {
 						console.log("Broadcasting push:downvote...");
