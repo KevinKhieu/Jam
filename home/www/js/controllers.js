@@ -21,15 +21,20 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		$scope.main.toggleClick = function($event, id) {
 
-			if ($event.target.parentElement.classList.contains('liked')) {
+			// Figured out the liking glitch! Different parts of the heart are considered
+			// the event target depending on where you click.
+			if ($event.target.classList.contains('liked')
+			 || $event.target.parentElement.classList.contains('liked')
+			 || $event.target.parentElement.parentElement.classList.contains('liked')
+			) {
 				// we will 'unlike' it
 				socket.emit('send:downvote', {'id': id} );
+				// $event.target.parentElement.classList.toggle('liked');
 			} else {
 				// we will 'like' it
 				socket.emit('send:upvote', {'id': id} );
 			}
 
-			$event.target.parentElement.classList.toggle('liked');
 			console.log("heart clicked for " + id);
 		}
 
@@ -62,18 +67,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			$scope.searchString = '';
 			console.log("TODO: searchString should be empty now...");
 		};
-
-		// UPVOTING //
-
-		// $scope.upvote = function(song) {
-		// 	console.log("Upvoting song " + song.spotifyId);
-		// 	socket.emit('send:upvote', {'sid': song.spotifyId} );
-		// };
-		//
-		// $scope.downvote = function(song) {
-		// 	console.log("Downvoting song " + song.spotifyId);
-		// 	socket.emit('send:downvote', {'sid': song.spotifyId} );
-		// }
 
 		$("#search_bar").on('keyup', function (e) {
 			if (e.keyCode == 13) {
@@ -119,9 +112,13 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			beginNextSong();
 		};
 
-		// RESET
+		// RESET DB
 		$scope.main.reset = function() {
 			console.log("sending reset");
 			socket.emit('send:reset');
+		};
+
+		$scope.main.test = function() {
+
 		};
 }]);

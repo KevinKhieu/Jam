@@ -4,15 +4,35 @@ function getRandomInt(min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function didIUpvote(upvotes, myIP) {
+	var i = upvotes.findIndex(function(upvote) {
+		return upvote.ip === myIP;
+	});
+	if(i === -1) { return false; }
+	return true;
+}
+
 angular.module('songServices', [])
 .factory('songs', ['$http', 'socket', function($http, socket) {
 	var o = {
-		songs: []
-		/* songs are sorted by number of upvotes, in the html, not here. */
+		songs: [],  // songs are sorted by number of upvotes, in the html, not here.
 	};
 
-	o.add = function(song) {
-		o.songs.push(song);
+	/* Call to completely replace songs with A COPY OF the song data given in database format. */
+	o.set = function(songDBDatas) {
+		// We need to figure out if we upvoted each song
+		songDBDatas.forEach(function(songData) {
+			songData.iUpvoted = didIUpvote(songData.upvotes, socket.myIP);
+		});
+
+		angular.copy(songDBDatas, o.songs);
+	};
+
+	/* Call to add a single song, given in database format, to songs. */
+	o.add = function(songDBData) {
+		songDBData.iUpvoted = didIUpvote(songDBData.upvotes, socket.myIP);
+
+		o.songs.push(songDBData);
 		console.log("received push:add-song and pushed data onto local songs object.");
 	};
 
@@ -21,6 +41,7 @@ angular.module('songServices', [])
 			return song.id === id;
 		});
 		o.songs[i].upvotes = upvotes;
+		o.songs[i].iUpvoted = didIUpvote(upvotes, socket.myIP);
 		console.log(id + ' has ' + upvotes.length + ' upvotes.');
 	};
 
@@ -56,6 +77,7 @@ angular.module('songServices', [])
 			});
 		});
 	};
+
 	return o;
 }])
 
@@ -63,6 +85,10 @@ angular.module('songServices', [])
 	/* The part of the controller that responds to socket events. Don't know better
 	 * place to register with socket.on - can't do it in the controller because
 	 * it gets called twice there. */
+
+	socket.on('send:your-ip', function(ip) {
+		socket.myIP = ip;
+	});
 
 	socket.on('push:add-song', function(data) {
 		songs.add(data);
@@ -81,7 +107,7 @@ angular.module('songServices', [])
 
 	socket.on('push:queue', function(data) {
 		console.log('received push:queue event');
-		angular.copy(data, songs.songs);
+		songs.set(data);
 	});
 
 	return {};

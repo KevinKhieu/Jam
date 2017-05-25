@@ -40,6 +40,9 @@ exports.initSocketConnection = function(io) {
 io.sockets.on('connection', function(socket) {
 	console.log('a user connected - sending room data');
 
+	var ip = getIP(socket);
+	socket.emit('send:your-ip', ip);
+
 	// socket.emit('push:now-playing', getNowPlaying());
 	pushQueue(socket);
 	// socket.emit('push:last-played', getLastPlayed());
@@ -68,7 +71,6 @@ io.sockets.on('connection', function(socket) {
 	// UPVOTING //
 	socket.on('send:upvote', function(data) {
 		var songId = data.id;
-		var ip = getIP(socket);
 		console.log('user at ip ' + ip + ' upvoted ' + songId);
 
 		Entry.findOne({'id': songId}, function(err, song) {
@@ -92,7 +94,6 @@ io.sockets.on('connection', function(socket) {
 	// DOWNVOTING //
 	socket.on('send:downvote', function(data) {
 		var id = data.id;
-		var ip = getIP(socket);
 		console.log('user at ip ' + ip + ' downvoted ' + id);
 
 		Entry.findOne({'id': id}, function(err, song) {

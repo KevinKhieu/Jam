@@ -5,8 +5,11 @@ that initiated the change.
 
 /****** API ******/
 
+// Send client's IP to client
+send:your-ip (server -> client) {ip}
+
 // Push song info to client
-send:queue (server -> client) {queue_songs}
+push:queue (server -> client(s)) {queue_songs}
 send:last-played (server -> client) {song}
 
 // Add Song

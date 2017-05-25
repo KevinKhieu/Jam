@@ -3,7 +3,7 @@
     "id": 0,
     "songName": "A Sky Full Of Stars",
     "artist": "Coldplay",
-    "upvotes": [],
+    "upvotes": [{"ip": "a"}, {"ip": "b"}, {"ip": "c"}, {"ip": "d"}],
     "link": "A Sky Full Of Stars.mp3",
     "userAdded": "Mr. Sanchez"
   },
@@ -27,7 +27,7 @@
     "id": 3,
     "songName": "Alive",
     "artist": "Adelitas Way",
-    "upvotes": [],
+    "upvotes": [{"ip": "a"}, {"ip": "b"}, {"ip": "c"}],
     "link": "Alive.mp3",
     "userAdded": "Mr. Sanchez"
   },
@@ -155,7 +155,7 @@
     "id": 19,
     "songName": "Rather Be",
     "artist": "Clean Bandit",
-    "upvotes": [],
+    "upvotes": [{"ip": "a"}, {"ip": "b"}, {"ip": "c"}],
     "link": "Rather Be.mp3",
     "userAdded": "Mr. Sanchez"
   },
@@ -195,7 +195,7 @@
     "id": 24,
     "songName": "The Scientist",
     "artist": "Coldplay",
-    "upvotes": [],
+    "upvotes": [{"ip": "a"}],
     "link": "The Scientist.mp3",
     "userAdded": "Mr. Sanchez"
   },

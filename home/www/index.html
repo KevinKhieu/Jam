@@ -82,7 +82,9 @@
 									</div>
 									<div class = 'playlistSongLikeArea'>
 										<div class='like-wrapper'>
-											<a class='like-button' ng-click = "main.toggleClick($event, song.id)">
+											<a class='like-button'
+												ng-class = "{liked: song.iUpvoted}"
+												ng-click = "main.toggleClick($event, song.id)">
 												<span class='like-icon'>
 													<div class='heart-animation-1'></div>
 													<div class='heart-animation-2'></div>
@@ -102,6 +104,7 @@
 
 			<button ng-click="main.reset()">Reset DB</button>
 			<button ng-click="main.beginPlayback()">Begin Playback</button>
+			<button ng-click="main.test()">Test</button>
 		</script>
 		<audio id = "audioElement" autoplay="false">
 			Oh No! Your browser doesn't support audioj
