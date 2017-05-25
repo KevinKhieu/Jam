@@ -8,37 +8,14 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 	'$resource',
 	function($scope, songs, socket, socket_controller, $resource) {
 
-
 		$scope.main = {};
 
 		$scope.main.songName = "";
 		$scope.main.artist = "";
 
-
 		$scope.main.lastPlayedArtist = "No Previous Song";
 		$scope.main.lastPlayedTitle = "";
 		$scope.main.currentSong = "";
-
-		$scope.FetchModel = function(url, callback) {
-
-			// Create XMLHttpRequest and assign handler
-			var xhr = new XMLHttpRequest();
-			xhr.onreadystatechange = xhrHandler;
-			xhr.open("GET", url);
-			xhr.send();
-
-			function xhrHandler(){
-				// If we have an invalid state or status, log and return.
-				if (this.readyState != 4 || this.status != 200) {
-					console.log("ERROR Status " + this.status + " state: " + this.readyState);
-					return;
-				}
-
-				// Otherwise call callback with model
-				var model = JSON.parse(this.responseText);
-				callback(model);
-			};
-		};
 
 		/* EVENT HANDLERS */
 
@@ -58,6 +35,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 		}
 
+	//TODO: Kevin, is there a #search-button anywhere anymore? This code may not be doing anything.
 		function handleAPILoaded() {
 			$('#search-button').attr('disabled', false);
 		}
@@ -115,12 +93,13 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				$scope.main.lastPlayedTitle = $scope.main.currentSong.songName;
 			}
 
-			// set now playing
+			// set now playing display
 			$scope.main.songName = song.songName.toUpperCase();
 			$scope.main.artist = song.artist.toUpperCase();
 			$scope.main.currentSong = song;
 			//TODO: album artwork
 
+			// actually start playing the song
 			var aud = document.getElementById("audioElement");
 			aud.src =  "music/" + song.link;
 			var timestamp = undefined;

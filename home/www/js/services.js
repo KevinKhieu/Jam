@@ -8,10 +8,9 @@ angular.module('songServices', [])
 .factory('songs', ['$http', 'socket', function($http, socket) {
 	var o = {
 		songs: []
-		/* songs should be sorted by number of upvotes, but the sorting happens on
-		 * the backend, no need to worry about it here.
+		/* songs are sorted by number of upvotes.
 		 * The song at the front of the queue has the most upvotes and will
-		 * accordingly be played next. */
+		 * accordingly be played next (and removed from the queue). */
 	};
 
 	o.add = function(song) {
