@@ -22,14 +22,13 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.toggleClick = function($event, id) {
 
 			// Figured out the liking glitch! Different parts of the heart are considered
-			// the event target depending on where you click.
+			// the event target depending on exactly where you click.
 			if ($event.target.classList.contains('liked')
 			 || $event.target.parentElement.classList.contains('liked')
 			 || $event.target.parentElement.parentElement.classList.contains('liked')
 			) {
 				// we will 'unlike' it
 				socket.emit('send:downvote', {'id': id} );
-				// $event.target.parentElement.classList.toggle('liked');
 			} else {
 				// we will 'like' it
 				socket.emit('send:upvote', {'id': id} );
@@ -119,6 +118,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		};
 
 		$scope.main.test = function() {
-
+			console.log("test button pressed");
 		};
 }]);
