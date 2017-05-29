@@ -28,10 +28,6 @@ db.once('open', function() {
 	// we're connected!
 });
 
-// Used for uploading photo functionality
-var multer = require('multer');
-var processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto');
-
 // Schema for Well Entries (Mongoose)
 var Entry = require('./schema/entry.js');
 

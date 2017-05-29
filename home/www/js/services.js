@@ -50,6 +50,8 @@ angular.module('songServices', [])
 		console.log("TODO: choose song with most upvotes");
 		var len = o.songs.length;
 		var song = o.songs[getRandomInt(0, len)];
+		console.log("\tnext random song: ");
+		console.dir(song);
 		return song;
 	};
 
