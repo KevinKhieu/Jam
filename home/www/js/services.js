@@ -29,6 +29,12 @@ angular.module('songServices', [])
 		});
 	}
 
+	o._findById = function(id) {
+		return o.songs.findIndex(function(song) {
+			return song.id === id;
+		});
+	}
+
 	/* Call to completely replace songs with A COPY OF the song data given in database format. */
 	o.set = function(songDBDatas) {
 		// We need to figure out if we upvoted each song
@@ -50,9 +56,7 @@ angular.module('songServices', [])
 	};
 
 	o.setUpvotes = function(id, upvotes) {
-		var i = o.songs.findIndex(function(song) {
-			return song.id === id;
-		});
+		var i = o._findById(id);
 		o.songs[i].upvotes = upvotes;
 		o.songs[i].iUpvoted = didIUpvote(upvotes, socket.myIP);
 		console.log(id + ' has ' + upvotes.length + ' upvotes.');
@@ -60,7 +64,13 @@ angular.module('songServices', [])
 		o._sort();
 	};
 
-	o.getNext = function() {
+	o.popById = function(id) {
+		var i = o._findById(id);
+		if(i < 0) return undefined;
+		return o.songs.splice(i, 1)[0];
+	}
+
+	o.popNext = function() {
 		/* Returns the song with the most upvotes. */
 		return o.songs.shift();
 	};
@@ -102,6 +112,11 @@ angular.module('songServices', [])
 		socket.myIP = ip;
 	});
 
+	socket.on('push:queue', function(data) {
+		console.log('received push:queue event');
+		songs.set(data);
+	});
+
 	socket.on('push:add-song', function(data) {
 		songs.add(data);
 	});
@@ -115,11 +130,6 @@ angular.module('songServices', [])
 	socket.on('push:downvote', function(data) {
 		console.log('received push:downvote event for ' + data.id);
 		songs.setUpvotes(data.id, data.upvotes);
-	});
-
-	socket.on('push:queue', function(data) {
-		console.log('received push:queue event');
-		songs.set(data);
 	});
 
 	return {};

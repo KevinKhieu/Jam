@@ -75,7 +75,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				}
 		});
 
-		// PLAYBACK SECTION
+		// PLAYBACK SECTION //
 
 		function _playNow(song) {
 			if($scope.main.currentSong) {  // Set last played, if applicable
@@ -99,9 +99,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		};
 
 		function beginNextSong() {
-			var song = songs.getNext();
+			var song = songs.popNext();
 			var timeStarted = _playNow(song);
-			socket.emit('send:now-playing', song.id, timeStarted);
+			console.log("Now Playing: " + song.songName + " by " + song.artist);
+			socket.emit('send:now-playing', {id: song.id, timeStarted: timeStarted} );
 		}
 
 		$scope.main.beginPlayback = function() {
@@ -110,6 +111,12 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 			beginNextSong();
 		};
+
+		// Receive playback events
+		socket.on('push:now-playing', function(data) {
+			var song = songs.popById(data.id);
+			_playNow(song); // TODO: , data.timeStarted);
+		});
 
 		// RESET DB
 		$scope.main.reset = function() {

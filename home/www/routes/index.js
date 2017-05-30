@@ -99,6 +99,14 @@ io.sockets.on('connection', function(socket) {
 		applyVote('down', data.id, ip, io);
 	});
 
+	// MEDIA CONTROL FROM ROOM HOST //
+	socket.on('send:now-playing', function(data) {
+		console.log('now playing: ' + data.id);
+
+		// TODO: store in db
+		socket.broadcast.emit('push:now-playing', data);
+	});
+
 	// RESET
 	socket.on('send:reset', function() {
 		console.log("RESETTING DB...");
