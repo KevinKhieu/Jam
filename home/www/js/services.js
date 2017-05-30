@@ -15,8 +15,19 @@ function didIUpvote(upvotes, myIP) {
 angular.module('songServices', [])
 .factory('songs', ['$http', 'socket', function($http, socket) {
 	var o = {
-		songs: [],  // songs are sorted by number of upvotes, in the html, not here.
+		songs: [],  // songs are sorted by number of upvotes.
 	};
+
+	o._sort = function() {
+		// Sort by upvotes
+		o.songs.sort(function(a,b) {
+			if(a.upvotes.length < b.upvotes.length)
+				return 1;
+			if(a.upvotes.length > b.upvotes.length)
+				return -1;
+			return 0;
+		});
+	}
 
 	/* Call to completely replace songs with A COPY OF the song data given in database format. */
 	o.set = function(songDBDatas) {
@@ -26,6 +37,7 @@ angular.module('songServices', [])
 		});
 
 		angular.copy(songDBDatas, o.songs);
+		o._sort();
 	};
 
 	/* Call to add a single song, given in database format, to songs. */
@@ -33,6 +45,7 @@ angular.module('songServices', [])
 		songDBData.iUpvoted = didIUpvote(songDBData.upvotes, socket.myIP);
 
 		o.songs.push(songDBData);
+		o._sort();
 		console.log("received push:add-song and pushed data onto local songs object.");
 	};
 
@@ -43,16 +56,13 @@ angular.module('songServices', [])
 		o.songs[i].upvotes = upvotes;
 		o.songs[i].iUpvoted = didIUpvote(upvotes, socket.myIP);
 		console.log(id + ' has ' + upvotes.length + ' upvotes.');
+
+		o._sort();
 	};
 
 	o.getNext = function() {
-		// Currently just gets a random song from the list.
-		console.log("TODO: choose song with most upvotes");
-		var len = o.songs.length;
-		var song = o.songs[getRandomInt(0, len)];
-		console.log("\tnext random song: ");
-		console.dir(song);
-		return song;
+		/* Returns the song with the most upvotes. */
+		return o.songs.shift();
 	};
 
 	return o;
