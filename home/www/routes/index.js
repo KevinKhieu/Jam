@@ -25,6 +25,27 @@ function pushQueue(transport) {
 	});
 }
 
+function applyVote(n, songId, ip, transport) {
+	console.log('user at ip ' + ip + ' ' + n + 'voted ' + songId);
+
+	Entry.findOne({'id': songId}, function(err, song) {
+		if(err) {
+			handleError(socket, err.message, "Failed to find song with given id to " + n + "vote.");
+		} else {
+
+			song[n + 'vote'] (ip, function(err, doc) {
+				if(err) {
+					handleError(socket, err.message, "Failed to " + n + "vote song.");
+
+				} else {
+					console.log("Broadcasting push:" + n + "vote...");
+					transport.emit('push:' + n + 'vote', doc);
+				}
+			});
+		}
+	});
+}
+
 function getNowPlaying() {}
 
 function getLastPlayed() {}
@@ -70,48 +91,12 @@ io.sockets.on('connection', function(socket) {
 
 	// UPVOTING //
 	socket.on('send:upvote', function(data) {
-		var songId = data.id;
-		console.log('user at ip ' + ip + ' upvoted ' + songId);
-
-		Entry.findOne({'id': songId}, function(err, song) {
-			if(err) {
-				handleError(socket, err.message, "Failed to find song with given id to upvote.");
-			} else {
-
-				song.upvote(ip, function(err, doc) {
-					if(err) {
-						handleError(socket, err.message, "Failed to upvote song.");
-
-					} else {
-						console.log("Broadcasting push:upvote...");
-						io.emit('push:upvote', doc);  //TODO: abstract this out like pushQueue()
-					}
-				});
-			}
-		});
+		applyVote('up', data.id, ip, io);
 	});
 
 	// DOWNVOTING //
 	socket.on('send:downvote', function(data) {
-		var id = data.id;
-		console.log('user at ip ' + ip + ' downvoted ' + id);
-
-		Entry.findOne({'id': id}, function(err, song) {
-			if(err) {
-				handleError(socket, err.message, "Failed to find song with given id to upvote.");
-			} else {
-
-				song.downvote(ip, function(err, doc) {
-					if(err) {
-						handleError(socket, err.message, "Failed to downvote song.");
-
-					} else {
-						console.log("Broadcasting push:downvote...");
-						io.emit('push:downvote', doc);  //TODO: abstract this out like pushQueue()
-					}
-				});
-			}
-		});
+		applyVote('down', data.id, ip, io);
 	});
 
 	// RESET
