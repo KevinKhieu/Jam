@@ -1,10 +1,7 @@
 "use strict";
 /*
- *  Defined the Mongoose Schema and return a Model for a Well Entry
+ *  Defined the Mongoose Schema and return a Model for a Song
  */
-/* jshint node: true */
-
-// EXAMPLE ENTRY SCHEME IN MONGO DB
 
 var mongoose = require('mongoose');
 

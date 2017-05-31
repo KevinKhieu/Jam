@@ -2,13 +2,15 @@
 
 // var Song = require('../schema/Songs');
 var Entry = require('../schema/entry');
+var NowPlaying = require('../schema/now-playing');
 var hardcodedMusicData = require('../data.json');
 
 // Generic error handler
 function handleError(transport, reason, message, code) {
 	console.log("ERROR: " + message);
 	console.log("\t" + reason);
-	transport.emit('server-error', {"reason": reason, "message": message, "code": code});
+	if(transport)
+		transport.emit('server-error', {"reason": reason, "message": message, "code": code});
 }
 
 function pushQueue(transport) {
@@ -46,27 +48,62 @@ function applyVote(n, songId, ip, transport) {
 	});
 }
 
-function getNowPlaying() {}
+function getNowPlaying(callback) {
+	NowPlaying.findOne(function(err, np) {
+		if(err) {
+			handleError(undefined, err.message, "Failed to get NowPlaying db data");
+		} else {
+			callback(np);
+		}
+	});
+}
 
-function getLastPlayed() {}
+function setNowPlaying(song, timeStarted, callback, lastPlayed) {
+	getNowPlaying(function(np) {
+		np.update(song, timeStarted, callback, lastPlayed);
+	});
+}
+
+function initNowPlaying() {
+	getNowPlaying(function(np) {
+		if(np == null || np.length === 0) {
+			NowPlaying.create({
+				id: '',
+				timeStarted: 0,
+				playState: false,
+
+				songName: '',
+				artist: '',
+				lastPlayed: {
+					songName: '',
+					artist: ''
+				}
+			});
+		}
+	});
+}
+initNowPlaying();
+
+function pushNowPlaying(transport) {
+	getNowPlaying(function(np) {
+		transport.emit('push:now-playing', np);
+	});
+}
 
 function getIP(socket) {
-	console.log('forwarded-for: ' + socket.handshake.headers['x-forwarded-for']);
-		//TODO: The above may be obsolete and nonfunctional.
-	console.log('socket.request.connection.remoteAddress: ' + socket.request.connection.remoteAddress);
 	return socket.handshake.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
 }
 
 exports.initSocketConnection = function(io) {
 io.sockets.on('connection', function(socket) {
-	console.log('a user connected - sending room data');
 
 	var ip = getIP(socket);
 	socket.emit('send:your-ip', ip);
 
-	// socket.emit('push:now-playing', getNowPlaying());
+	console.log('a user connected with IP ' + ip + '.');
+
 	pushQueue(socket);
-	// socket.emit('push:last-played', getLastPlayed());
+	pushNowPlaying(socket);
 
 	socket.on('disconnect', function() {
 		console.log('a user disconnected');
@@ -100,18 +137,33 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	// MEDIA CONTROL FROM ROOM HOST //
+
 	socket.on('send:now-playing', function(data) {
 		console.log('now playing: ' + data.id);
 
-		// TODO: store in db
-		socket.broadcast.emit('push:now-playing', data);
+		Entry.findOne({ id:data.id }, function(err, song) {
+			if(err) {
+				handleError(socket, err.message, "Failed to find now-playing song in queue.");
+			} else {
+				setNowPlaying(song, data.timeStarted, function(err, nowPlaying) {
+					socket.broadcast.emit('push:now-playing', nowPlaying);
+				});
+			}
+		}).remove(function(err) {
+			if(err) {
+				handleError(socket, err.message, "DB: Failed to remove now-playing song from queue.");
+			} else {
+				console.log("Successfully removed now-playing song from DB queue.");
+			}
+		});
+
 	});
 
 	// RESET
 	socket.on('send:reset', function() {
 		console.log("RESETTING DB...");
 
-		// clear
+		// reset queue
 		Entry.remove({}, function(err) {
 			if (err) {
 				return handleError(socket, err.message, "Failed to remove all songs from database.");
@@ -121,11 +173,29 @@ io.sockets.on('connection', function(socket) {
 			// re-add hardcoded data
 			Entry.create(hardcodedMusicData, function(err) {
 				if(err) {
-					return handleError(socket, err.message, "Failed to add hardcoded data to database.");
+					handleError(socket, err.message, "Failed to add hardcoded data to database.");
+				} else {
+					console.log('  successfully re-added hardcoded music data');
+					pushQueue(io);
 				}
-				console.log('  successfully re-added hardcoded music data');
-				pushQueue(io);
 			});
+		});
+
+		// clear now playing
+		setNowPlaying({
+			id: '',
+			songName: '',
+			artist: ''
+		}, 0, function(err, np) {
+			if(err) {
+				handleError(socket, err.message, "Failed to set now playing in database.");
+			} else {
+				console.log('  successfully cleared DB now playing');
+				pushNowPlaying(io);
+			}
+		}, {
+			songName: '',
+			artist: ''
 		});
 
 	});

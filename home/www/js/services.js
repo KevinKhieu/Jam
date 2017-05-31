@@ -64,7 +64,7 @@ angular.module('songServices', [])
 		o._sort();
 	};
 
-	o.popById = function(id) {
+	o.removeById = function(id) {
 		var i = o._findById(id);
 		if(i < 0) return undefined;
 		return o.songs.splice(i, 1)[0];

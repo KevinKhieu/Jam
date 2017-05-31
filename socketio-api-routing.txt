@@ -27,9 +27,9 @@ push:downvote (server -> clients) {song}
 
 /** Music control with host-client **/
 
-// Now Playing
+// Now Playing (also includes lastPlayed)
 send:now-playing (host-client -> server) {sid, timeStarted}
-push:now-playing (server -> client(s)) {sid, name, artist, timeStarted, playState}
+push:now-playing (server -> non-host-client(s)) {nowPlaying}
 
 // Play
 send:play (host-client -> server) {sid, seekpos}
