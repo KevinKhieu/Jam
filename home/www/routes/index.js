@@ -145,9 +145,11 @@ io.sockets.on('connection', function(socket) {
 			if(err) {
 				handleError(socket, err.message, "Failed to find now-playing song in queue.");
 			} else {
-				setNowPlaying(song, data.timeStarted, function(err, nowPlaying) {
-					socket.broadcast.emit('push:now-playing', nowPlaying);
-				});
+				if(song !== null) {
+					setNowPlaying(song, data.timeStarted, function(err, nowPlaying) {
+						socket.broadcast.emit('push:now-playing', nowPlaying);
+					});
+				}
 			}
 		}).remove(function(err) {
 			if(err) {
