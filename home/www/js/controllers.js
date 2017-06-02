@@ -17,6 +17,8 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.lastPlayedTitle = "";
 		$scope.main.currentSong = "";
 
+		$scope.main.playAction = "Play";  // can either be Play or Pause
+
 		/* EVENT HANDLERS */
 
 		$scope.main.toggleClick = function($event, id) {
@@ -115,6 +117,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			console.log("Now Playing: " + song.songName + " by " + song.artist);
 			_setAsNowPlaying(song);
 			var timeStarted = _playNow(song);
+			$scope.main.playAction = "Pause";
 			socket.emit('send:now-playing', {id: song.id, timeStarted: timeStarted} );
 		}
 
@@ -125,11 +128,21 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			beginNextSong();
 		};
 
-		$scope.main.play = function() {
+		$scope.main.togglePlay = function() {
 			var aud = document.getElementById("audioElement");
-			aud.play();
-			console.log('audio playing');
-			socket.emit('send:play');
+
+			if($scope.main.playAction === "Play") {
+				aud.play();
+				$scope.main.playAction = "Pause";
+				console.log('audio playing');
+				socket.emit('send:play');
+
+			} else {  // Pause
+				aud.pause();
+				$scope.main.playAction = "Play";
+				console.log('audio paused');
+				socket.emit('send:pause');
+			}
 		};
 
 		$scope.main.pause = function() {
@@ -150,12 +163,12 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		socket.on('push:play', function() {
 			console.log('received push:play');
-
+			$scope.main.playAction = "Pause";
 		});
 
 		socket.on('push:pause', function() {
 			console.log('received push:pause');
-
+			$scope.main.playAction = "Play";
 		});
 
 		// RESET DB

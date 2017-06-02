@@ -105,8 +105,7 @@
 
 			<button ng-click="main.reset()">Reset DB</button>
 			<button ng-click="main.beginPlayback()">Begin Playback</button>
-			<button ng-click="main.play()">Play</button>
-			<button ng-click="main.pause()">Pause</button>
+			<button ng-click="main.togglePlay()">{{main.playAction}}</button>
 			<button ng-click="main.test()">Test</button>
 		</script>
 		<audio id = "audioElement" autoplay="false">
