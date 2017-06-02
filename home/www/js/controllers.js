@@ -125,6 +125,20 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			beginNextSong();
 		};
 
+		$scope.main.play = function() {
+			var aud = document.getElementById("audioElement");
+			aud.play();
+			console.log('audio playing');
+			socket.emit('send:play');
+		};
+
+		$scope.main.pause = function() {
+			var aud = document.getElementById("audioElement");
+			aud.pause();
+			console.log('audio paused');
+			socket.emit('send:pause');
+		};
+
 		// Receive playback events from server
 
 		socket.on('push:now-playing', function(data) {
@@ -132,6 +146,16 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			songs.removeById(data.id);
 			_setAsNowPlaying(data);
 			// DO NOT actually play the song's audio - just display it as now playing.
+		});
+
+		socket.on('push:play', function() {
+			console.log('received push:play');
+
+		});
+
+		socket.on('push:pause', function() {
+			console.log('received push:pause');
+
 		});
 
 		// RESET DB

@@ -32,8 +32,8 @@ send:now-playing (host-client -> server) {sid, timeStarted}
 push:now-playing (server -> non-host-client(s)) {nowPlaying}
 
 // Play
-send:play (host-client -> server) {sid, seekpos}
-push:play (server -> clients) {sid, seekpos}
+send:play (host-client -> server) {sid, seekpos, timeResumed}
+push:play (server -> clients) {sid, seekpos, timeResumed}
 
 // Pause
 send:pause (host-client -> server) {sid, seekpos}

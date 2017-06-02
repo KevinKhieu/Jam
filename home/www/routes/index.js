@@ -158,8 +158,18 @@ io.sockets.on('connection', function(socket) {
 				console.log("Successfully removed now-playing song from DB queue.");
 			}
 		});
-
 	});
+
+	socket.on('send:play', function() {
+		console.log('music is now playing');
+		socket.broadcast.emit('push:play');
+	});
+
+	socket.on('send:pause', function() {
+		console.log('music is now paused');
+		socket.broadcast.emit('push:pause');
+	});
+
 
 	// RESET
 	socket.on('send:reset', function() {
