@@ -5,7 +5,14 @@ var Entry = require('../schema/entry');
 var NowPlaying = require('../schema/now-playing');
 var LastPlayed = require('../schema/last-played');
 var hardcodedMusicData = require('../data.json');
-// googlePlayAPI = require('../gplayapi');
+var googlePlayAPI = require('../google-music/googleMusic');
+var PlayMusic = require('../google-music/play');
+
+// Initialize Google Music API
+var pm = new PlayMusic();
+googlePlayAPI.initialize(pm, function() {
+	console.log('successfully initialized google play api');
+});
 
 // Generic error handler
 function handleError(transport, reason, message, code) {
@@ -159,14 +166,14 @@ io.sockets.on('connection', function(socket) {
 			} else {
 				console.log("Broadcasting push:add-song...");
 				io.emit('push:add-song', song);
-				// googlePlayAPI.getStreamURL(song.id, function(url) {
-				// 	song.link = url;
-				// 	song.save(function(err, song) {
-				// 		if(err) {
-				// 			handleError(socket, err.message, "Failed to save url to song entry.");
-				// 		}
-				// 	});
-				// });
+				googlePlayAPI.getStreamURL(song.id, function(url) {
+					song.link = url;
+					song.save(function(err, song) {
+						if(err) {
+							handleError(socket, err.message, "Failed to save url to song entry.");
+						}
+					});
+				});
 			}
 		});
 	});
@@ -222,9 +229,10 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('get:search', function(data) {
 		console.log('getting search for ' + data.query);
-		// googlePlayAPI.getSearchResults(data.query, function(results) {
-		// 	socket.emit('send:search', results);
-		// });
+		googlePlayAPI.search(pm, data.query, function(results) {
+			console.dir(results);
+			socket.emit('send:search', {results: results});
+		});
 	});
 
 

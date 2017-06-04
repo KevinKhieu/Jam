@@ -7,7 +7,8 @@ var fs = require('fs');
 var PlayMusic = require('./play');
 var util = require('util');
 
-var config = JSON.parse(fs.readFileSync("config.json"));
+// var config = JSON.parse(fs.readFileSync("./config.json"));
+var config = require('./config.json');
 
 exports.initialize = function(pm, callback) {
     pm.login({email: config.email, password: config.password}, function(err, resp) {
@@ -29,8 +30,8 @@ exports.search = function(pm, song, callback) {
             if (data.entries[entry].type === '1') {
                 songs.push({
                     artist: data.entries[entry].track['artist'],
-                    title: data.entries[entry].track['title'],
-                    songid: data.entries[entry].track['storeId'],
+                    songName: data.entries[entry].track['title'],
+                    id: data.entries[entry].track['storeId'],
                     albumid: data.entries[entry].track['albumId']
                 });
             }

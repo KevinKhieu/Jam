@@ -65,7 +65,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		// Convert Google Play Music API search results to our song format
 		function resultsToSongs(results) {
 			// TODO
-			return {};
+			return results;
 		}
 
 		function determineSongsAlreadyAdded(results) {
@@ -174,9 +174,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		});
 
 		// Receive Google API events back from server
-		socket.on('send:search', function(results) {
-			var songResults = resultsToSongs(results);
+		socket.on('send:search', function(data) {
+			var songResults = resultsToSongs(data.results);
 			determineSongsAlreadyAdded(songResults);
+			console.dir(songResults);
 			// TODO: Kevin will make search results appear on the screen like magic
 		});
 
