@@ -3,6 +3,7 @@
 // var Song = require('../schema/Songs');
 var Entry = require('../schema/entry');
 var NowPlaying = require('../schema/now-playing');
+var LastPlayed = require('../schema/last-played');
 var hardcodedMusicData = require('../data.json');
 
 // Generic error handler
@@ -58,35 +59,72 @@ function getNowPlaying(callback) {
 	});
 }
 
-function setNowPlaying(song, timeStarted, callback, lastPlayed) {
+function getLastPlayed(callback) {
+	LastPlayed.findOne(function(err, lp) {
+		if(err) {
+			handleError(undefined, err.message, "Failed to get LastPlayed db data");
+		} else {
+			callback(lp);
+		}
+	});
+}
+
+function setNowPlaying(newNowPlaying, callback) {
 	getNowPlaying(function(np) {
-		np.update(song, timeStarted, callback, lastPlayed);
+		np.id = newNowPlaying.id;
+		np.songName = newNowPlaying.songName;
+		np.artist = newNowPlaying.artist;
+		np.isPlaying = newNowPlaying.isPlaying;
+		np.timeResumed = newNowPlaying.timeResumed;
+		np.resumedSeekPos = newNowPlaying.resumedSeekPos;
+		np.save(callback);
+	});
+}
+
+function setLastPlayed(newLastPlayed, callback) {
+	getLastPlayed(function(lp) {
+		lp.id = newLastPlayed.id;
+		lp.songName = newLastPlayed.songName;
+		lp.artist = newLastPlayed.artist;
+		lp.save(callback);
 	});
 }
 
 function initNowPlaying() {
 	getNowPlaying(function(np) {
-		if(np == null || np.length === 0) {
+		if(np == null) {
 			NowPlaying.create({
 				id: '',
-				timeStarted: 0,
-				playState: false,
-
 				songName: '',
 				artist: '',
-				lastPlayed: {
-					songName: '',
-					artist: ''
-				}
+
+				isPlaying: false,
+				// timeResumed: undefined,  // not set yet
+				resumedSeekPos: 0
 			});
 		}
 	});
 }
 initNowPlaying();
 
+function initLastPlayed() {
+	getLastPlayed(function(lp) {
+		if(lp == null) {
+			LastPlayed.create({
+				id: '',
+				songName: '',
+				artist: ''
+			});
+		}
+	});
+}
+initLastPlayed();
+
 function pushNowPlaying(transport) {
 	getNowPlaying(function(np) {
-		transport.emit('push:now-playing', np);
+		getLastPlayed(function(lp) {
+			transport.emit('push:now-playing', { np: np, lp: lp });
+		});
 	});
 }
 
@@ -139,25 +177,49 @@ io.sockets.on('connection', function(socket) {
 	// MEDIA CONTROL FROM ROOM HOST //
 
 	socket.on('send:now-playing', function(data) {
-		console.log('now playing: ' + data.id);
+		console.log('now playing: ' + data.np.id);
 
-		Entry.findOne({ id:data.id }, function(err, song) {
-			if(err) {
-				handleError(socket, err.message, "Failed to find now-playing song in queue.");
-			} else {
-				setNowPlaying(song, data.timeStarted, function(err, nowPlaying) {
-					socket.broadcast.emit('push:now-playing', nowPlaying);
-				});
-			}
-		}).remove(function(err) {
+		Entry.findOne({ id:data.np.id }).remove(function(err) {
 			if(err) {
 				handleError(socket, err.message, "DB: Failed to remove now-playing song from queue.");
 			} else {
 				console.log("Successfully removed now-playing song from DB queue.");
+				setLastPlayed(data.lp, function(err, lastPlayed) {
+					setNowPlaying(data.np, function(err, nowPlaying) {
+						socket.broadcast.emit('push:now-playing', {np: nowPlaying, lp: lastPlayed});
+					});
+				});
 			}
 		});
-
 	});
+
+	socket.on('send:play', function() {
+		console.log('music is now playing');
+		getNowPlaying(function(np) {
+			np.isPlaying = true;
+			np.save(function(np) {
+				socket.broadcast.emit('push:play');
+			});
+		});
+	});
+
+	socket.on('send:pause', function() {
+		console.log('music is now paused');
+		getNowPlaying(function(np) {
+			np.isPlaying = false;
+			np.save(function(np) {
+				socket.broadcast.emit('push:pause');
+			});
+		});
+	});
+
+	socket.on('get:search', function(data) {
+		console.log('getting search for ' + data.query);
+		// googlePlayAPI.getSearchResults(data.query, function(results) {
+		// 	socket.emit('send:search', results);
+		// });
+	});
+
 
 	// RESET
 	socket.on('send:reset', function() {
@@ -185,17 +247,28 @@ io.sockets.on('connection', function(socket) {
 		setNowPlaying({
 			id: '',
 			songName: '',
-			artist: ''
-		}, 0, function(err, np) {
+			artist: '',
+
+			isPlaying: false,
+			// timeResumed: undefined,  // not set yet
+			resumedSeekPos: 0
+		}, function(err, np) {
 			if(err) {
 				handleError(socket, err.message, "Failed to set now playing in database.");
 			} else {
-				console.log('  successfully cleared DB now playing');
-				pushNowPlaying(io);
+				setLastPlayed({
+					id: '',
+					songName: '',
+					artist: '',
+				}, function(err, lp) {
+					if(err) {
+						handleError(socket, err.message, "Failed to set last played in database.");
+					} else {
+						console.log('  successfully cleared DB now playing and last played');
+						pushNowPlaying(io);
+					}
+				});
 			}
-		}, {
-			songName: '',
-			artist: ''
 		});
 
 	});

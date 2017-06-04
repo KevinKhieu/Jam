@@ -1,0 +1,30 @@
+goals
+
+socketio
+	DONE convert all existing communication to socketio
+	DONE on Start button-click, randomly choose a song to play and start playing it
+	DONE get upvotes working again
+		DONE make upvotes only one per ip
+		DONE on load page, toggle heart as liked for each song this ip has liked
+	DONE choose one of songs with most upvotes to play each time
+	DONE remove song from queue after choosing it
+	DONE now-playing routing
+		DONE Send sid, but push now-playing json.
+		DONE The room host sets everything and plays music before sending the event,
+			then the others set everything after it goes through the server.
+	DONE play and pause routes
+	DONE tidy up controller now-playing state architecture and now-playing schema
+		DONE add playState to schema
+	Combine Begin Playback button with Play button
+
+
+then integrate with google play api
+	if time: pre-create structure so that all that needs to happen is the library be provided
+keep track of room host with toggle
+build new view that allows room creation
+
+
+
+For Kevin
+media controls: play/pause toggle button, skip button. Seek bar.
+some kind of toggle or other mechanism to specify "host" or "guest" mode

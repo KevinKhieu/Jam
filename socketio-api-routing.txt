@@ -28,21 +28,29 @@ push:downvote (server -> clients) {song}
 /** Music control with host-client **/
 
 // Now Playing (also includes lastPlayed)
-send:now-playing (host-client -> server) {sid, timeStarted}
-push:now-playing (server -> non-host-client(s)) {nowPlaying}
+send:now-playing (host-client -> server) {nowPlaying, lastPlayed}
+push:now-playing (server -> non-host-client(s)) {nowPlaying, lastPlayed}
 
 // Play
-send:play (host-client -> server) {sid, seekpos}
-push:play (server -> clients) {sid, seekpos}
+send:play (host-client -> server) {seekpos, timeResumed}
+push:play (server -> clients) {seekpos, timeResumed}
 
 // Pause
-send:pause (host-client -> server) {sid, seekpos}
-push:pause (server -> clients) {sid, seekpos}
+send:pause (host-client -> server) {seekpos}
+push:pause (server -> clients) {seekpos}
 
 
 /** Google Music Proxy API **/
-
 // TODO: search functionality and get streaming url
+
+// Search
+get:search (client -> server) {query}
+send:search (server -> client) {results}
+
+// Get song's streaming URL
+get:streamUrl (host-client -> server) {sid}
+send:streamUrl (server -> host-client) {url}
+
 
 /** Debugging **/
 send:reset (client -> server) {}
