@@ -39,8 +39,8 @@
 					</div>
 
 				</div>
-				<p class = "songname">{{main.songName}}</p>
-				<p class = "songartist">{{main.artist}}</p>
+				<p class = "songname">{{main.nowPlaying.songName.toUpperCase()}}</p>
+				<p class = "songartist">{{main.nowPlaying.artist.toUpperCase()}}</p>
 
 			</div>
 
@@ -52,8 +52,8 @@
 				</div>
 				<div class = "lastPlayedSection">
 					<div class = "songInfo">
-						<p class = "lastPlayedTitle">{{main.lastPlayedTitle}}</p>
-						<p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
+						<p class = "lastPlayedTitle">{{main.lastPlayed.songName}}</p>
+						<p class = "lastPlayedArtist">{{main.lastPlayed.artist}}</p>
 					</div>
 					<div class = "likeButtonSection">
 						<div class='like-wrapper'>
@@ -105,7 +105,7 @@
 
 			<button ng-click="main.reset()">Reset DB</button>
 			<button ng-click="main.beginPlayback()">Begin Playback</button>
-			<button ng-click="main.togglePlay()">{{main.playAction}}</button>
+			<button ng-click="main.togglePlay()">{{main.nowPlaying.isPlaying ? "Pause" : "Play"}}</button>
 			<button ng-click="main.test()">Test</button>
 		</script>
 		<audio id = "audioElement" autoplay="false">
