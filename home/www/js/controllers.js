@@ -68,19 +68,16 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			return {};
 		}
 
-		$scope.addSong = function() {
-			console.log("TODO: Adding song " + $scope.searchString);
-			// if(!$scope.searchString || $scope.searchString === '') { return; }
-			// socket.emit('send:add-song', {
-			// 	id: '' + $scope.main.playlist.length,
-			// 	songName: $scope.searchString,
-			// 	artist: $scope.searchString,
-			// 	upvotes: [],
-			// 	userAdded: "lucas-testing"
-			// });
+		function determineSongsAlreadyAdded(results) {
+			results.forEach(function(result) {
+				result.isAlreadyAdded = songs.contains(result.id);
+			});
+		}
 
-			$scope.searchString = '';
-			console.log("TODO: searchString should be empty now...");
+		// TODO: front end calls this from search view
+		$scope.addSong = function(song) {
+			console.log('adding song: ' + song.id);
+			socket.emit('send:add-song', song);
 		};
 
 		// PLAYBACK SECTION //
@@ -176,9 +173,11 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			$scope.main.nowPlaying.isPlaying = false;
 		});
 
+		// Receive Google API events back from server
 		socket.on('send:search', function(results) {
 			var songResults = resultsToSongs(results);
-			$scope.main.playlist = songResults;
+			determineSongsAlreadyAdded(songResults);
+			// TODO: Kevin will make search results appear on the screen like magic
 		});
 
 		// RESET DB

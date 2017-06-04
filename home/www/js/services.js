@@ -75,6 +75,10 @@ angular.module('songServices', [])
 		return o.songs.shift();
 	};
 
+	o.contains = function(id) {
+		return o._findById(id) >= 0;
+	}
+
 	return o;
 }])
 

@@ -5,6 +5,7 @@ var Entry = require('../schema/entry');
 var NowPlaying = require('../schema/now-playing');
 var LastPlayed = require('../schema/last-played');
 var hardcodedMusicData = require('../data.json');
+// googlePlayAPI = require('../gplayapi');
 
 // Generic error handler
 function handleError(transport, reason, message, code) {
@@ -148,20 +149,26 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	// ADDING SONG //
-	socket.on('send:add-song', function(data) {
+	socket.on('send:add-song', function(song) {
 		console.log("received send:add-song: ");
-		console.dir(data);
-		// var song = new Entry(data);
-		// song.save(function(err, song){
-		// 	if(err){
-		// 		handleError(socket, err.message, "Failed to add song to list.");
-		// 	} else {
-		// 		console.log("Broadcasting push:add-song...");
-		// 		// socket.emit('push:add-song', song);
-		// 		// socket.broadcast.emit('push:add-song', song);
-		// 		io.emit('push:add-song', song);
-		// 	}
-		// });
+		console.dir(song);
+		var song = new Entry(song);
+		song.save(function(err, song) {
+			if(err){
+				handleError(socket, err.message, "Failed to add song to list.");
+			} else {
+				console.log("Broadcasting push:add-song...");
+				io.emit('push:add-song', song);
+				// googlePlayAPI.getStreamURL(song.id, function(url) {
+				// 	song.link = url;
+				// 	song.save(function(err, song) {
+				// 		if(err) {
+				// 			handleError(socket, err.message, "Failed to save url to song entry.");
+				// 		}
+				// 	});
+				// });
+			}
+		});
 	});
 
 	// UPVOTING //

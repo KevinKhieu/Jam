@@ -16,6 +16,7 @@ socketio
 	DONE tidy up controller now-playing state architecture and now-playing schema
 		DONE add playState to schema
 	Combine Begin Playback button with Play button
+	streamline NowPlaying initialization with new NowPlaying(json) constructor
 
 
 then integrate with google play api
