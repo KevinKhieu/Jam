@@ -213,6 +213,13 @@ io.sockets.on('connection', function(socket) {
 		});
 	});
 
+	socket.on('get:search', function(data) {
+		console.log('getting search for ' + data.query);
+		// googlePlayAPI.getSearchResults(data.query, function(results) {
+		// 	socket.emit('send:search', results);
+		// });
+	});
+
 
 	// RESET
 	socket.on('send:reset', function() {

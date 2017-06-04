@@ -46,38 +46,42 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			$('#search-button').attr('disabled', false);
 		}
 
-		// Search for a specified string.
-		$scope.search = function () {
-			var q = $('#search_bar').val();
-			//TODO: make a socketio route for search
-		}
-
 		$scope.main.playlist = songs.songs;
 
-		// ADDING SONG //
+		// SEARCHING AND ADDING SONGS //
+
+		function search() {
+			socket.emit("get:search", {query: $scope.searchString});
+			$scope.searchString = '';
+		}
+
+		// On press enter in the search bar, call search()
+		$("#search_bar").on('keyup', function (e) {
+			if (e.keyCode == 13) {
+				$scope.$apply(search);
+			}
+		});
+
+		// Convert Google Play Music API search results to our song format
+		function resultsToSongs(results) {
+			// TODO
+			return {};
+		}
 
 		$scope.addSong = function() {
-			console.log("Adding song " + $scope.searchString);
-			if(!$scope.searchString || $scope.searchString === '') { return; }
-			socket.emit('send:add-song', {
-				id: '' + $scope.main.playlist.length,
-				songName: $scope.searchString,
-				artist: $scope.searchString,
-				upvotes: [],
-				userAdded: "lucas-testing"
-			});
+			console.log("TODO: Adding song " + $scope.searchString);
+			// if(!$scope.searchString || $scope.searchString === '') { return; }
+			// socket.emit('send:add-song', {
+			// 	id: '' + $scope.main.playlist.length,
+			// 	songName: $scope.searchString,
+			// 	artist: $scope.searchString,
+			// 	upvotes: [],
+			// 	userAdded: "lucas-testing"
+			// });
 
 			$scope.searchString = '';
 			console.log("TODO: searchString should be empty now...");
 		};
-
-		$("#search_bar").on('keyup', function (e) {
-			if (e.keyCode == 13) {
-						$scope.addSong();
-						// $scope.search();
-						// $scope.reset();
-				}
-		});
 
 		// PLAYBACK SECTION //
 
@@ -172,12 +176,18 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			$scope.main.nowPlaying.isPlaying = false;
 		});
 
+		socket.on('send:search', function(results) {
+			var songResults = resultsToSongs(results);
+			$scope.main.playlist = songResults;
+		});
+
 		// RESET DB
 		$scope.main.reset = function() {
 			console.log("sending reset");
 			socket.emit('send:reset');
 		};
 
+		// DEBUG
 		$scope.main.test = function() {
 			console.log("test button pressed");
 			console.dir($scope.main.currentSong);
