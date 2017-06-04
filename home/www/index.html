@@ -18,6 +18,7 @@
 
 		<link rel="stylesheet" type="text/css" href="css/favorite.css">
 		<link rel="stylesheet" type="text/css" href="css/index.css">
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 		<script src="./js/controllers.js"></script>
 		<script src="./js/services.js"></script>
@@ -26,11 +27,12 @@
 
 	<body>
 		<ui-view></ui-view>
+		<div class="w3-row-padding w3-padding-32">
 		<script type="text/ng-template" id = "/home.html">
-			<div class = "left">
+			<div class = "left w3-col w3-container w3-hide-small w3-hide-medium l3">
 				<img src="img/logo.png" class="logo">
 			</div>
-			<div class = "middle">
+			<div class = "middle w3-col w3-container l6">
 				<p class = "title">NOW PLAYING</p>
 				<div class="image-cropper">
 					<div class="imageHolder">
@@ -39,12 +41,17 @@
 					</div>
 
 				</div>
+				<div class="controls">
+					<button ng-click="main.reset()">Reset DB</button>
+					<button ng-click="main.beginPlayback()">Begin Playback</button>
+					<button ng-click="main.test()">Test</button>
+				</div>
 				<p class = "songname">{{main.songName}}</p>
 				<p class = "songartist">{{main.artist}}</p>
-
+				
 			</div>
 
-			<div class="right">
+			<div class="right w3-col w3-container l3">
 
 				<p class = "lastPlayed">LAST PLAYED</p>
 				<div class = "lastPlayedLine">
@@ -52,10 +59,10 @@
 				</div>
 				<div class = "lastPlayedSection">
 					<div class = "songInfo">
-						<p class = "lastPlayedTitle">{{main.lastPlayedTitle}}</p>
-						<p class = "lastPlayedArtist">{{main.lastPlayedArtist}}</p>
+						<p class = "playlistSong">{{main.lastPlayedTitle}}</p>
+						<p class = "playlistArtist">{{main.lastPlayedArtist}}</p>
 					</div>
-					<div class = "likeButtonSection">
+					<!-- <div class = "likeButtonSection">
 						<div class='like-wrapper'>
 							<a class='like-button'>
 								<span class='like-icon'>
@@ -65,7 +72,7 @@
 								</span>
 							</a>
 						</div>
-					</div>
+					</div> -->
 
 				</div>
 
@@ -78,8 +85,12 @@
 							<div id = "song-{{$index}}" class = "listSongWrapper">
 								<div class = "songStuff">
 									<div class = 'playlistSongInfoArea'>
+										<div class="spacer">
+										</div>
 										<p class = "playlistSong">{{song.songName}}</p>
 										<p class = "playlistArtist">{{song.artist}}</p>
+										<div class="spacer">
+										</div>
 									</div>
 									<div class = 'playlistSongLikeArea'>
 										<div class='like-wrapper'>
@@ -92,8 +103,9 @@
 												</span>
 											</a>
 										</div>
+										<p class="hi">{{song.upvotes.length}}</p>
 									</div>
-									<p>{{song.upvotes.length}}</p>
+									
 								</div>
 								<hr class = "fadedLine">
 							</div>
@@ -102,10 +114,8 @@
 				</div>
 
 			</div>
+			</div>
 
-			<button ng-click="main.reset()">Reset DB</button>
-			<button ng-click="main.beginPlayback()">Begin Playback</button>
-			<button ng-click="main.test()">Test</button>
 		</script>
 		<audio id = "audioElement" autoplay="false">
 			Oh No! Your browser doesn't support audioj

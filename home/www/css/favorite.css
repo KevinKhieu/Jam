@@ -25,6 +25,7 @@ a {
 	-ms-flex-flow: row wrap;
 			flex-flow: row wrap;
 	width: 50%;
+	margin:auto;
 }
 
 .like-button {

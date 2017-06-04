@@ -13,6 +13,10 @@ body {
 	width: 90%;
 }
 
+.spacer {
+	height: 10px;
+}
+
 .playlistSongLikeArea {
 	float: left;
 	width: 9%;
@@ -24,6 +28,7 @@ body {
 	margin: auto;
 	display: inline-block;
 	vertical-align: middle;
+	text-align: center;
 }
 
 .logo {
@@ -34,13 +39,18 @@ body {
 	padding-top: 15px;
 }
 
+.hi {
+	padding-top:0px;
+	margin-top:1px;
+}
+
 .title {
 	font-family: Eurostile;
 	font-size: 38px;
 	text-align: center;
 	color: #5d5d5d;
 	margin: auto;
-	padding-top: 80px;
+	padding-top: 60px;
 }
 
 .lastPlayed {
@@ -51,7 +61,7 @@ body {
 	font-weight: bold;
 	text-align: right;
 	color: #777777;
-	padding-top: 30px;
+	padding-top: 10px;
 	margin-bottom: 1px;
 	padding-right: 35px;
 	float: right;
@@ -117,6 +127,7 @@ input[type=text]:focus {
 	word-wrap: break-word;
 	display: inline-block;
 	vertical-align: middle;
+	padding-right:30px;
 }
 
 .songInfo2 {
@@ -128,9 +139,10 @@ input[type=text]:focus {
 }
 
 .lastPlayedLine {
-	width: 73%;
+	width: 95%;
 	padding-right: 30px;
 	margin-bottom: 0px;
+	padding-top: 0px;
 	float: right;
 	opacity: .7;
 }
@@ -182,29 +194,29 @@ input[type=text]:focus {
 }
 
 .image-cropper {
-		width: 500px;
-		height: 500px;
-		margin: auto;
-		position: relative;
-		overflow: hidden;
-		margin-top: 40px;
-		border-radius: 50%;
+	width: 450px;
+	height: 450px;
+	margin: auto;
+	position: relative;
+	overflow: hidden;
+	margin-top: 40px;
+	border-radius: 50%;
 }
 
 .imageHolder {
 	display: inline;
-		margin: 0 auto;
-		height: 100%;
-		width: auto;
+	margin: 0 auto;
+	height: 100%;
+	width: auto;
 	z-index: 3;
 	position: absolute;
 }
 
 .songImg {
 	display: inline;
-		margin: 0 auto;
-		height: 100%;
-		width: auto;
+	margin: 0 auto;
+	height: 100%;
+	width: auto;
 	z-index: 1;
 	position: absolute;
 }
@@ -224,7 +236,8 @@ input[type=text]:focus {
 	text-align: center;
 	color: #000000;
 	margin: auto;
-	padding-top: 50px;
+	padding-top: 10px;
+	padding-bottom:0px;
 }
 
 .songartist {
@@ -233,14 +246,21 @@ input[type=text]:focus {
 	text-align: center;
 	color: #5d5d5d;
 	margin: auto;
-	padding-top: 10px;
+	margin-top:0px;
+	padding-top: 0px;
+}
+
+.controls {
+	text-align: center;
+	margin: auto;
+	margin-top:25px;
 }
 
 .searchArea {
 	margin-top: 30px;
 	float:right;
 	padding-right: 30px;
-	width: 75%;
+	width: 100%;
 }
 
 html {
@@ -248,23 +268,27 @@ html {
 }
 
 .fadedLine {
-	opacity: .3;
+/*	opacity: .;*/
 	margin-bottom: 0px;
+	height:1px;
+	width:100%;
+
 }
 
 .playlistSong {
 	font-family: Eurostile;
 	font-size: 20px;
 	text-align: right;
-	width: 230px;
+	width: 100%;
 	color: #000000;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 		overflow: hidden;
 	padding-top: 0px;
-	margin-top: 10px;
+	margin-top: 3px;
 	padding-right: 0px;
-	margin-bottom: 1px;
+	margin-bottom:0px;
+	padding-bottom:0px;
 	float: right;
 	cursor: pointer;
 }
@@ -273,7 +297,7 @@ html {
 	font-family: Eurostile;
 	font-size: 18.5px;
 	text-align: right;
-	width: 230px;
+	width: 100%;
 	color: #777777;
 	padding-top: 0px;
 	text-overflow: ellipsis;
@@ -282,7 +306,7 @@ html {
 	margin-top: 3px;
 	padding-right: 0px;
 	float: right;
-	margin-bottom: 10px;
+	margin-bottom: 2px;
 }
 
 .songList {
