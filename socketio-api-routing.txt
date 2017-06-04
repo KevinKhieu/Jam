@@ -41,15 +41,10 @@ push:pause (server -> clients) {seekpos}
 
 
 /** Google Music Proxy API **/
-// TODO: search functionality and get streaming url
 
 // Search
 get:search (client -> server) {query}
 send:search (server -> client) {results}
-
-// Get song's streaming URL
-get:streamUrl (host-client -> server) {sid}
-send:streamUrl (server -> host-client) {url}
 
 
 /** Debugging **/

@@ -12,7 +12,7 @@
     "angular": "^1.6.4",
     "express": "^4.15.3",
     "mongodb-core": "^2.1.10",
-    "mongoose": "^4.9.9",
+    "mongoose": "^4.10.4",
     "socket.io": "^1.7.4"
   },
   "engines": {

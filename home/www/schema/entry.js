@@ -7,7 +7,7 @@ var mongoose = require('mongoose');
 
 var upvoteSchema = new mongoose.Schema({ ip: 'String' });
 
-// Entry Schema used in webServer.js
+// Entry Schema used in backend
 var entrySchema = new mongoose.Schema({
 	id: String,
 	songName: String,
