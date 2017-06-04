@@ -1,5 +1,5 @@
 var googleApi = require('./googleMusic');
-var PlayMusic = require('../');
+var PlayMusic = require('./play');
 
 var pm = new PlayMusic();
 
@@ -10,4 +10,3 @@ googleApi.initialize(pm, function(pm_init) {
 		});
 	});
 });
-

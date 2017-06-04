@@ -1,13 +1,12 @@
-/* 
+/*
  * This is the node service module that handles calls to google music API.
  */
 
  //This are the required services needed
 var fs = require('fs');
-var PlayMusic = require('../');
+var PlayMusic = require('./play');
 var util = require('util');
 
-var pm = new PlayMusic();
 var config = JSON.parse(fs.readFileSync("config.json"));
 
 exports.initialize = function(pm, callback) {
@@ -36,7 +35,7 @@ exports.search = function(pm, song, callback) {
                 });
             }
         }
-        callback(songs);   
+        callback(songs);
     });
 };
 
