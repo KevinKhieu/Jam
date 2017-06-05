@@ -87,7 +87,9 @@
 				<div class = "searchArea">
 					<input type="text" name="search" placeholder="Search or Add Songs..."
 								ng-model="searchString" class="style-4" id="search_bar">
-					<div class = "songList">
+
+					<!-- PLAYLIST - NO SEARCH -->
+					<div ng-if = "!main.searchResults" class = "songList">
 						<div class = "songInfo2"
 										ng-repeat = "song in main.playlist">
 							<div id = "song-{{$index}}" class = "listSongWrapper">
@@ -109,6 +111,37 @@
 													<div class='heart-animation-1'></div>
 													<div class='heart-animation-2'></div>
 												</span>
+											</a>
+										</div>
+										<p class="hi">{{song.upvotes.length}}</p>
+									</div>
+									
+								</div>
+								<hr class = "fadedLine">
+							</div>
+						</div>
+					</div>
+
+
+					<!-- PLAYLIST - Results for SEARCH -->
+					<div ng-if = "main.searchResults" class = "songList">
+						<div class = "songInfo2"
+										ng-repeat = "song in main.searchList">
+							<div id = "song-{{$index}}" class = "listSongWrapper">
+								<div class = "songStuff">
+									<div class = 'playlistSongInfoArea'>
+										<div class="spacer">
+										</div>
+										<p class = "playlistSong">{{song.songName}}</p>
+										<p class = "playlistArtist">{{song.artist}}</p>
+										<div class="spacer">
+										</div>
+									</div>
+									<div class = 'playlistSongLikeArea add'>
+										<div class='add-wrapper add'>
+											<a class='add-button add'
+												ng-click = "main.addClick($event, song.id, $index)">
+												<img src="img/plus.png" class="add-icon add">
 											</a>
 										</div>
 										<p class="hi">{{song.upvotes.length}}</p>

@@ -16,6 +16,33 @@ a {
 	height: 95vh;
 }
 
+.add-wrapper {
+	width: 50%;
+	margin:auto;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-ms-flex-pack: distribute;
+			justify-content: space-around;
+	-ms-flex-flow: row wrap;
+			flex-flow: row wrap;
+}
+
+.add-icon {
+	height: 50%;
+}
+
+.add-button {
+	border: 0px solid #c7c7c7;
+	border-radius: 40px;
+	padding: .45rem .75rem;
+	color: #d3d3d3;
+	font-weight: bold;
+/*  width: 30px;
+	height: 30px;*/
+	display: flex;
+}
+
 .like-wrapper {
 	display: -webkit-box;
 	display: -ms-flexbox;
@@ -71,6 +98,7 @@ a {
 	display: inline-block;
 	position: relative;
 	font-size: 1.5rem;
+	vertical-align: middle;
 	background: url("http://share.wojtek.im/ajKY+") no-repeat center;
 	background-size: 100%;
 	-webkit-animation: heartUnlike 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;

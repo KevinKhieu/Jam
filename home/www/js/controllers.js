@@ -20,6 +20,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			artist: "No Previous Song"
 		};
 
+		$scope.main.searchResults = false;
+		$scope.main.searchList = [];
+
 
 		/* EVENT HANDLERS */
 
@@ -41,6 +44,32 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			console.log("heart clicked for " + id);
 		}
 
+		$scope.main.addClick = function($event, id, index) {
+
+			// Figured out the liking glitch! Different parts of the heart are considered
+			// the event target depending on exactly where you click.
+
+			console.log(index);
+
+			if ($event.target.classList.contains('add')
+			 || $event.target.parentElement.classList.contains('add')
+			 || $event.target.parentElement.parentElement.classList.contains('add')
+			) {
+				// we will 'unlike' it
+				console.log(index);
+				console.log(this);
+				$scope.addSong($scope.main.searchList[index]);
+				$event.target.classList.remove('add')
+			 	$event.target.parentElement.classList.remove('add')
+			 	$event.target.parentElement.parentElement.classList.remove('add')
+			} else {
+				// we will 'like' it
+				console.log("Already added");
+			}
+
+			// console.log("heart clicked for " + id);
+		}
+
 	//TODO: Kevin, is there a #search-button anywhere anymore? This code may not be doing anything.
 		function handleAPILoaded() {
 			$('#search-button').attr('disabled', false);
@@ -52,13 +81,30 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		function search() {
 			socket.emit("get:search", {query: $scope.searchString});
-			$scope.searchString = '';
+			//$scope.searchString = '';
 		}
 
+		var typingTimer;                //timer identifier
+		var doneTypingInterval = 900;  //time in ms (5 seconds)
 		// On press enter in the search bar, call search()
 		$("#search_bar").on('keyup', function (e) {
-			if (e.keyCode == 13) {
-				$scope.$apply(search);
+			// if (e.keyCode == 13) {
+			// 	$scope.$apply(search);
+			// }
+			clearTimeout(typingTimer);
+			if (this.value) {
+				typingTimer = setTimeout(doneTyping, doneTypingInterval);
+				
+				function doneTyping() {
+					$scope.$apply(search);
+					$scope.main.searchResults = true;
+				}
+				
+			} else {
+				console.log("EMPTY");
+				$scope.$apply(function() {
+					$scope.main.searchResults = false;
+				})
 			}
 		});
 
@@ -178,6 +224,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			var songResults = resultsToSongs(data.results);
 			determineSongsAlreadyAdded(songResults);
 			console.dir(songResults);
+			$scope.main.searchList = songResults;
 			// TODO: Kevin will make search results appear on the screen like magic
 		});
 
