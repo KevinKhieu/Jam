@@ -11,15 +11,26 @@ var util = require('util');
 var config = require('./config.json');
 
 exports.initialize = function(pm, callback) {
-    pm.login({email: config.email, password: config.password}, function(err, resp) {
-        if (err) console.log("Error initializing...");
-        else {
-            pm.init({androidId: resp['androidId'], masterToken: resp['masterToken']}, function(err) {
-                if (err) console.log("Error init");
-                else callback(pm);
-            });
-        }
-    });
+    function login() {
+        pm.login({email: config.email, password: config.password}, function(err, resp) {
+            if (err) {
+                console.log("Error initializing. Retrying...")
+                login();
+            }
+            else {
+                console.log("We in!")
+                pm.init({androidId: resp['androidId'], masterToken: resp['masterToken']}, function(err) {
+                    if (err) {
+                        console.log("Error init"); 
+                        login();
+                    }
+                    else callback(pm);
+                });
+            }
+        });
+    }
+
+    login();
 };
 
 exports.search = function(pm, song, callback) {

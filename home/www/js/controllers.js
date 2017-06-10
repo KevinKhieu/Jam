@@ -85,7 +85,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		}
 
 		var typingTimer;                //timer identifier
-		var doneTypingInterval = 900;  //time in ms (5 seconds)
+		var doneTypingInterval = 250;  //time in ms (5 seconds)
 		// On press enter in the search bar, call search()
 		$("#search_bar").on('keyup', function (e) {
 			// if (e.keyCode == 13) {
