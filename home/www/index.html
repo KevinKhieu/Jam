@@ -47,10 +47,6 @@
 					<button ng-click="main.togglePlay()">{{main.nowPlaying.isPlaying ? "Pause" : "Play"}}</button>
 					<button ng-click="main.test()">Test</button>
 				</div>
-<!-- 				<p class = "songname">{{main.songName}}</p>
-				<p class = "songartist">{{main.artist}}</p>
-				
-======= -->
 				<p class = "songname">{{main.nowPlaying.songName.toUpperCase()}}</p>
 				<p class = "songartist">{{main.nowPlaying.artist.toUpperCase()}}</p>
 			</div>
@@ -63,25 +59,9 @@
 				</div>
 				<div class = "lastPlayedSection">
 					<div class = "songInfo">
-<!-- <<<<<<< HEAD
-						<p class = "playlistSong">{{main.lastPlayedTitle}}</p>
-						<p class = "playlistArtist">{{main.lastPlayedArtist}}</p>
-======= -->
 						<p class = "playlistSong">{{main.lastPlayed.songName}}</p>
 						<p class = "playlistArtist">{{main.lastPlayed.artist}}</p>
 					</div>
-					<!-- <div class = "likeButtonSection">
-						<div class='like-wrapper'>
-							<a class='like-button'>
-								<span class='like-icon'>
-									<div class='heart-animation-1'></div>
-									<div class='heart-animation-2'></div>
-
-								</span>
-							</a>
-						</div>
-					</div> -->
-
 				</div>
 
 				<div class = "searchArea">

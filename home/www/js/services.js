@@ -60,8 +60,8 @@ angular.module('songServices', [])
 		o.songs[i].upvotes = upvotes;
 		o.songs[i].iUpvoted = didIUpvote(upvotes, socket.myIP);
 		console.log(id + ' has ' + upvotes.length + ' upvotes.');
-
-		o._sort();
+		console.log(o);
+		//o._sort();
 	};
 
 	o.removeById = function(id) {
