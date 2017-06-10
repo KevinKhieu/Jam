@@ -94,12 +94,12 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			clearTimeout(typingTimer);
 			if (this.value) {
 				typingTimer = setTimeout(doneTyping, doneTypingInterval);
-				
+
 				function doneTyping() {
 					$scope.$apply(search);
 					$scope.main.searchResults = true;
 				}
-				
+
 			} else {
 				console.log("EMPTY");
 				$scope.$apply(function() {
@@ -131,8 +131,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		function _playNow(link) {
 			// actually start playing the song
 			var aud = document.getElementById("audioElement");
-			aud.src =  "music/" + link;
-			var timestamp = undefined;
+			// aud.src =  "music/" + link;
+			aud.src = link;
+			var timestamp = undefined;  // TODO: Get timestamp of now
 			aud.play();
 		};
 
@@ -225,7 +226,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			determineSongsAlreadyAdded(songResults);
 			console.dir(songResults);
 			$scope.main.searchList = songResults;
-			// TODO: Kevin will make search results appear on the screen like magic
 		});
 
 		// RESET DB

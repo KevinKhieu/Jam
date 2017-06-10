@@ -21,7 +21,7 @@ exports.initialize = function(pm, callback) {
                 console.log("We in!")
                 pm.init({androidId: resp['androidId'], masterToken: resp['masterToken']}, function(err) {
                     if (err) {
-                        console.log("Error init"); 
+                        console.log("Error init");
                         login();
                     }
                     else callback(pm);
@@ -52,7 +52,7 @@ exports.search = function(pm, song, callback) {
 };
 
 exports.getStreamURL = function(pm, song, callback) {
-    pm.getStreamUrl(song['songid'], function (err, resp) {
+    pm.getStreamUrl(song['id'], function (err, resp) {
         if (err) console.log("Error getting song url...");
         else callback(resp);
     });
