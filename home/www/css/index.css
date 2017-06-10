@@ -1,3 +1,8 @@
+@font-face {
+   font-family: Eurostile; 
+   src: url('linotype.com/384/eurostile-family.html');
+} 
+
 body {
 	 background-color: #FFFFFF;
 }
