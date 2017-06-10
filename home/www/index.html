@@ -43,9 +43,8 @@
 				</div>
 				<div class="controls">
 					<button ng-click="main.reset()">Reset DB</button>
-					<button ng-click="main.beginPlayback()">Begin Playback</button>
-					<button ng-click="main.togglePlay()">{{main.nowPlaying.isPlaying ? "Pause" : "Play"}}</button>
-					<button ng-click="main.test()">Test</button>
+					<button ng-click="main.Play()">{{main.nowPlaying.isPlaying ? "PAUSE" : "PLAY"}}</button>
+					<button ng-click="main.Skip()">SKIP</button>
 				</div>
 				<p class = "songname">{{main.nowPlaying.songName.toUpperCase()}}</p>
 				<p class = "songartist">{{main.nowPlaying.artist.toUpperCase()}}</p>
@@ -95,7 +94,7 @@
 										</div>
 										<p class="hi">{{song.upvotes.length}}</p>
 									</div>
-									
+
 								</div>
 								<hr class = "fadedLine">
 							</div>
@@ -126,7 +125,7 @@
 										</div>
 										<p class="hi">{{song.upvotes.length}}</p>
 									</div>
-									
+
 								</div>
 								<hr class = "fadedLine">
 							</div>

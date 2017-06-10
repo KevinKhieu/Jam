@@ -250,9 +250,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on('get:search', function(data) {
 		console.log('getting search for ' + data.query);
 		googlePlayAPI.search(pm, data.query, function(results) {
-			console.dir(results);
 			results = filterUniques(results);
-			console.dir(results);
 
 			socket.emit('send:search', {results: results});
 		});

@@ -176,14 +176,14 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			});
 		}
 
-		$scope.main.beginPlayback = function() {
+		function beginPlayback() {
 			var aud = document.getElementById("audioElement");
 			aud.onended = function() { $scope.$apply(beginNextSong) };
 
 			beginNextSong();
 		};
 
-		$scope.main.togglePlay = function() {
+		function togglePlay() {
 			var aud = document.getElementById("audioElement");
 
 			if($scope.main.nowPlaying.isPlaying === false) {
@@ -199,6 +199,18 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				socket.emit('send:pause');
 			}
 		};
+
+		$scope.main.Play = function() {
+			if($scope.main.nowPlaying.songName === "") {
+				beginPlayback();
+			} else {
+				togglePlay();
+			}
+		}
+
+		$scope.main.Skip = function() {
+			beginNextSong();
+		}
 
 		// Receive playback events from server
 
@@ -231,11 +243,5 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.reset = function() {
 			console.log("sending reset");
 			socket.emit('send:reset');
-		};
-
-		// DEBUG
-		$scope.main.test = function() {
-			console.log("test button pressed");
-			console.dir($scope.main.currentSong);
 		};
 }]);
