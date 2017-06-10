@@ -114,9 +114,16 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		}
 
 		function determineSongsAlreadyAdded(results) {
+			console.log(results)
+			var newResults = [];
 			results.forEach(function(result) {
-				result.isAlreadyAdded = songs.contains(result.id);
+				// result.isAlreadyAdded = songs.contains(result.id);
+				if (!songs.contains(result.id)) {
+					newResults.push(result);
+				}
 			});
+			return newResults;
+			console.log(results)
 		}
 
 		// TODO: front end calls this from search view
@@ -222,9 +229,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		// Receive Google API events back from server
 		socket.on('send:search', function(data) {
 			var songResults = resultsToSongs(data.results);
-			determineSongsAlreadyAdded(songResults);
+			var newResults = determineSongsAlreadyAdded(songResults);
 			console.dir(songResults);
-			$scope.main.searchList = songResults;
+			//$scope.main.searchList = songResults;
+			$scope.main.searchList = newResults;
 		});
 
 		// RESET DB
