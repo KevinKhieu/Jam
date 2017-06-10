@@ -107,19 +107,32 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 		});
 
-		$("#search_bar").on('blur', function (e) {
-		    console.log(e);
-		    this.value = '';
-		    $scope.$apply(function() {
-				$scope.main.searchResults = false;
-			})
-		});    
+		// $("#search_bar").on('blur', function (e) {
+		//     console.log(e);
+		//     this.value = '';
+		//     $scope.$apply(function() {
+		// 		$scope.main.searchResults = false;
+		// 	})
+		// });    
 
 		// Convert Google Play Music API search results to our song format
 		function resultsToSongs(results) {
 			// TODO
 			return results;
 		}
+
+		document.addEventListener('click', function(e) {
+			var el = $(e.target);
+			if (el.parents('div#targetArea').length) {
+				console.log(el.parents('div#targetArea'));
+			} else {
+				console.log("HIHIH");
+				$("#search_bar").value = '';
+				$scope.$apply(function() {
+					$scope.main.searchResults = false;
+				})
+			}
+		})
 
 		function determineSongsAlreadyAdded(results) {
 			console.log(results)
@@ -138,8 +151,8 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.addSong = function(song) {
 			console.log('adding song: ' + song.id);
 			socket.emit('send:add-song', song);
-			$("#search_bar").value = '';
-			$scope.main.searchResults = false;
+			// $("#search_bar").value = '';
+			// $scope.main.searchResults = false;
 		};
 
 		// PLAYBACK SECTION //
