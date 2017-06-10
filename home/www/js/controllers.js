@@ -56,12 +56,11 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			 || $event.target.parentElement.parentElement.classList.contains('add')
 			) {
 				// we will 'unlike' it
-				console.log(index);
-				console.log(this);
 				$scope.addSong($scope.main.searchList[index]);
 				$event.target.classList.remove('add')
 			 	$event.target.parentElement.classList.remove('add')
 			 	$event.target.parentElement.parentElement.classList.remove('add')
+			 	$event.target.src = "img/check.png"
 			} else {
 				// we will 'like' it
 				console.log("Already added");

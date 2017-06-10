@@ -118,9 +118,9 @@
 										</div>
 									</div>
 									<div class = 'playlistSongLikeArea add'>
-										<div class='add-wrapper add'>
+										<div class='add-wrapper add' ng-show="!this.classList.contains('add')">
 											<a class='add-button add'
-												ng-click = "main.addClick($event, song.id, $index)">
+												ng-click = "main.addClick($event, song.id, $index)" ng-show = "!this.classList.contains('add')">
 												<img src="img/plus.png" class="add-icon add">
 											</a>
 										</div>

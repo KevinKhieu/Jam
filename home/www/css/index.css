@@ -283,9 +283,9 @@ html {
 
 .playlistSong {
 	font-family: Eurostile;
-	font-size: 25px;
+	font-size: 23px;
 	text-align: right;
-	width: 100%;
+	width: 90%;
 	color: #000000;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -302,9 +302,9 @@ html {
 
 .playlistArtist {
 	font-family: Eurostile;
-	font-size: 20px;
+	font-size: 19px;
 	text-align: right;
-	width: 100%;
+	width: 98%;
 	color: #777777;
 	padding-top: 0px;
 	text-overflow: ellipsis;

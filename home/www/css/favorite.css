@@ -30,6 +30,8 @@ a {
 
 .add-icon {
 	height: 50%;
+	display: block;
+    margin: auto;
 }
 
 .add-button {
