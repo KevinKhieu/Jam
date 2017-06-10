@@ -107,6 +107,14 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 		});
 
+		$("#search_bar").on('blur', function (e) {
+		    console.log(e);
+		    this.value = '';
+		    $scope.$apply(function() {
+				$scope.main.searchResults = false;
+			})
+		});    
+
 		// Convert Google Play Music API search results to our song format
 		function resultsToSongs(results) {
 			// TODO
@@ -130,6 +138,8 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.addSong = function(song) {
 			console.log('adding song: ' + song.id);
 			socket.emit('send:add-song', song);
+			$("#search_bar").value = '';
+			$scope.main.searchResults = false;
 		};
 
 		// PLAYBACK SECTION //
