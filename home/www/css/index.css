@@ -29,6 +29,7 @@ body {
 	display: inline-block;
 	vertical-align: middle;
 	text-align: center;
+	z-index: 1000;
 }
 
 .logo {
@@ -131,7 +132,7 @@ input[type=text]:focus {
 }
 
 .songInfo2 {
-	width: 90%;
+	width: 97%;
 	float: right;
 	word-wrap: break-word;
 	display: inline-block;
@@ -277,7 +278,7 @@ html {
 
 .playlistSong {
 	font-family: Eurostile;
-	font-size: 20px;
+	font-size: 25px;
 	text-align: right;
 	width: 100%;
 	color: #000000;
@@ -293,9 +294,10 @@ html {
 	cursor: pointer;
 }
 
+
 .playlistArtist {
 	font-family: Eurostile;
-	font-size: 18.5px;
+	font-size: 20px;
 	text-align: right;
 	width: 100%;
 	color: #777777;
@@ -313,6 +315,7 @@ html {
 	float:right;
 	height:600px;
 	overflow-y: scroll;
+	width: 100%;
 }
 /*.top {
 	width: 100%;

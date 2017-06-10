@@ -34,7 +34,7 @@ exports.initialize = function(pm, callback) {
 };
 
 exports.search = function(pm, song, callback) {
-    pm.search(song, 2, function(err, data) {
+    pm.search(song, 10, function(err, data) {
         songs = [];
         if (err) console.log("Error searching...");
         for (var entry in data.entries) {
