@@ -23,6 +23,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.searchResults = false;
 		$scope.main.searchList = [];
 
+		$scope.main.I_AM_HOST = false;
 
 		/* EVENT HANDLERS */
 
@@ -141,7 +142,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			// must set last played before now playing because
 			// newLastPlayed may be $scope.main.nowPlaying
 			$scope.main.lastPlayed = newLastPlayed;
-			if(newLastPlayed.artist === "") newLastPlayed.artist = "No Previous Song";
 
 			// set now playing display
 			$scope.main.nowPlaying = newNowPlaying;
@@ -159,20 +159,16 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				isPlaying: false,
 				timeResumed: undefined,
 				resumedSeekPos: 0
-			}
+			};
 		}
 
 		function beginNextSong() {
 			var song = songs.popNext();
-			console.log("Now Playing: " + song.songName + " by " + song.artist);
-
-			_setAsNowPlaying(_createNowPlaying(song), $scope.main.nowPlaying);
-			$scope.main.nowPlaying.timeResumed = _playNow(song.link);
-			$scope.main.nowPlaying.isPlaying = true;
+			console.log("requesting to server to play " + song.songName);
 
 			socket.emit('send:now-playing', {
-				np: $scope.main.nowPlaying,
-				lp: $scope.main.lastPlayed
+				np: _createNowPlaying(song),
+				lp: $scope.main.nowPlaying
 			});
 		}
 
@@ -215,10 +211,18 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		// Receive playback events from server
 
 		socket.on('push:now-playing', function(data) {
-			console.log("received push:now-playing");
-			songs.removeById(data.np.id);
+			console.log("Now Playing: " + data.np.songName + " by " + data.np.artist);
 			_setAsNowPlaying(data.np, data.lp);
-			// DO NOT actually play the song's audio - just display it as now playing.
+
+			// Actually start playing song
+			if($scope.main.I_AM_HOST) {
+				console.log("now playing from " + data.np_url);
+				$scope.main.nowPlaying.timeResumed = _playNow(data.np_url);
+				$scope.main.nowPlaying.isPlaying = true;
+
+			} else {
+				songs.removeById(data.np.id);
+			}
 		});
 
 		socket.on('push:play', function() {
@@ -235,7 +239,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		socket.on('send:search', function(data) {
 			var songResults = resultsToSongs(data.results);
 			determineSongsAlreadyAdded(songResults);
-			console.dir(songResults);
 			$scope.main.searchList = songResults;
 		});
 
@@ -244,4 +247,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			console.log("sending reset");
 			socket.emit('send:reset');
 		};
+
+		// DEBUG
+		$scope.main.makeHost = function() {
+			$scope.main.I_AM_HOST = true;
+		}
 }]);

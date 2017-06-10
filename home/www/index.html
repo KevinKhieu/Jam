@@ -45,6 +45,8 @@
 					<button ng-click="main.reset()">Reset DB</button>
 					<button ng-click="main.Play()">{{main.nowPlaying.isPlaying ? "PAUSE" : "PLAY"}}</button>
 					<button ng-click="main.Skip()">SKIP</button>
+					<button ng-click="main.makeHost()">
+							{{main.I_AM_HOST ? "You Are Room Host" : "Become Room Host"}}</button>
 				</div>
 				<p class = "songname">{{main.nowPlaying.songName.toUpperCase()}}</p>
 				<p class = "songartist">{{main.nowPlaying.artist.toUpperCase()}}</p>

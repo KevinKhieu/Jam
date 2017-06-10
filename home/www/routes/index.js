@@ -166,19 +166,8 @@ io.sockets.on('connection', function(socket) {
 			if(err){
 				handleError(socket, err.message, "Failed to add song to list.");
 			} else {
-
-				// Get streaming url
-				googlePlayAPI.getStreamURL(pm, song, function(url) {
-					song.link = url;
-					song.save(function(err, song) {
-						if(err) {
-							handleError(socket, err.message, "Failed to save url to song entry.");
-						} else {
-							console.log("Broadcasting push:add-song...");
-							io.emit('push:add-song', song);
-						}
-					});
-				});
+				console.log("Broadcasting push:add-song...");
+				io.emit('push:add-song', song);
 			}
 		});
 	});
@@ -203,9 +192,16 @@ io.sockets.on('connection', function(socket) {
 				handleError(socket, err.message, "DB: Failed to remove now-playing song from queue.");
 			} else {
 				console.log("Successfully removed now-playing song from DB queue.");
+				if(data.lp.artist === "") data.lp.artist = "No Previous Song";
+
 				setLastPlayed(data.lp, function(err, lastPlayed) {
 					setNowPlaying(data.np, function(err, nowPlaying) {
-						socket.broadcast.emit('push:now-playing', {np: nowPlaying, lp: lastPlayed});
+
+						// Get streaming url of Now Playing song
+						googlePlayAPI.getStreamURL(pm, nowPlaying, function(url) {
+							console.log("Broadcasting push:now-playing...");
+							io.emit('push:now-playing', {np: nowPlaying, lp: lastPlayed, np_url: url});
+						});
 					});
 				});
 			}
@@ -251,7 +247,6 @@ io.sockets.on('connection', function(socket) {
 		console.log('getting search for ' + data.query);
 		googlePlayAPI.search(pm, data.query, function(results) {
 			results = filterUniques(results);
-
 			socket.emit('send:search', {results: results});
 		});
 	});
