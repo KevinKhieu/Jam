@@ -124,7 +124,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		document.addEventListener('click', function(e) {
 			var el = $(e.target);
 			if (el.parents('div#targetArea').length) {
-				console.log(el.parents('div#targetArea'));
+
 			} else {
 				console.log("HIHIH");
 				$("#search_bar").value = '';
@@ -194,41 +194,76 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		function beginNextSong() {
 			var song = songs.popNext();
-			console.log("Now Playing: " + song.songName + " by " + song.artist);
+			console.log(song);
+			
+			if (song == null) {
+				console.log("UH OH");
+				console.log("No more songs in queue.");
+				$scope.main.nowPlaying.isPlaying = false;
+				$scope.main.lastPlayed.songName = $scope.main.nowPlaying.songName;
+				$scope.main.lastPlayed.artist = $scope.main.nowPlaying.artist;
+				$scope.main.nowPlaying.songName = "No Current Song";
+				$scope.main.nowPlaying.artist = "";
 
-			_setAsNowPlaying(_createNowPlaying(song), $scope.main.nowPlaying);
-			$scope.main.nowPlaying.timeResumed = _playNow(song.link);
-			$scope.main.nowPlaying.isPlaying = true;
+			} else {
+				console.log("Now Playing: " + song.songName + " by " + song.artist);
 
-			socket.emit('send:now-playing', {
-				np: $scope.main.nowPlaying,
-				lp: $scope.main.lastPlayed
-			});
+				_setAsNowPlaying(_createNowPlaying(song), $scope.main.nowPlaying);
+				$scope.main.nowPlaying.timeResumed = _playNow(song.link);
+				$scope.main.nowPlaying.isPlaying = true;
+
+				socket.emit('send:now-playing', {
+					np: $scope.main.nowPlaying,
+					lp: $scope.main.lastPlayed
+				});
+			}
+			
 		}
 
-		$scope.main.beginPlayback = function() {
+		// $scope.main.beginPlayback = function() {
+		// 	var aud = document.getElementById("audioElement");
+		// 	aud.onended = function() { $scope.$apply(beginNextSong) };
+		// 	beginNextSong();
+		// };
+
+		$scope.main.playSong = function() {
+			var aud = document.getElementById("audioElement");
+			aud.play();
+			$scope.main.nowPlaying.isPlaying = true;
+			console.log('audio playing');
+			socket.emit('send:play');
+		};
+
+		$scope.main.pauseSong = function() {
+			var aud = document.getElementById("audioElement");
+			aud.pause();
+			$scope.main.nowPlaying.isPlaying = false;
+			console.log('audio paused');
+			socket.emit('send:pause');
+		};
+
+		$scope.main.skipSong = function() {
 			var aud = document.getElementById("audioElement");
 			aud.onended = function() { $scope.$apply(beginNextSong) };
-
 			beginNextSong();
 		};
 
-		$scope.main.togglePlay = function() {
-			var aud = document.getElementById("audioElement");
+		// $scope.main.togglePlay = function() {
+		// 	var aud = document.getElementById("audioElement");
 
-			if($scope.main.nowPlaying.isPlaying === false) {
-				aud.play();
-				$scope.main.nowPlaying.isPlaying = true;
-				console.log('audio playing');
-				socket.emit('send:play');
+		// 	if($scope.main.nowPlaying.isPlaying === false) {
+		// 		aud.play();
+		// 		$scope.main.nowPlaying.isPlaying = true;
+		// 		console.log('audio playing');
+		// 		socket.emit('send:play');
 
-			} else {  // Pause
-				aud.pause();
-				$scope.main.nowPlaying.isPlaying = false;
-				console.log('audio paused');
-				socket.emit('send:pause');
-			}
-		};
+		// 	} else {  // Pause
+		// 		aud.pause();
+		// 		$scope.main.nowPlaying.isPlaying = false;
+		// 		console.log('audio paused');
+		// 		socket.emit('send:pause');
+		// 	}
+		// };
 
 		// Receive playback events from server
 
