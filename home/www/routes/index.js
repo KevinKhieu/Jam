@@ -232,20 +232,28 @@ io.sockets.on('connection', function(socket) {
 		});
 	});
 
+	/* Dedupes any two adjacent songs with same name and artist. */
+	function filterUniques(results) {
+		var unique_songs = [];
+		for (var i = 0; i < results.length - 1; i+=2) {
+			if (results[i].songName === results[i + 1].songName && results[i].artist === results[i + 1].artist) {
+				console.log('detected duplicate');
+				unique_songs.push(results[i+1]);
+			} else {
+				unique_songs.push(results[i]);
+				unique_songs.push(results[i+1]);
+			}
+		}
+		return unique_songs;
+	}
+
 	socket.on('get:search', function(data) {
 		console.log('getting search for ' + data.query);
 		googlePlayAPI.search(pm, data.query, function(results) {
 			console.dir(results);
-			var unique_songs = [];
-			for (var i = 0; i < results.length - 1; i+=2) {
-				if (results[i].songName === results[i + 1].songName && results[i].artist === results[i + 1].artist) {
-					unique_songs.push(results[i+1]);
-				} else {
-					unique_songs.push(results[i]);
-					unique_songs.push(results[i+1]);
-				}
-			}
-			results = unique_songs;
+			results = filterUniques(results);
+			console.dir(results);
+
 			socket.emit('send:search', {results: results});
 		});
 	});
