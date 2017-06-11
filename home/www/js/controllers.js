@@ -23,8 +23,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.searchResults = false;
 		$scope.main.searchList = [];
 
-		$scope.main.I_AM_HOST = false;
-
 		/* EVENT HANDLERS */
 
 		$scope.main.toggleClick = function($event, id) {
@@ -128,7 +126,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 		})
 
-		function filterOutSongsAlredayAdded(results) {
+		function filterOutSongsAlreadyAdded(results) {
 			console.log(results)
 			var newResults = [];
 			results.forEach(function(result) {
@@ -273,7 +271,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		// Receive Google Music API search results back from server
 		socket.on('send:search', function(data) {
-			var newResults = filterOutSongsAlredayAdded(songResults);
+			var newResults = filterOutSongsAlreadyAdded(data.results);
 			$scope.main.searchList = newResults;
 		});
 
@@ -282,9 +280,4 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			console.log("sending reset");
 			socket.emit('send:reset');
 		};
-
-		// DEBUG
-		$scope.main.makeHost = function() {
-			$scope.main.I_AM_HOST = true;
-		}
 }]);
