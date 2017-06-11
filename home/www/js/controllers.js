@@ -158,12 +158,8 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		}
 
 		function _setAsNowPlaying(newNowPlaying, newLastPlayed) {
-			// set last played display
-			// must set last played before now playing because
-			// newLastPlayed may be $scope.main.nowPlaying
 			$scope.main.lastPlayed = newLastPlayed;
-
-			// set now playing display
+			// must set last played before now playing to avoid clobbering
 			$scope.main.nowPlaying = newNowPlaying;
 
 			// TODO: set album artwork using albumUrl
