@@ -24,12 +24,12 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.searchList = [];
 		$scope.main.imgURL = "img/noImg.png";
 
-		$scope.main.buttonimg = 'img/pause.png';
-		if(!$scope.main.nowPlaying.isPlaying) {
-			$scope.main.buttonimg = 'img/pause.png';
-		} else {  // Pause
-			$scope.main.buttonimg = 'img/play.png';
-		}
+		// $scope.main.buttonimg = 'img/pause.png';
+		// if(!$scope.main.nowPlaying.isPlaying) {
+		// 	$scope.main.buttonimg = 'img/pause.png';
+		// } else {  // Pause
+		// 	$scope.main.buttonimg = 'img/play.png';
+		// }
 
 		/* EVENT HANDLERS */
 
@@ -162,12 +162,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			$scope.main.lastPlayed = newLastPlayed;
 			// must set last played before now playing to avoid clobbering
 			$scope.main.nowPlaying = newNowPlaying;
-
-			if ($scope.main.nowPlaying.albumUrl == null) {
-				$scope.main.imgURL = "img/noImg.png";
-			} else {
-				$scope.main.imgURL = $scope.main.nowPlaying.albumUrl;
-			}
 
 			// TODO: seek bar
 		}

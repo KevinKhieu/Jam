@@ -30,6 +30,7 @@ clear now playing when host connects
 	or clear now playing when host disconnects?
 
 Frontend stuff
+	Please add album to song display, that will solve much of the problem of duplicates
 	Seek bar
 	song info on hover
 
