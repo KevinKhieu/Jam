@@ -205,7 +205,7 @@ input[type=text]:focus {
 	margin: auto;
 	position: relative;
 	overflow: hidden;
-	margin-top: 40px;
+	margin-top: 20px;
 	border-radius: 50%;
 }
 
@@ -283,7 +283,7 @@ html {
 
 .playlistSong {
 	font-family: Eurostile;
-	font-size: 23px;
+	font-size: 22px;
 	text-align: right;
 	width: 90%;
 	color: #000000;
@@ -322,11 +322,42 @@ html {
 	overflow-y: scroll;
 	width: 100%;
 }
-/*.top {
-	width: 100%;
-	margin: auto;
-	text-align: center;
-	vertical-align: middle;
-	position: relative;
-	display: inline-block;
-}*/
+
+#playButton {
+	height: 100px;
+	width: 100px;
+	border: none;
+	background-color: #FFFFFF;
+	margin-right: 5px;
+}
+
+#playButton img {
+	height: 50%;
+	width: 50%;
+}
+
+#pauseButton {
+	height: 100px;
+	width: 100px;
+	border: none;
+	background-color: #FFFFFF;
+	margin-right: 5px;
+}
+
+#pauseButton img {
+	height: 50%;
+	width: 50%;
+}
+
+#skipButton {
+	height: 100px;
+	width: 100px;
+	border: none;
+	background-color: #FFFFFF;
+}
+
+#skipButton img {
+	height: 50%;
+	width: 50%;
+}
+

@@ -108,22 +108,42 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 		});
 
-		// Convert Google Play Music API search results to our song format
-		function resultsToSongs(results) {
-			// TODO
-			return results;
-		}
+		// $("#search_bar").on('blur', function (e) {
+		//     console.log(e);
+		//     this.value = '';
+		//     $scope.$apply(function() {
+		// 		$scope.main.searchResults = false;
+		// 	})
+		// });
 
-		function determineSongsAlreadyAdded(results) {
+		document.addEventListener('click', function(e) {
+			var el = $(e.target);
+			if (el.parents('div#targetArea').length) {
+
+			} else {
+				$("#search_bar").value = '';
+				$scope.$apply(function() {
+					$scope.main.searchResults = false;
+				})
+			}
+		})
+
+		function filterOutSongsAlredayAdded(results) {
+			console.log(results)
+			var newResults = [];
 			results.forEach(function(result) {
-				result.isAlreadyAdded = songs.contains(result.id);
+				if (!songs.contains(result.id)) {
+					newResults.push(result);
+				}
 			});
+			return newResults;
 		}
 
-		// TODO: front end calls this from search view
 		$scope.addSong = function(song) {
 			console.log('adding song: ' + song.id);
 			socket.emit('send:add-song', song);
+			// $("#search_bar").value = '';
+			// $scope.main.searchResults = false;
 		};
 
 		// PLAYBACK SECTION //
@@ -166,43 +186,57 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		function beginNextSong() {
 			var song = songs.popNext();
-			console.log("requesting to server to play " + song.songName);
-			console.log("next song album id: " + song.albumId);
-			socket.emit('send:now-playing', {
-				np: _createNowPlaying(song),
-				lp: $scope.main.nowPlaying
-			});
+
+			if (song == null) {
+				console.log("No more songs in queue.");
+				$scope.main.nowPlaying.isPlaying = false;
+				$scope.main.lastPlayed.songName = $scope.main.nowPlaying.songName;
+				$scope.main.lastPlayed.artist = $scope.main.nowPlaying.artist;
+				$scope.main.nowPlaying.songName = "No Current Song";
+				$scope.main.nowPlaying.artist = "";
+				// TODO:
+				// socket.emit('send:now-playing', {
+				// 	np: null,
+				// 	lp: $scope.main.nowPlaying
+				// });
+
+			} else {
+				console.log("requesting to server to play " + song.songName);
+				socket.emit('send:now-playing', {
+					np: _createNowPlaying(song),
+					lp: $scope.main.nowPlaying
+				});
+			}
+
 		}
 
 		function beginPlayback() {
 			var aud = document.getElementById("audioElement");
 			aud.onended = function() { $scope.$apply(beginNextSong) };
-
 			beginNextSong();
 		};
 
-		function togglePlay() {
+		function playSong() {
 			var aud = document.getElementById("audioElement");
+			aud.play();
+			$scope.main.nowPlaying.isPlaying = true;
+			console.log('audio playing');
+			socket.emit('send:play');
+		};
 
-			if($scope.main.nowPlaying.isPlaying === false) {
-				aud.play();
-				$scope.main.nowPlaying.isPlaying = true;
-				console.log('audio playing');
-				socket.emit('send:play');
-
-			} else {  // Pause
-				aud.pause();
-				$scope.main.nowPlaying.isPlaying = false;
-				console.log('audio paused');
-				socket.emit('send:pause');
-			}
+		$scope.main.Pause = function() {
+			var aud = document.getElementById("audioElement");
+			aud.pause();
+			$scope.main.nowPlaying.isPlaying = false;
+			console.log('audio paused');
+			socket.emit('send:pause');
 		};
 
 		$scope.main.Play = function() {
 			if($scope.main.nowPlaying.songName === "") {
 				beginPlayback();
 			} else {
-				togglePlay();
+				playSong();
 			}
 		}
 
@@ -237,11 +271,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			$scope.main.nowPlaying.isPlaying = false;
 		});
 
-		// Receive Google API events back from server
+		// Receive Google Music API search results back from server
 		socket.on('send:search', function(data) {
-			var songResults = resultsToSongs(data.results);
-			determineSongsAlreadyAdded(songResults);
-			$scope.main.searchList = songResults;
+			var newResults = filterOutSongsAlredayAdded(songResults);
+			$scope.main.searchList = newResults;
 		});
 
 		// RESET DB
