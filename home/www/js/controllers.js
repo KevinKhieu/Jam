@@ -249,11 +249,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			_setAsNowPlaying(data.np, data.lp, data.albumUrl);
 
 			// Actually start playing song
-			if($scope.main.I_AM_HOST) {
+			if(document.getElementById('skipButton')) {  // We are on host
 				console.log("now playing from " + data.npUrl);
 				$scope.main.nowPlaying.timeResumed = _playNow(data.npUrl);
 				$scope.main.nowPlaying.isPlaying = true;
-
 			} else {
 				songs.removeById(data.np.id);
 			}
