@@ -84,6 +84,7 @@ function setNowPlaying(newNowPlaying, callback) {
 		np.id = newNowPlaying.id;
 		np.songName = newNowPlaying.songName;
 		np.artist = newNowPlaying.artist;
+		np.albumId = newNowPlaying.albumId;
 		np.isPlaying = newNowPlaying.isPlaying;
 		np.timeResumed = newNowPlaying.timeResumed;
 		np.resumedSeekPos = newNowPlaying.resumedSeekPos;
@@ -186,6 +187,7 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('send:now-playing', function(data) {
 		console.log('now playing: ' + data.np.id);
+		console.log('album id: ' + data.np.albumId);
 
 		Entry.findOne({ id:data.np.id }).remove(function(err) {
 			if(err) {
@@ -198,9 +200,17 @@ io.sockets.on('connection', function(socket) {
 					setNowPlaying(data.np, function(err, nowPlaying) {
 
 						// Get streaming url of Now Playing song
-						googlePlayAPI.getStreamURL(pm, nowPlaying, function(url) {
-							console.log("Broadcasting push:now-playing...");
-							io.emit('push:now-playing', {np: nowPlaying, lp: lastPlayed, np_url: url});
+						googlePlayAPI.getStreamURL(pm, nowPlaying, function(songUrl) {
+							console.dir(nowPlaying);
+							googlePlayAPI.getAlbumURL(pm, nowPlaying, function(albumUrl) {
+								console.log("Broadcasting push:now-playing...");
+								io.emit('push:now-playing', {
+									np: nowPlaying,
+									lp: lastPlayed,
+									npUrl: songUrl,
+									npAlbumUrl: albumUrl
+								});
+							});
 						});
 					});
 				});

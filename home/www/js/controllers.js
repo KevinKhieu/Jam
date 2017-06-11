@@ -137,7 +137,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			aud.play();
 		};
 
-		function _setAsNowPlaying(newNowPlaying, newLastPlayed) {
+		function _setAsNowPlaying(newNowPlaying, newLastPlayed, albumUrl) {
 			// set last played display
 			// must set last played before now playing because
 			// newLastPlayed may be $scope.main.nowPlaying
@@ -145,7 +145,8 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 			// set now playing display
 			$scope.main.nowPlaying = newNowPlaying;
-			//TODO: album artwork
+
+			// TODO: set album artwork using albumUrl
 
 			// TODO: seek bar
 		}
@@ -155,6 +156,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				id: song.id,
 				songName: song.songName,
 				artist: song.artist,
+				albumId: song.albumId,
 
 				isPlaying: false,
 				timeResumed: undefined,
@@ -165,7 +167,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		function beginNextSong() {
 			var song = songs.popNext();
 			console.log("requesting to server to play " + song.songName);
-
+			console.log("next song album id: " + song.albumId);
 			socket.emit('send:now-playing', {
 				np: _createNowPlaying(song),
 				lp: $scope.main.nowPlaying
@@ -212,12 +214,12 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		socket.on('push:now-playing', function(data) {
 			console.log("Now Playing: " + data.np.songName + " by " + data.np.artist);
-			_setAsNowPlaying(data.np, data.lp);
+			_setAsNowPlaying(data.np, data.lp, data.albumUrl);
 
 			// Actually start playing song
 			if($scope.main.I_AM_HOST) {
-				console.log("now playing from " + data.np_url);
-				$scope.main.nowPlaying.timeResumed = _playNow(data.np_url);
+				console.log("now playing from " + data.npUrl);
+				$scope.main.nowPlaying.timeResumed = _playNow(data.npUrl);
 				$scope.main.nowPlaying.isPlaying = true;
 
 			} else {
