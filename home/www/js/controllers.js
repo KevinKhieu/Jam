@@ -22,6 +22,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		$scope.main.searchResults = false;
 		$scope.main.searchList = [];
+		$scope.main.imgURL = "img/noImg.png";
 
 		$scope.main.buttonimg = 'img/pause.png';
 		if(!$scope.main.nowPlaying.isPlaying) {
@@ -162,10 +163,15 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			// must set last played before now playing because
 			// newLastPlayed may be $scope.main.nowPlaying
 			$scope.main.lastPlayed = newLastPlayed;
+			console.log(albumUrl);
 
 			// set now playing display
 			$scope.main.nowPlaying = newNowPlaying;
-
+			if (albumUrl == null) {
+				$scope.main.imgURL = "img/noImg.png";
+			} else {
+				$scope.main.imgURL = albumUrl;
+			}
 			// TODO: set album artwork using albumUrl
 
 			// TODO: seek bar
@@ -257,7 +263,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		socket.on('push:now-playing', function(data) {
 			console.log("Now Playing: " + data.np.songName + " by " + data.np.artist);
-			_setAsNowPlaying(data.np, data.lp, data.albumUrl);
+			_setAsNowPlaying(data.np, data.lp, data.npAlbumUrl);
 			if(data.np.songName === "") return;
 
 			if(document.getElementById('skipButton')) {  // We are on host
