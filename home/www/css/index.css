@@ -52,11 +52,11 @@ body {
 
 .title {
 	font-family: Eurostile;
-	font-size: 38px;
+	font-size: 31px;
 	text-align: center;
 	color: #5d5d5d;
 	margin: auto;
-	padding-top: 60px;
+	padding-top: 40px;
 }
 
 .lastPlayed {
@@ -238,7 +238,7 @@ input[type=text]:focus {
 
 .songname {
 	font-family: Eurostile;
-	font-size: 50px;
+	font-size: 40px;
 	text-align: center;
 	color: #000000;
 	margin: auto;
@@ -248,7 +248,7 @@ input[type=text]:focus {
 
 .songartist {
 	font-family: Eurostile;
-	font-size: 38px;
+	font-size: 31px;
 	text-align: center;
 	color: #5d5d5d;
 	margin: auto;
@@ -259,7 +259,7 @@ input[type=text]:focus {
 .controls {
 	text-align: center;
 	margin: auto;
-	margin-top:25px;
+	margin-top:5px;
 }
 
 .searchArea {
@@ -324,8 +324,8 @@ html {
 }
 
 #playButton {
-	height: 100px;
-	width: 100px;
+	height: 85px;
+	width: 85px;
 	border: none;
 	background-color: #FFFFFF;
 	margin-right: 0px;
@@ -339,8 +339,8 @@ html {
 }
 
 #pauseButton {
-	height: 100px;
-	width: 100px;
+	height: 85px;
+	width: 85px;
 	border: none;
 	background-color: #FFFFFF;
 	margin-right: 0px;
@@ -367,42 +367,114 @@ html {
 	width: 50%;
 }
 
-@media only screen and (max-width: 768px) {
-    /* For tablets: */
+@media only screen and (max-device-width: 800px) {
 
-}
-
-@media only screen and (max-width: 600px) {
-    /* For Phones: */
-    .lastPlayedTitle {
-		font-family: Eurostile;
+	.lastPlayed {
 		font-size: 40px;
+	}
+    /* For Phones: */
+    .playlistSong {
+		font-family: Eurostile;
+		font-size: 4.5vw;
 		text-align: right;
-		width: 230px;
+		width: 90%;
 		color: #000000;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 			overflow: hidden;
 		padding-top: 0px;
-		margin-top: 1px;
-		padding-right: 35px;
-		margin-bottom: 1px;
+		margin-top: 3px;
+		padding-right: 0px;
+		margin-bottom:0px;
+		padding-bottom:0px;
 		float: right;
+		cursor: pointer;
 	}
-	.lastPlayedArtist {
+
+
+	.playlistArtist {
 		font-family: Eurostile;
-		font-size: 30px;
+		font-size: 4.0vw;
 		text-align: right;
-		width: 230px;
+		width: 98%;
 		color: #777777;
 		padding-top: 0px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 			overflow: hidden;
 		margin-top: 3px;
-		padding-right: 35px;
+		padding-right: 0px;
 		float: right;
-		margin-bottom: 0px;
+		margin-bottom: 2px;
+	}
+
+	.playlistSongInfoArea {
+		width: 80%;
+	}
+
+	.playlistSongLikeArea {
+		width: 20%;
+		height: 100%;
+	}
+
+	.like-icon {
+		height: 100%;
+		width: 100%;
+	}
+
+	.like-wrapper {
+		height: 80px;
+		width: 80px;
+	}
+
+	.like-button {
+		height: 100%;
+		width: 100%;
+	}
+
+	.hi {
+		height: 20%;
+		width: auto;
+		font-size: 4vw;
+	}
+
+	input[type=text] {
+		width: 96%;
+		float: right;
+		font-family: Eurostile;
+		font-size: 40px;
+		color: #777777;
+		-webkit-transition: width 0.4s ease-in-out;
+		transition: width 0.4s ease-in-out;
+
+		padding: 5px;
+		border: none;
+		border-bottom: solid 2px #c9c9c9;
+		transition: border 0.3s;
+	}
+
+	.image-cropper {
+		width: 650px;
+		height: 650px;
+	}
+
+	.songname {
+		font-size: 70px;
+	}
+
+	.songartist {
+		font-size: 50px;
+	}
+
+	.title {
+		font-size: 50px;
+	}
+
+	.noBottomPadding {
+		padding-bottom: 32px;
 	}
 }
 
+.noBottomPadding {
+	padding-bottom: 1px;
+}
