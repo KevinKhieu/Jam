@@ -253,7 +253,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			console.log("Now Playing: " + data.np.songName + " by " + data.np.artist);
 			if(document.getElementById('skipButton')) {  // We are on host
 				// Actually start playing song
-				console.log("now playing from " + data.npUrl);
 				$scope.main.nowPlaying.timeResumed = _playNow(data.npUrl);
 				$scope.main.nowPlaying.isPlaying = true;
 

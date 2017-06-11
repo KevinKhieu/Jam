@@ -13,7 +13,7 @@ var pm = new PlayMusic();
 googlePlayAPI.initialize(pm, function() {
 	console.log('successfully initialized google play api');
 }, function(err) {
-	console.log("HEYYY");
+	console.log("failed to initialize google play api");
 });
 
 // Generic error handler
