@@ -128,7 +128,7 @@ input[type=text]:focus {
 }
 
 .songInfo {
-	width: 67%;
+	width: 97%;
 	float: right;
 	word-wrap: break-word;
 	display: inline-block;
@@ -328,7 +328,9 @@ html {
 	width: 100px;
 	border: none;
 	background-color: #FFFFFF;
-	margin-right: 5px;
+	margin-right: 0px;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 
 #playButton img {
@@ -341,7 +343,9 @@ html {
 	width: 100px;
 	border: none;
 	background-color: #FFFFFF;
-	margin-right: 5px;
+	margin-right: 0px;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 
 #pauseButton img {
@@ -354,10 +358,51 @@ html {
 	width: 100px;
 	border: none;
 	background-color: #FFFFFF;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 
 #skipButton img {
 	height: 50%;
 	width: 50%;
+}
+
+@media only screen and (max-width: 768px) {
+    /* For tablets: */
+
+}
+
+@media only screen and (max-width: 600px) {
+    /* For Phones: */
+    .lastPlayedTitle {
+		font-family: Eurostile;
+		font-size: 40px;
+		text-align: right;
+		width: 230px;
+		color: #000000;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+			overflow: hidden;
+		padding-top: 0px;
+		margin-top: 1px;
+		padding-right: 35px;
+		margin-bottom: 1px;
+		float: right;
+	}
+	.lastPlayedArtist {
+		font-family: Eurostile;
+		font-size: 30px;
+		text-align: right;
+		width: 230px;
+		color: #777777;
+		padding-top: 0px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+			overflow: hidden;
+		margin-top: 3px;
+		padding-right: 35px;
+		float: right;
+		margin-bottom: 0px;
+	}
 }
 

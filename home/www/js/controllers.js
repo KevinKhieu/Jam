@@ -23,6 +23,12 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.searchResults = false;
 		$scope.main.searchList = [];
 
+		$scope.main.buttonimg = 'img/pause.png';
+		if($scope.main.nowPlaying.isPlaying === false) {
+			$scope.main.buttonimg = 'img/pause.png';
+		} else {  // Pause
+			$scope.main.buttonimg = 'img/play.png';
+		}
 
 		/* EVENT HANDLERS */
 
@@ -245,25 +251,30 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.skipSong = function() {
 			var aud = document.getElementById("audioElement");
 			aud.onended = function() { $scope.$apply(beginNextSong) };
+			$scope.main.buttonimg = 'img/pause.png';
 			beginNextSong();
 		};
 
-		// $scope.main.togglePlay = function() {
-		// 	var aud = document.getElementById("audioElement");
+		$scope.main.togglePlay = function() {
+			var aud = document.getElementById("audioElement");
+			if (songs.popNext() == null) {
+				return;
+			}
+			if($scope.main.nowPlaying.isPlaying === false) {
+				aud.play();
+				$scope.main.buttonimg = 'img/pause.png';
+				$scope.main.nowPlaying.isPlaying = true;
+				console.log('audio playing');
+				socket.emit('send:play');
 
-		// 	if($scope.main.nowPlaying.isPlaying === false) {
-		// 		aud.play();
-		// 		$scope.main.nowPlaying.isPlaying = true;
-		// 		console.log('audio playing');
-		// 		socket.emit('send:play');
-
-		// 	} else {  // Pause
-		// 		aud.pause();
-		// 		$scope.main.nowPlaying.isPlaying = false;
-		// 		console.log('audio paused');
-		// 		socket.emit('send:pause');
-		// 	}
-		// };
+			} else {  // Pause
+				aud.pause();
+				$scope.main.buttonimg = 'img/play.png';
+				$scope.main.nowPlaying.isPlaying = false;
+				console.log('audio paused');
+				socket.emit('send:pause');
+			}
+		};
 
 		// Receive playback events from server
 
