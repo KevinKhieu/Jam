@@ -198,6 +198,8 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		}
 
 		function beginPlayback() {
+			if(songs.songs.length === 0) return;
+
 			var aud = document.getElementById("audioElement");
 			aud.onended = function() { $scope.$apply(beginNextSong) };
 			beginNextSong();
@@ -226,7 +228,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		};
 
 		$scope.main.togglePlay = function() {
-			if($scope.main.nowPlaying.songName === "") {
+			if($scope.main.nowPlaying.songName === "" || $scope.main.nowPlaying.songName === "No Current Song") {
 				beginPlayback();
 			} else {
 				if($scope.main.nowPlaying.isPlaying) {
@@ -247,6 +249,12 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			_setAsNowPlaying(data.np, data.lp);
 			if(data.np.songName === "" || data.np.songName === "No Current Song") {
 				$scope.main.nowPlaying.isPlaying = false;
+				if(document.getElementById('skipButton')) {  // We are on host
+					// TODO: this is a mess, clean it up
+					var aud = document.getElementById("audioElement");
+					aud.pause();
+					aud.src = "";
+				}
 				return;
 			}
 

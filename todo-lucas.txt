@@ -25,9 +25,11 @@ DONE then integrate with google play api
 DONE Record album url as part of backend nowPlaying so that clients get it on connect
 DONE Remove IP tracking for likes
 	refreshing the page should forget all your likes
-Send nowPlaying:none when queue runs out
+DONE Send nowPlaying:none when queue runs out
 clear now playing when host connects
 	or clear now playing when host disconnects?
+Whenever no song is playing, it should say No Current Song.
+Synchronization (like radio)
 
 Frontend stuff
 	Seek bar
