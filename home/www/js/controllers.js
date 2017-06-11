@@ -43,9 +43,11 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			) {
 				// we will 'unlike' it
 				socket.emit('send:downvote', {'id': id} );
+				songs.iVoted(id, false);
 			} else {
 				// we will 'like' it
 				socket.emit('send:upvote', {'id': id} );
+				songs.iVoted(id, true);
 			}
 
 			console.log("heart clicked for " + id);

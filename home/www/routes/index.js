@@ -43,12 +43,12 @@ function applyVote(n, songId, ip, transport) {
 
 	Entry.findOne({'id': songId}, function(err, song) {
 		if(err) {
-			handleError(socket, err.message, "Failed to find song with given id to " + n + "vote.");
+			handleError(transport, err.message, "Failed to find song with given id to " + n + "vote.");
 		} else {
 
 			song[n + 'vote'] (ip, function(err, doc) {
 				if(err) {
-					handleError(socket, err.message, "Failed to " + n + "vote song.");
+					handleError(transport, err.message, "Failed to " + n + "vote song.");
 
 				} else {
 					console.log("Broadcasting push:" + n + "vote...");
