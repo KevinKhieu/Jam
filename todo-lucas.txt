@@ -15,17 +15,26 @@ socketio
 	DONE play and pause routes
 	DONE tidy up controller now-playing state architecture and now-playing schema
 		DONE add playState to schema
-	Combine Begin Playback button with Play button
+	DONE Combine Begin Playback button with Play button
 	streamline NowPlaying initialization with new NowPlaying(json) constructor
 
 
-then integrate with google play api
-	if time: pre-create structure so that all that needs to happen is the library be provided
-keep track of room host with toggle
-build new view that allows room creation
+DONE then integrate with google play api
+	DONE if time: pre-create structure so that all that needs to happen is the library be provided
 
+Record album url as part of backend nowPlaying so that clients get it on connect
+Remove IP tracking for likes
+	refreshing the page should forget all your likes
+Send nowPlaying:none when queue runs out
+clear now playing when host connects
+	or clear now playing when host disconnects?
 
+Frontend stuff
+	Seek bar
+	song info on hover
 
-For Kevin
-media controls: play/pause toggle button, skip button. Seek bar.
-some kind of toggle or other mechanism to specify "host" or "guest" mode
+Maybe later
+	host admin privileges
+		remove songs, queue songs
+	allow clients to ctrl music
+	build room creation / multiple rooms

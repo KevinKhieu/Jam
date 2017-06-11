@@ -157,7 +157,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			aud.play();
 		}
 
-		function _setAsNowPlaying(newNowPlaying, newLastPlayed, albumUrl) {
+		function _setAsNowPlaying(newNowPlaying, newLastPlayed) {
 			// set last played display
 			// must set last played before now playing because
 			// newLastPlayed may be $scope.main.nowPlaying
@@ -256,10 +256,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		// Receive playback events from server
 
 		socket.on('push:now-playing', function(data) {
-			console.log("Now Playing: " + data.np.songName + " by " + data.np.artist);
-			_setAsNowPlaying(data.np, data.lp, data.albumUrl);
+			_setAsNowPlaying(data.np, data.lp);
 			if(data.np.songName === "") return;
 
+			console.log("Now Playing: " + data.np.songName + " by " + data.np.artist);
 			if(document.getElementById('skipButton')) {  // We are on host
 				// Actually start playing song
 				console.log("now playing from " + data.npUrl);
