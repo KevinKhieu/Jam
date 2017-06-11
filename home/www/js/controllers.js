@@ -111,14 +111,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 		});
 
-		// $("#search_bar").on('blur', function (e) {
-		//     console.log(e);
-		//     this.value = '';
-		//     $scope.$apply(function() {
-		// 		$scope.main.searchResults = false;
-		// 	})
-		// });
-
 		document.addEventListener('click', function(e) {
 			var el = $(e.target);
 			if (el.parents('div#targetArea').length) {
@@ -186,16 +178,15 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 			if (song == null) {
 				console.log("No more songs in queue.");
-				$scope.main.nowPlaying.isPlaying = false;
-				$scope.main.lastPlayed.songName = $scope.main.nowPlaying.songName;
-				$scope.main.lastPlayed.artist = $scope.main.nowPlaying.artist;
-				$scope.main.nowPlaying.songName = "No Current Song";
-				$scope.main.nowPlaying.artist = "";
-				// TODO:
-				// socket.emit('send:now-playing', {
-				// 	np: null,
-				// 	lp: $scope.main.nowPlaying
-				// });
+				socket.emit('send:now-playing', {
+					np: _createNowPlaying({
+						id: '',
+						songName: "No Current Song",
+						artist: "",
+						albumId: ''
+					}),
+					lp: $scope.main.nowPlaying
+				});
 
 			} else {
 				console.log("requesting to server to play " + song.songName);
@@ -254,7 +245,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		socket.on('push:now-playing', function(data) {
 			_setAsNowPlaying(data.np, data.lp);
-			if(data.np.songName === "") return;
+			if(data.np.songName === "" || data.np.songName === "No Current Song") {
+				$scope.main.nowPlaying.isPlaying = false;
+				return;
+			}
 
 			console.log("Now Playing: " + data.np.songName + " by " + data.np.artist);
 			if(document.getElementById('skipButton')) {  // We are on host

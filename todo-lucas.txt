@@ -23,7 +23,7 @@ DONE then integrate with google play api
 	DONE if time: pre-create structure so that all that needs to happen is the library be provided
 
 DONE Record album url as part of backend nowPlaying so that clients get it on connect
-Remove IP tracking for likes
+DONE Remove IP tracking for likes
 	refreshing the page should forget all your likes
 Send nowPlaying:none when queue runs out
 clear now playing when host connects
