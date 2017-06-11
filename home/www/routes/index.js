@@ -188,7 +188,6 @@ io.sockets.on('connection', function(socket) {
 	socket.on('send:now-playing', function(data) {
 		console.log('now playing: ' + data.np.id);
 		console.log('album id: ' + data.np.albumId);
-
 		Entry.findOne({ id:data.np.id }).remove(function(err) {
 			if(err) {
 				handleError(socket, err.message, "DB: Failed to remove now-playing song from queue.");

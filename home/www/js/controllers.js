@@ -23,6 +23,13 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.searchResults = false;
 		$scope.main.searchList = [];
 
+		$scope.main.buttonimg = 'img/pause.png';
+		if(!$scope.main.nowPlaying.isPlaying) {
+			$scope.main.buttonimg = 'img/pause.png';
+		} else {  // Pause
+			$scope.main.buttonimg = 'img/play.png';
+		}
+
 		/* EVENT HANDLERS */
 
 		$scope.main.toggleClick = function($event, id) {
@@ -66,11 +73,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 
 			// console.log("heart clicked for " + id);
-		}
-
-	//TODO: Kevin, is there a #search-button anywhere anymore? This code may not be doing anything.
-		function handleAPILoaded() {
-			$('#search-button').attr('disabled', false);
 		}
 
 		$scope.main.playlist = songs.songs;
@@ -214,28 +216,37 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			beginNextSong();
 		};
 
-		function playSong() {
+		function play() {
 			var aud = document.getElementById("audioElement");
 			aud.play();
+
 			$scope.main.nowPlaying.isPlaying = true;
+			$scope.main.buttonimg = 'img/pause.png';
+
 			console.log('audio playing');
 			socket.emit('send:play');
 		};
 
-		$scope.main.Pause = function() {
+		function pause() {
 			var aud = document.getElementById("audioElement");
 			aud.pause();
+
 			$scope.main.nowPlaying.isPlaying = false;
+			$scope.main.buttonimg = 'img/play.png';
+
 			console.log('audio paused');
 			socket.emit('send:pause');
 		};
 
-		$scope.main.Play = function() {
+		$scope.main.togglePlay = function() {
 			if($scope.main.nowPlaying.songName === "") {
 				beginPlayback();
 			} else {
-				playSong();
-			}
+				if($scope.main.nowPlaying.isPlaying) {
+					pause();
+				} else {
+					play();
+				}
 		}
 
 		$scope.main.Skip = function() {
