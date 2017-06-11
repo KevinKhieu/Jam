@@ -48,7 +48,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 
 			console.log("heart clicked for " + id);
-		}
+		};
 
 		$scope.main.addClick = function($event, id, index) {
 
@@ -73,7 +73,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 
 			// console.log("heart clicked for " + id);
-		}
+		};
 
 		$scope.main.playlist = songs.songs;
 
@@ -104,7 +104,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				console.log("EMPTY");
 				$scope.$apply(function() {
 					$scope.main.searchResults = false;
-				})
+				});
 			}
 		});
 
@@ -124,9 +124,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				$("#search_bar").value = '';
 				$scope.$apply(function() {
 					$scope.main.searchResults = false;
-				})
+				});
 			}
-		})
+		});
 
 		function filterOutSongsAlreadyAdded(results) {
 			console.log(results)
@@ -155,7 +155,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			aud.src = link;
 			var timestamp = undefined;  // TODO: Get timestamp of now
 			aud.play();
-		};
+		}
 
 		function _setAsNowPlaying(newNowPlaying, newLastPlayed, albumUrl) {
 			// set last played display
@@ -207,7 +207,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 					lp: $scope.main.nowPlaying
 				});
 			}
-
 		}
 
 		function beginPlayback() {
@@ -247,11 +246,12 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				} else {
 					play();
 				}
-		}
+			}
+		};
 
 		$scope.main.Skip = function() {
 			beginNextSong();
-		}
+		};
 
 		// Receive playback events from server
 
@@ -290,4 +290,5 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			console.log("sending reset");
 			socket.emit('send:reset');
 		};
-}]);
+}
+]);
