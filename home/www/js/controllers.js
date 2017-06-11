@@ -22,6 +22,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		$scope.main.searchResults = false;
 		$scope.main.searchList = [];
+		$scope.main.imgURL = "img/noImg.png";
 
 		$scope.main.buttonimg = 'img/pause.png';
 		if(!$scope.main.nowPlaying.isPlaying) {
@@ -162,7 +163,11 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			// must set last played before now playing to avoid clobbering
 			$scope.main.nowPlaying = newNowPlaying;
 
-			// TODO: set album artwork using albumUrl
+			if ($scope.main.nowPlaying.albumUrl == null) {
+				$scope.main.imgURL = "img/noImg.png";
+			} else {
+				$scope.main.imgURL = $scope.main.nowPlaying.albumUrl;
+			}
 
 			// TODO: seek bar
 		}
