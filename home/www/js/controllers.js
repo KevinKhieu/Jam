@@ -220,7 +220,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			aud.play();
 
 			$scope.main.nowPlaying.isPlaying = true;
-			$scope.main.buttonimg = 'img/pause.png';
+			// $scope.main.buttonimg = 'img/pause.png';
 
 			console.log('audio playing');
 			socket.emit('send:play');
@@ -231,7 +231,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			aud.pause();
 
 			$scope.main.nowPlaying.isPlaying = false;
-			$scope.main.buttonimg = 'img/play.png';
+			// $scope.main.buttonimg = 'img/play.png';
 
 			console.log('audio paused');
 			socket.emit('send:pause');
@@ -258,12 +258,14 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		socket.on('push:now-playing', function(data) {
 			console.log("Now Playing: " + data.np.songName + " by " + data.np.artist);
 			_setAsNowPlaying(data.np, data.lp, data.albumUrl);
+			if(data.np.songName === "") return;
 
-			// Actually start playing song
 			if(document.getElementById('skipButton')) {  // We are on host
+				// Actually start playing song
 				console.log("now playing from " + data.npUrl);
 				$scope.main.nowPlaying.timeResumed = _playNow(data.npUrl);
 				$scope.main.nowPlaying.isPlaying = true;
+
 			} else {
 				songs.removeById(data.np.id);
 			}
