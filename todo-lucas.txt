@@ -26,7 +26,7 @@ DONE Record album url as part of backend nowPlaying so that clients get it on co
 DONE Remove IP tracking for likes
 	refreshing the page should forget all your likes
 DONE Send nowPlaying:none when queue runs out
-clear now playing when host connects
+DONE clear now playing when host connects
 	or clear now playing when host disconnects?
 Whenever no song is playing, it should say No Current Song.
 Synchronization (like radio)

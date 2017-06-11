@@ -7,6 +7,9 @@ that initiated the change.
 
 // Send client's IP to client
 send:your-ip (server -> client) {ip}
+// Tell server whether this client is room host
+send:i-am-room-host (host-client -> server) {}
+	sent in response to the your-ip event
 
 // Push song info to client
 push:queue (server -> client(s)) {queue_songs}

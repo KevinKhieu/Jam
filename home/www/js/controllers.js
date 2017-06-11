@@ -240,7 +240,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		};
 
 		$scope.main.Skip = function() {
-			beginNextSong();
+			if($scope.main.nowPlaying.songName !== ""
+			&& $scope.main.nowPlaying.songName !== "No Current Song")
+				beginNextSong();
 		};
 
 		// Receive playback events from server

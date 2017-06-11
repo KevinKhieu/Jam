@@ -119,6 +119,9 @@ angular.module('songServices', [])
 
 	socket.on('send:your-ip', function(ip) {
 		socket.myIP = ip;
+		if(document.getElementById("THIS_IS_HOST")) {
+			socket.emit("send:i-am-room-host");
+		}
 	});
 
 	socket.on('push:queue', function(data) {

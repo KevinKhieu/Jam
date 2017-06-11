@@ -141,6 +141,7 @@ function pushNowPlaying(transport) {
 }
 
 function setAndPushNowPlaying(io, nowPlaying, lastPlayed, songUrl) {
+	// Set lastPlayed before nowPlaying so as not to clobber
 	setLastPlayed(lastPlayed, function(err, lp) {
 		setNowPlaying(nowPlaying, function(err, np) {
 			console.log("Broadcasting push:now-playing...");
@@ -161,6 +162,12 @@ function getIP(socket) {
 exports.initSocketConnection = function(io) {
 io.sockets.on('connection', function(socket) {
 
+	var is_room_host = false;
+	socket.on('send:i-am-room-host', function() {
+		is_room_host = true;
+		console.log('room host connected');
+	});
+
 	var ip = getIP(socket);
 	socket.emit('send:your-ip', ip);
 
@@ -171,6 +178,21 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('disconnect', function() {
 		console.log('a user disconnected');
+		if(is_room_host) {
+			console.log('room host disconnected! Clearing now playing.');
+			getNowPlaying(function(np) {
+				var nothingPlaying = {
+					id: '',
+					songName: "No Current Song",
+					artist: '',
+					albumUrl: '',
+					isPlaying: false,
+					timeResumed: undefined,
+					resumedSeekPos: 0
+				};
+				setAndPushNowPlaying(io, nothingPlaying, np)
+			});
+		}
 	});
 
 	// ADDING SONG //
