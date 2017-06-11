@@ -84,6 +84,7 @@ function setNowPlaying(newNowPlaying, callback) {
 		np.id = newNowPlaying.id;
 		np.songName = newNowPlaying.songName;
 		np.artist = newNowPlaying.artist;
+		np.albumId = newNowPlaying.albumId;
 		np.isPlaying = newNowPlaying.isPlaying;
 		np.timeResumed = newNowPlaying.timeResumed;
 		np.resumedSeekPos = newNowPlaying.resumedSeekPos;
@@ -166,19 +167,8 @@ io.sockets.on('connection', function(socket) {
 			if(err){
 				handleError(socket, err.message, "Failed to add song to list.");
 			} else {
-
-				// Get streaming url
-				googlePlayAPI.getStreamURL(pm, song, function(url) {
-					song.link = url;
-					song.save(function(err, song) {
-						if(err) {
-							handleError(socket, err.message, "Failed to save url to song entry.");
-						} else {
-							console.log("Broadcasting push:add-song...");
-							io.emit('push:add-song', song);
-						}
-					});
-				});
+				console.log("Broadcasting push:add-song...");
+				io.emit('push:add-song', song);
 			}
 		});
 	});
@@ -197,15 +187,30 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('send:now-playing', function(data) {
 		console.log('now playing: ' + data.np.id);
-		
+		console.log('album id: ' + data.np.albumId);
 		Entry.findOne({ id:data.np.id }).remove(function(err) {
 			if(err) {
 				handleError(socket, err.message, "DB: Failed to remove now-playing song from queue.");
 			} else {
 				console.log("Successfully removed now-playing song from DB queue.");
+				if(data.lp.artist === "") data.lp.artist = "No Previous Song";
+
 				setLastPlayed(data.lp, function(err, lastPlayed) {
 					setNowPlaying(data.np, function(err, nowPlaying) {
-						socket.broadcast.emit('push:now-playing', {np: nowPlaying, lp: lastPlayed});
+
+						// Get streaming url of Now Playing song
+						googlePlayAPI.getStreamURL(pm, nowPlaying, function(songUrl) {
+							console.dir(nowPlaying);
+							googlePlayAPI.getAlbumURL(pm, nowPlaying, function(albumUrl) {
+								console.log("Broadcasting push:now-playing...");
+								io.emit('push:now-playing', {
+									np: nowPlaying,
+									lp: lastPlayed,
+									npUrl: songUrl,
+									npAlbumUrl: albumUrl
+								});
+							});
+						});
 					});
 				});
 			}
@@ -250,10 +255,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on('get:search', function(data) {
 		console.log('getting search for ' + data.query);
 		googlePlayAPI.search(pm, data.query, function(results) {
-			console.dir(results);
 			results = filterUniques(results);
-			console.dir(results);
-
 			socket.emit('send:search', {results: results});
 		});
 	});
