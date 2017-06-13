@@ -61,9 +61,15 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				$event.target.classList.remove('add')
 				 $event.target.parentElement.classList.remove('add')
 				 $event.target.parentElement.parentElement.classList.remove('add')
-
-				 var x = $event.target.childNodes
-				 $event.target.childNodes[1].src = "img/check.png"
+			 	var x = $event.target.childNodes
+			 	console.log($event.target);
+			 	console.log($event.target.childNodes);
+			 	if ($event.target.childNodes.length > 0) {
+			 		$event.target.childNodes[1].src = "img/check.png"
+			 	} else {
+			 		$event.target.src = "img/check.png"
+			 	}
+			
 			} else {
 				console.log("Already added");
 			}
@@ -106,9 +112,11 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		document.addEventListener('click', function(e) {
 			var el = $(e.target);
+
 			if (el.parents('div#targetArea').length) {
 
 			} else {
+				hideOptions();
 				$("#search_bar").value = '';
 				$scope.$apply(function() {
 					$scope.main.searchResults = false;
