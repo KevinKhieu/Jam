@@ -60,7 +60,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 				$event.target.classList.remove('add')
 			 	$event.target.parentElement.classList.remove('add')
 			 	$event.target.parentElement.parentElement.classList.remove('add')
-			 	$event.target.src = "img/check.png"
+
+			 	var x = $event.target.childNodes
+			 	$event.target.childNodes[1].src = "img/check.png"
 			} else {
 				// we will 'like' it
 				console.log("Already added");
@@ -283,6 +285,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		}
 
 		$scope.main.showOptions = function($event, id) {
+			hideOptions();
 			var x = $event.target.parentElement.childNodes[1];
 			$scope.main.currDropdown = x;
 			console.log(x);

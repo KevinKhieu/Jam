@@ -42,7 +42,7 @@
 					</div>
 
 				</div>
-				<p class = "songname shimmer">{{main.nowPlaying.songName.toUpperCase()}}</p>
+				<p class = "songname">{{main.nowPlaying.songName.toUpperCase()}}</p>
 				<p class = "songartist">{{main.nowPlaying.artist.toUpperCase()}}</p>
 
 				<label class="switch">
@@ -119,11 +119,11 @@
 										<div class="spacer">
 										</div>
 									</div>
-									<div class = 'playlistSongLikeArea add'>
-										<div class='add-wrapper add' ng-show="!this.classList.contains('add')">
+									<div class = 'playlistSongLikeArea'>
+										<div class='add-wrapper' ng-show="!this.classList.contains('add')">
 											<a class='add-button add'
 												ng-click = "main.addClick($event, song.id, $index)" ng-show = "!this.classList.contains('add')">
-												<img src="img/plus.png" class="add-icon add">
+												<img src="img/plus.png" class="add-icon">
 											</a>
 										</div>
 										<p class="hi">{{song.upvotes.length}}</p>
