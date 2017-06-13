@@ -132,42 +132,63 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		// PLAYBACK SECTION //
 
 		// When host starts playing music, send timestamp for playback synchronization
-		if($scope.main.thisIsHost) {
-			document.getElementById("audioElement").onplay = function() {
-				socket.emit('send:resumed-time', {
-					resumedSeekPos: 0,  // time offset from beginning of song
-					timeResumed: Date.now() / 1000  // timestamp
+		var aud = document.getElementById("audioElement");
+		aud.onplay = function() {
+
+			if($scope.main.thisIsHost) {
+				var timeResumed = Date.now() / 1000;  // timestamp
+				var resumedSeekPos = aud.currentTime;  // time offset from beginning of song
+				socket.emit('send:play', {
+					resumedSeekPos: resumedSeekPos,
+					timeResumed: timeResumed
 				});
-			};
-		}
+				// _logEndTime(resumedSeekPos, timeResumed, aud.duration);
+			} else {
+				if(!$scope.main.nowPlaying.isPlaying) {
+					aud.pause();
+					return;
+					// This can happen if the song is paused when the user loads the page.
+				}
+
+				if($scope.main.nowPlaying.timeResumed) {
+					// if timeResumed is undefined, the event we received was the original one
+					// fired when the host started playing the song, and we should just
+					// start the song at the beginning.
+					_synchronizeSeekPosition();
+				} else {
+					var timeResumed = Date.now() / 1000;  // timestamp
+					var resumedSeekPos = aud.currentTime;  // time offset from beginning of song
+					// _logEndTime(resumedSeekPos, timeResumed, aud.duration);
+				}
+			}
+		};
 
 		function _synchronizeSeekPosition() {
-			var seekPos = $scope.main.nowPlaying.resumedSeekPos;  // seconds
-			console.log("resumedSeekPos: " + seekPos);
+
+			var resumedSeekPos = $scope.main.nowPlaying.resumedSeekPos;  // seconds
+			var timeResumed = $scope.main.nowPlaying.timeResumed;  // seconds
 
 			var timestamp = Date.now() / 1000;
+			var latency = timestamp - timeResumed;
 
-			var latency = timestamp - $scope.main.nowPlaying.timeResumed;  // seconds
-			console.log(timestamp + " - " + $scope.main.nowPlaying.timeResumed + " = " + latency);
+			var seekPos = resumedSeekPos + latency;
+			aud.currentTime = seekPos;
 
-			console.log('being assigned to aud.currentTime: ' + seekPos + latency);
-			return seekPos + latency;
+			// console.log("resumedSeekPos: " + resumedSeekPos);
+			// console.log(timestamp + " - " + $scope.main.nowPlaying.timeResumed + " = " + latency);
+			// console.log('being assigned to aud.currentTime: ' + seekPos);
+
+			// _logEndTime(seekPos, timestamp, aud.duration);
+		}
+
+		function _logEndTime(position, timestamp, duration) {
+			console.log(timestamp + " + " + duration + " - " + position);
+			var sum = timestamp + duration - position;
+			console.log('end time: ' + sum);
 		}
 
 		function _setAsNowPlaying(newNowPlaying) {
 			$scope.main.nowPlaying = newNowPlaying;
-
-			// seek to correct position if not the host
-			if(!$scope.main.thisIsHost
-				 && $scope.main.nowPlaying.isPlaying
-				 && $scope.main.nowPlaying.timeResumed
-					// if timeResumed is undefined, we received the original now-playing event
-					// fired when the host started playing the song, and we should just
-					// start the song at the beginning.
-				) {
-				var aud = document.getElementById("audioElement");
-				aud.currentTime = _synchronizeSeekPosition();
-			}
 
 			// TODO: seek bar
 		}
@@ -187,17 +208,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		function play() {
 			var aud = document.getElementById("audioElement");
+
 			aud.play();
-			// if(!$scope.main.thisIsHost) {
-			// 	aud.currentTime = _synchronizeSeekPosition();
-			// }
-
 			$scope.main.nowPlaying.isPlaying = true;
-
 			console.log('audio playing');
-			if($scope.main.thisIsHost) {
-				socket.emit('send:play');
-			}
 		};
 
 		function pause() {
@@ -239,8 +253,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			_setAsNowPlaying(np);
 		});
 
-		socket.on('push:play', function() {
+		socket.on('push:play', function(data) {
 			console.log('received push:play');
+			$scope.main.nowPlaying.resumedSeekPos = data.resumedSeekPos;
+			$scope.main.nowPlaying.timeResumed = data.timeResumed;
 			play();
 		});
 

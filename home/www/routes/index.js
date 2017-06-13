@@ -146,22 +146,31 @@ io.sockets.on('connection', function(socket) {
 		}
 	});
 
-	socket.on('send:resumed-time', function(data) {
-		console.log('received send:resume-time: ');
-		console.dir(data);
-		NowPlaying.get(function(np) {
-			np.resumedSeekPos = data.resumedSeekPos;
-			np.timeResumed = data.timeResumed;
-			np.save();
-		});
-	});
+	// socket.on('send:resumed-time', function(data) {
+	// 	console.log('received send:resume-time: ');
+	// 	console.dir(data);
+	// 	NowPlaying.get(function(np) {
+	// 		np.resumedSeekPos = data.resumedSeekPos;
+	// 		np.timeResumed = data.timeResumed;
+	// 		np.save();
+	// 	});
+	// });
 
-	socket.on('send:play', function() {
+	socket.on('send:play', function(data) {
 		console.log('music is now playing');
 		NowPlaying.get(function(np) {
+			console.dir(data);
+			np.resumedSeekPos = data.resumedSeekPos;
+			np.timeResumed = data.timeResumed;
+			var wasPlaying = np.isPlaying;
+
 			np.isPlaying = true;
 			np.save(function(np) {
-				socket.broadcast.emit('push:play');
+				if(wasPlaying) {
+					console.log('received play event, but was already playing, so not forwarding to clients.');
+					return;
+				}
+				socket.broadcast.emit('push:play', data);
 			});
 		});
 	});
