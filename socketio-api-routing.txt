@@ -19,6 +19,10 @@ send:last-played (server -> client) {song}
 send:add-song (client -> server) {song}
 push:add-song (server -> clients) {song}
 
+// Remove Song
+send:remove-song (host-client -> server) {id}
+push:remove-song (server -> clients) {id}
+
 // Upvote Song
 send:upvote (client -> server) {sid}
 push:upvote (server -> clients) {song}
