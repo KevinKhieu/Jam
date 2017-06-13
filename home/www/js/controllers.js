@@ -339,11 +339,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		}
 
 		$scope.main.queueNext = function($event, id) {
-			console.log(id);
-			console.log(songs);
-			var result = $.grep(songs.songs, function(e){ return e.id == id; });
-			if (result.length == 1) {
-				$scope.main.queuedSong = result[0];
+			var song = songs.getById(id);
+			if(song) {
+				$scope.main.queuedSong = song;
 				console.log($scope.main.queuedSong);
 				removeShimmers();
 				console.log($event.target.parentElement.parentElement.childNodes[5]);
@@ -352,10 +350,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			hideOptions();
 		}
 
-		// DOES NOT WORK TEARS
 		$scope.main.removeSong = function($event, id) {
 			console.log(id);
-			songs.removeById(id);
+			socket.emit('send:remove-song', {id:id});
 			hideOptions();
 		}
 }

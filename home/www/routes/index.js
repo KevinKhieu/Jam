@@ -107,6 +107,20 @@ io.sockets.on('connection', function(socket) {
 		});
 	});
 
+	// REMOVING SONG //
+	socket.on('send:remove-song', function(data) {
+		console.log('removing song: ' + data.id);
+
+		Entry.findOne({ id:data.id }).remove(function(err) {
+			if(err) {
+				handleError(socket, err.message, "DB: Failed to remove song from queue.");
+			} else {
+				console.log("Successfully removed song from DB queue.");
+				io.emit('push:remove-song', data);
+			}
+		});
+	});
+
 	// UPVOTING //
 	socket.on('send:upvote', function(data) {
 		applyVote('up', data.id, ip, io);
