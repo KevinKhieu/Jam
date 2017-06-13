@@ -30,8 +30,8 @@ var nowPlayingSchema = new mongoose.Schema({
 	albumUrl: String,
 
 	isPlaying: Boolean,
-	timeResumed: Number,  // timestamp
-	resumedSeekPos: Number, // time offset from beginning of song
+	timeResumed: Number,  // timestamp (float seconds)
+	resumedSeekPos: Number, // time offset from beginning of song (float seconds)
 
 	/// LAST PLAYED ///
 

@@ -131,13 +131,45 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		// PLAYBACK SECTION //
 
+		// When host starts playing music, send timestamp for playback synchronization
+		if($scope.main.thisIsHost) {
+			document.getElementById("audioElement").onplay = function() {
+				socket.emit('send:resumed-time', {
+					resumedSeekPos: 0,  // time offset from beginning of song
+					timeResumed: Date.now() / 1000  // timestamp
+				});
+			};
+		}
+
+		function _synchronizeSeekPosition() {
+			var seekPos = $scope.main.nowPlaying.resumedSeekPos;  // seconds
+			console.log("resumedSeekPos: " + seekPos);
+
+			var timestamp = Date.now() / 1000;
+
+			var latency = timestamp - $scope.main.nowPlaying.timeResumed;  // seconds
+			console.log(timestamp + " - " + $scope.main.nowPlaying.timeResumed + " = " + latency);
+
+			console.log('being assigned to aud.currentTime: ' + seekPos + latency);
+			return seekPos + latency;
+		}
+
 		function _setAsNowPlaying(newNowPlaying) {
 			$scope.main.nowPlaying = newNowPlaying;
-			var timestamp = undefined;  // TODO: get timestamp of now
+
+			// seek to correct position if not the host
+			if(!$scope.main.thisIsHost
+				 && $scope.main.nowPlaying.isPlaying
+				 && $scope.main.nowPlaying.timeResumed
+					// if timeResumed is undefined, we received the original now-playing event
+					// fired when the host started playing the song, and we should just
+					// start the song at the beginning.
+				) {
+				var aud = document.getElementById("audioElement");
+				aud.currentTime = _synchronizeSeekPosition();
+			}
 
 			// TODO: seek bar
-
-			return timestamp;
 		}
 
 		function beginNextSong() {
@@ -156,6 +188,9 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		function play() {
 			var aud = document.getElementById("audioElement");
 			aud.play();
+			// if(!$scope.main.thisIsHost) {
+			// 	aud.currentTime = _synchronizeSeekPosition();
+			// }
 
 			$scope.main.nowPlaying.isPlaying = true;
 
@@ -201,7 +236,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			}
 
 			console.log("Now Playing: " + np.songName + " by " + np.artist);
-			var timeResumed = _setAsNowPlaying(np);
+			_setAsNowPlaying(np);
 		});
 
 		socket.on('push:play', function() {

@@ -34,6 +34,10 @@ push:downvote (server -> clients) {song}
 send:now-playing (host-client -> server) {song}
 push:now-playing (server -> clients) {nowPlaying}
 
+// Synchronize resumed time
+send:resumed-time (host-client -> server) {resumedSeekPos, timeResumed}
+	the host-client sends this in response to push:now-playing.
+
 // Play
 send:play (host-client -> server) {seekpos, timeResumed}
 push:play (server -> clients) {seekpos, timeResumed}

@@ -146,6 +146,16 @@ io.sockets.on('connection', function(socket) {
 		}
 	});
 
+	socket.on('send:resumed-time', function(data) {
+		console.log('received send:resume-time: ');
+		console.dir(data);
+		NowPlaying.get(function(np) {
+			np.resumedSeekPos = data.resumedSeekPos;
+			np.timeResumed = data.timeResumed;
+			np.save();
+		});
+	});
+
 	socket.on('send:play', function() {
 		console.log('music is now playing');
 		NowPlaying.get(function(np) {

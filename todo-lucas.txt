@@ -29,6 +29,12 @@ DONE Send nowPlaying:none when queue runs out
 DONE clear now playing when host connects
 	or clear now playing when host disconnects?
 Synchronization (like radio)
+	DONE all clients stream song
+	DONE play and pause events work
+	song seek/starttime is synchronized
+		DONE synchronize when client loads
+		make sure the client doesn't play if it loads while playback is paused
+		synchronize on send:play
 Whenever no song is playing, it should say No Current Song.
 
 Frontend stuff
