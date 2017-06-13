@@ -31,7 +31,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.isStreaming = false;
 
 		/* EVENT HANDLERS */
-
 		$scope.main.toggleClick = function($event, id) {
 
 			// Figured out the liking glitch! Different parts of the heart are considered

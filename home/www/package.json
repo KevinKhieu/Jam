@@ -20,6 +20,7 @@
     "express": "^4.15.3",
     "mongodb-core": "^2.1.10",
     "mongoose": "^4.10.4",
+    "remodal": "^1.1.1",
     "socket.io": "^1.7.4"
   },
   "engines": {
@@ -30,5 +31,4 @@
     "type": "git",
     "url": "https://github.com/KevinKhieu/Jam"
   }
-
 }
