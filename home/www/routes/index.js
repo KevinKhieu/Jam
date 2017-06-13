@@ -199,15 +199,17 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	/* Dedupes any two adjacent songs with same name and artist. */
+	function duplicate(value, map) {
+		return map.has(value);
+	}
+
 	function filterUniques(results) {
 		var unique_songs = [];
-		for (var i = 0; i < results.length - 1; i+=2) {
-			if (results[i].songName === results[i + 1].songName && results[i].artist === results[i + 1].artist) {
-				console.log('detected duplicate');
-				unique_songs.push(results[i+1]);
-			} else {
+		var map = new Map();
+		for (var i = 0; i < results.length; i++) {
+			if (!duplicate(results[i].artist+results[i].songName, map)) {
 				unique_songs.push(results[i]);
-				unique_songs.push(results[i+1]);
+				map.set(results[i].artist+results[i].songName, "Unique");
 			}
 		}
 		return unique_songs;
