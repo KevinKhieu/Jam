@@ -31,8 +31,8 @@ push:downvote (server -> clients) {song}
 /** Music control with host-client **/
 
 // Now Playing (also includes lastPlayed)
-send:now-playing (host-client -> server) {nowPlaying, lastPlayed}
-push:now-playing (server -> non-host-client(s)) {nowPlaying, lastPlayed}
+send:now-playing (host-client -> server) {song}
+push:now-playing (server -> clients) {nowPlaying}
 
 // Play
 send:play (host-client -> server) {seekpos, timeResumed}

@@ -59,107 +59,16 @@ function applyVote(n, songId, ip, transport) {
 	});
 }
 
-function getNowPlaying(callback) {
-	NowPlaying.findOne(function(err, np) {
-		if(err) {
-			handleError(undefined, err.message, "Failed to get NowPlaying db data");
-		} else {
-			callback(np);
-		}
-	});
-}
-
-function getLastPlayed(callback) {
-	LastPlayed.findOne(function(err, lp) {
-		if(err) {
-			handleError(undefined, err.message, "Failed to get LastPlayed db data");
-		} else {
-			callback(lp);
-		}
-	});
-}
-
-function setNowPlaying(newNowPlaying, callback) {
-	getNowPlaying(function(np) {
-		np.id = newNowPlaying.id;
-		np.songName = newNowPlaying.songName;
-		np.artist = newNowPlaying.artist;
-		np.albumUrl = newNowPlaying.albumUrl;
-		np.isPlaying = newNowPlaying.isPlaying;
-		np.timeResumed = newNowPlaying.timeResumed;
-		np.resumedSeekPos = newNowPlaying.resumedSeekPos;
-		np.save(callback);
-	});
-}
-
-function setLastPlayed(newLastPlayed, callback) {
-	getLastPlayed(function(lp) {
-		lp.id = newLastPlayed.id;
-		lp.songName = newLastPlayed.songName;
-		lp.artist = newLastPlayed.artist;
-		lp.save(callback);
-	});
-}
-
-function initNowPlaying() {
-	getNowPlaying(function(np) {
-		if(np == null) {
-			NowPlaying.create({
-				id: '',
-				songName: '',
-				artist: '',
-				albumUrl: '',
-
-				isPlaying: false,
-				// timeResumed: undefined,  // not set yet
-				resumedSeekPos: 0
-			});
-		}
-	});
-}
-initNowPlaying();
-
-function initLastPlayed() {
-	getLastPlayed(function(lp) {
-		if(lp == null) {
-			LastPlayed.create({
-				id: '',
-				songName: '',
-				artist: ''
-			});
-		}
-	});
-}
-initLastPlayed();
-
-function pushNowPlaying(transport) {
-	getNowPlaying(function(np) {
-		getLastPlayed(function(lp) {
-			transport.emit('push:now-playing', { np: np, lp: lp });
-		});
-	});
-}
-
-function setAndPushNowPlaying(io, nowPlaying, lastPlayed, songUrl) {
-	// Set lastPlayed before nowPlaying so as not to clobber
-	setLastPlayed(lastPlayed, function(err, lp) {
-		setNowPlaying(nowPlaying, function(err, np) {
-			console.log("Broadcasting push:now-playing...");
-			io.emit('push:now-playing', {
-				np: np,
-				lp: lp,
-				npUrl: songUrl
-			});
-		});
-	});
-}
-
-
 function getIP(socket) {
 	return socket.handshake.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
 }
 
 exports.initSocketConnection = function(io) {
+
+// Initialize database
+NowPlaying.init(io);
+
+// Set handlers for socket events
 io.sockets.on('connection', function(socket) {
 
 	var is_room_host = false;
@@ -174,31 +83,19 @@ io.sockets.on('connection', function(socket) {
 	console.log('a user connected with IP ' + ip + '.');
 
 	pushQueue(socket);
-	pushNowPlaying(socket);
+	NowPlaying.push(socket);
 
 	socket.on('disconnect', function() {
 		console.log('a user disconnected');
 		if(is_room_host) {
 			console.log('room host disconnected! Clearing now playing.');
-			getNowPlaying(function(np) {
-				var nothingPlaying = {
-					id: '',
-					songName: "No Current Song",
-					artist: '',
-					albumUrl: '',
-					isPlaying: false,
-					timeResumed: undefined,
-					resumedSeekPos: 0
-				};
-				setAndPushNowPlaying(io, nothingPlaying, np)
-			});
+			NowPlaying.clear();
 		}
 	});
 
 	// ADDING SONG //
 	socket.on('send:add-song', function(song) {
-		console.log("received send:add-song: ");
-		console.dir(song);
+		console.log("received send:add-song: " + song.songName + " by " + song.artist);
 		var song = new Entry(song);
 		song.save(function(err, song) {
 			if(err){
@@ -223,36 +120,35 @@ io.sockets.on('connection', function(socket) {
 	// MEDIA CONTROL FROM ROOM HOST //
 
 	socket.on('send:now-playing', function(data) {
-		console.log('now playing: ' + data.np.id);
-		console.log('album id: ' + data.np.albumId);
 
-		if(data.lp.artist === "") data.lp.artist = "No Previous Song";
-
-		if(data.np.id) {  // True unless we've reached the end of the queue
-			Entry.findOne({ id:data.np.id }).remove(function(err) {
+		if(data) {  // True unless we've reached the end of the queue
+			console.log('now playing: ' + data.id);
+			console.log('album id: ' + data.albumId);
+			Entry.findOne({ id:data.id }).remove(function(err) {
 				if(err) {
 					handleError(socket, err.message, "DB: Failed to remove now-playing song from queue.");
 				} else {
 					console.log("Successfully removed now-playing song from DB queue.");
 
 					// Get urls of Now Playing song
-					googlePlayAPI.getStreamURL(pm, data.np, function(songUrl) {
-						googlePlayAPI.getAlbumURL(pm, data.np, function(albumUrl) {
-							data.np.albumUrl = albumUrl;
-							setAndPushNowPlaying(io, data.np, data.lp, songUrl);
+					googlePlayAPI.getStreamURL(pm, data, function(songUrl) {
+						googlePlayAPI.getAlbumURL(pm, data, function(albumUrl) {
+							data.songUrl = songUrl;
+							data.albumUrl = albumUrl;
+							data.isPlaying = true;
+							NowPlaying.set(data);
 						});
 					});
 				}
 			});
 		} else {  // we've reached the end of the queue
-			data.np.albumUrl = '';
-			setAndPushNowPlaying(io, data.np, data.lp);
+			NowPlaying.clear();
 		}
 	});
 
 	socket.on('send:play', function() {
 		console.log('music is now playing');
-		getNowPlaying(function(np) {
+		NowPlaying.get(function(np) {
 			np.isPlaying = true;
 			np.save(function(np) {
 				socket.broadcast.emit('push:play');
@@ -262,7 +158,7 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('send:pause', function() {
 		console.log('music is now paused');
-		getNowPlaying(function(np) {
+		NowPlaying.get(function(np) {
 			np.isPlaying = false;
 			np.save(function(np) {
 				socket.broadcast.emit('push:pause');
@@ -305,45 +201,8 @@ io.sockets.on('connection', function(socket) {
 			console.log('  successfully removed all songs from database');
 
 			pushQueue(io);
-			// // re-add hardcoded data
-			// Entry.create(hardcodedMusicData, function(err) {
-			// 	if(err) {
-			// 		handleError(socket, err.message, "Failed to add hardcoded data to database.");
-			// 	} else {
-			// 		console.log('  successfully re-added hardcoded music data');
-			// 		pushQueue(io);
-			// 	}
-			// });
 		});
 
-		// clear now playing
-		setNowPlaying({
-			id: '',
-			songName: '',
-			artist: '',
-			albumUrl: '',
-
-			isPlaying: false,
-			// timeResumed: undefined,  // not set yet
-			resumedSeekPos: 0
-		}, function(err, np) {
-			if(err) {
-				handleError(socket, err.message, "Failed to set now playing in database.");
-			} else {
-				setLastPlayed({
-					id: '',
-					songName: '',
-					artist: '',
-				}, function(err, lp) {
-					if(err) {
-						handleError(socket, err.message, "Failed to set last played in database.");
-					} else {
-						console.log('  successfully cleared DB now playing and last played');
-						pushNowPlaying(io);
-					}
-				});
-			}
-		});
-
+		NowPlaying.reset();
 	});
 })};

@@ -28,8 +28,8 @@ DONE Remove IP tracking for likes
 DONE Send nowPlaying:none when queue runs out
 DONE clear now playing when host connects
 	or clear now playing when host disconnects?
-Whenever no song is playing, it should say No Current Song.
 Synchronization (like radio)
+Whenever no song is playing, it should say No Current Song.
 
 Frontend stuff
 	Seek bar

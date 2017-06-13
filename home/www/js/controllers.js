@@ -10,26 +10,21 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		$scope.main = {};
 
-		$scope.main.nowPlaying = {
-			songName: "",
-			artist: ""
-		};
-
-		$scope.main.lastPlayed = {
-			songName: "",
-			artist: "No Previous Song"
-		};
+		// $scope.main.nowPlaying = {
+		// 	songName: "",
+		// 	artist: ""
+		// };
+		//
+		// $scope.main.lastPlayed = {
+		// 	songName: "",
+		// 	artist: "No Previous Song"
+		// };
 
 		$scope.main.searchResults = false;
 		$scope.main.searchList = [];
 		$scope.main.imgURL = "img/noImg.png";
 
-		// $scope.main.buttonimg = 'img/pause.png';
-		// if(!$scope.main.nowPlaying.isPlaying) {
-		// 	$scope.main.buttonimg = 'img/pause.png';
-		// } else {  // Pause
-		// 	$scope.main.buttonimg = 'img/play.png';
-		// }
+		$scope.main.thisIsHost = document.getElementById("THIS_IS_HOST") != null;
 
 		/* EVENT HANDLERS */
 
@@ -54,12 +49,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		};
 
 		$scope.main.addClick = function($event, id, index) {
-
-			// Figured out the liking glitch! Different parts of the heart are considered
-			// the event target depending on exactly where you click.
-
-			console.log(index);
-
 			if ($event.target.classList.contains('add')
 			 || $event.target.parentElement.classList.contains('add')
 			 || $event.target.parentElement.parentElement.classList.contains('add')
@@ -124,7 +113,6 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		});
 
 		function filterOutSongsAlreadyAdded(results) {
-			console.log(results)
 			var newResults = [];
 			results.forEach(function(result) {
 				if (!songs.contains(result.id)) {
@@ -143,58 +131,18 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		// PLAYBACK SECTION //
 
-		function _playNow(link) {
-			// actually start playing the song
-			var aud = document.getElementById("audioElement");
-			// aud.src =  "music/" + link;
-			aud.src = link;
-			var timestamp = undefined;  // TODO: Get timestamp of now
-			aud.play();
-		}
-
-		function _setAsNowPlaying(newNowPlaying, newLastPlayed) {
-			$scope.main.lastPlayed = newLastPlayed;
-			// must set last played before now playing to avoid clobbering
+		function _setAsNowPlaying(newNowPlaying) {
 			$scope.main.nowPlaying = newNowPlaying;
+			var timestamp = undefined;  // TODO: get timestamp of now
 
 			// TODO: seek bar
-		}
 
-		function _createNowPlaying(song) {
-			return {
-				id: song.id,
-				songName: song.songName,
-				artist: song.artist,
-				albumId: song.albumId,
-
-				isPlaying: false,
-				timeResumed: undefined,
-				resumedSeekPos: 0
-			};
+			return timestamp;
 		}
 
 		function beginNextSong() {
 			var song = songs.popNext();
-
-			if (song == null) {
-				console.log("No more songs in queue.");
-				socket.emit('send:now-playing', {
-					np: _createNowPlaying({
-						id: '',
-						songName: "No Current Song",
-						artist: "",
-						albumId: ''
-					}),
-					lp: $scope.main.nowPlaying
-				});
-
-			} else {
-				console.log("requesting to server to play " + song.songName);
-				socket.emit('send:now-playing', {
-					np: _createNowPlaying(song),
-					lp: $scope.main.nowPlaying
-				});
-			}
+			socket.emit('send:now-playing', song);
 		}
 
 		function beginPlayback() {
@@ -228,7 +176,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		};
 
 		$scope.main.togglePlay = function() {
-			if($scope.main.nowPlaying.songName === "" || $scope.main.nowPlaying.songName === "No Current Song") {
+			if($scope.main.nowPlaying.songName === "No Current Song") {
 				beginPlayback();
 			} else {
 				if($scope.main.nowPlaying.isPlaying) {
@@ -240,35 +188,19 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		};
 
 		$scope.main.Skip = function() {
-			if($scope.main.nowPlaying.songName !== ""
-			&& $scope.main.nowPlaying.songName !== "No Current Song")
+			if($scope.main.nowPlaying.songName !== "No Current Song")
 				beginNextSong();
 		};
 
 		// Receive playback events from server
 
-		socket.on('push:now-playing', function(data) {
-			_setAsNowPlaying(data.np, data.lp);
-			if(data.np.songName === "" || data.np.songName === "No Current Song") {
-				$scope.main.nowPlaying.isPlaying = false;
-				if(document.getElementById('skipButton')) {  // We are on host
-					// TODO: this is a mess, clean it up
-					var aud = document.getElementById("audioElement");
-					aud.pause();
-					aud.src = "";
-				}
-				return;
+		socket.on('push:now-playing', function(np) {
+			if(!$scope.main.thisIsHost) {  // not on host
+				songs.removeById(np.id);
 			}
 
-			console.log("Now Playing: " + data.np.songName + " by " + data.np.artist);
-			if(document.getElementById('skipButton')) {  // We are on host
-				// Actually start playing song
-				$scope.main.nowPlaying.timeResumed = _playNow(data.npUrl);
-				$scope.main.nowPlaying.isPlaying = true;
-
-			} else {
-				songs.removeById(data.np.id);
-			}
+			console.log("Now Playing: " + np.songName + " by " + np.artist);
+			var timeResumed = _setAsNowPlaying(np);
 		});
 
 		socket.on('push:play', function() {

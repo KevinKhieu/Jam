@@ -54,8 +54,8 @@
 				</div>
 				<div class = "lastPlayedSection">
 					<div class = "songInfo">
-						<p class = "playlistSong">{{main.lastPlayed.songName}}</p>
-						<p class = "playlistArtist">{{main.lastPlayed.artist}}</p>
+						<p class = "playlistSong">{{main.nowPlaying.lpSongName}}</p>
+						<p class = "playlistArtist">{{main.nowPlaying.lpArtist}}</p>
 					</div>
 				</div>
 
@@ -131,10 +131,10 @@
 
 			</div>
 			</div>
+			<audio id = "audioElement" autoplay="false" src="{{main.nowPlaying.songUrl}}">
+				Oh No! Your browser doesn't support audio
+			</audio>
 		</script>
-		<audio id = "audioElement" autoplay="false">
-			Oh No! Your browser doesn't support audio
-		</audio>
 
 	</body>
 
