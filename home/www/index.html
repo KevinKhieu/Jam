@@ -46,7 +46,7 @@
 				<p class = "songartist">{{main.nowPlaying.artist.toUpperCase()}}</p>
 
 				<label class="switch">
-					<input id = "playCheck" type="checkbox" ng-click = "main.toggleSound()">
+					<input id = "playCheck" type="checkbox" ng-click = "main.toggleSound()" ng-model="main.isStreaming">
 					<div class="slider round"></div>
 				</label>
 				<p class="playCaption">Play Music On This Device</p>
@@ -138,7 +138,7 @@
 
 			</div>
 			</div>
-			<audio id = "audioElement" autoplay="false" src="{{main.nowPlaying.songUrl}}">
+			<audio id = "audioElement" autoplay="false" src="{{main.isStreaming ? main.nowPlaying.songUrl : ''}}">
 				Oh No! Your browser doesn't support audio
 			</audio>
 		</script>
