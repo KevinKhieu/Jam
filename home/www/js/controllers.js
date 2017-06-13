@@ -158,10 +158,11 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			aud.play();
 
 			$scope.main.nowPlaying.isPlaying = true;
-			// $scope.main.buttonimg = 'img/pause.png';
 
 			console.log('audio playing');
-			socket.emit('send:play');
+			if($scope.main.thisIsHost) {
+				socket.emit('send:play');
+			}
 		};
 
 		function pause() {
@@ -169,10 +170,11 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			aud.pause();
 
 			$scope.main.nowPlaying.isPlaying = false;
-			// $scope.main.buttonimg = 'img/play.png';
 
 			console.log('audio paused');
-			socket.emit('send:pause');
+			if($scope.main.thisIsHost) {
+				socket.emit('send:pause');
+			}
 		};
 
 		$scope.main.togglePlay = function() {
@@ -188,8 +190,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		};
 
 		$scope.main.Skip = function() {
-			if($scope.main.nowPlaying.songName !== "No Current Song")
-				beginNextSong();
+			beginNextSong();
 		};
 
 		// Receive playback events from server
@@ -205,12 +206,12 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 		socket.on('push:play', function() {
 			console.log('received push:play');
-			$scope.main.nowPlaying.isPlaying = true;
+			play();
 		});
 
 		socket.on('push:pause', function() {
 			console.log('received push:pause');
-			$scope.main.nowPlaying.isPlaying = false;
+			pause();
 		});
 
 		// Receive Google Music API search results back from server
