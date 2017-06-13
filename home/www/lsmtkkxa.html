@@ -76,7 +76,11 @@
 										ng-repeat = "song in main.playlist">
 							<div id = "song-{{$index}}" class = "listSongWrapper">
 								<div class = "songStuff">
-									<div class = 'playlistSongInfoArea'>
+									<div class = 'playlistSongInfoArea' ng-click="main.showOptions($event, song.id)">
+										<div class="w3-dropdown-content w3-bar-block w3-border">
+									      <a ng-click="main.queueNext($event, song.id)" class="w3-bar-item w3-button">Play Next</a>
+									      <a ng-click="main.removeSong($event, song.id)" class="w3-bar-item w3-button">Remove</a>
+									    </div>
 										<div class="spacer">
 										</div>
 										<p class = "playlistSong">{{song.songName}}</p>
@@ -84,6 +88,9 @@
 										<div class="spacer">
 										</div>
 									</div>
+
+
+
 									<div class = 'playlistSongLikeArea'>
 										<div class='like-wrapper'>
 											<a class='like-button'
@@ -118,11 +125,11 @@
 										<div class="spacer">
 										</div>
 									</div>
-									<div class = 'playlistSongLikeArea add'>
-										<div class='add-wrapper add' ng-show="!this.classList.contains('add')">
+									<div class = 'playlistSongLikeArea'>
+										<div class='add-wrapper' ng-show="!this.classList.contains('add')">
 											<a class='add-button add'
 												ng-click = "main.addClick($event, song.id, $index)" ng-show = "!this.classList.contains('add')">
-												<img src="img/plus.png" class="add-icon add">
+												<img src="img/plus.png" class="add-icon">
 											</a>
 										</div>
 										<p class="hi">{{song.upvotes.length}}</p>

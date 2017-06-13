@@ -27,7 +27,7 @@
 
 	<body>
 		<ui-view></ui-view>
-		<div class="w3-row-padding w3-padding-32 noBottomPadding">
+		<div class="w3-row-padding noBottomPadding">
 		<script type="text/ng-template" id = "/home.html">
 			<div class = "left w3-col w3-container w3-hide-small w3-hide-medium l3">
 				<img src="img/logo.png" class="logo">
@@ -44,6 +44,12 @@
 				</div>
 				<p class = "songname">{{main.nowPlaying.songName.toUpperCase()}}</p>
 				<p class = "songartist">{{main.nowPlaying.artist.toUpperCase()}}</p>
+
+				<label class="switch">
+					<input id = "playCheck" type="checkbox" ng-click = "main.toggleSound()" ng-model="main.isStreaming">
+					<div class="slider round"></div>
+				</label>
+				<p class="playCaption">Play Music On This Device</p>
 			</div>
 
 			<div class="right w3-col w3-container l3">
@@ -77,6 +83,7 @@
 										<div class="spacer">
 										</div>
 									</div>
+
 									<div class = 'playlistSongLikeArea'>
 										<div class='like-wrapper'>
 											<a class='like-button'
@@ -112,11 +119,11 @@
 										<div class="spacer">
 										</div>
 									</div>
-									<div class = 'playlistSongLikeArea add'>
-										<div class='add-wrapper add' ng-show="!this.classList.contains('add')">
+									<div class = 'playlistSongLikeArea'>
+										<div class='add-wrapper' ng-show="!this.classList.contains('add')">
 											<a class='add-button add'
 												ng-click = "main.addClick($event, song.id, $index)" ng-show = "!this.classList.contains('add')">
-												<img src="img/plus.png" class="add-icon add">
+												<img src="img/plus.png" class="add-icon">
 											</a>
 										</div>
 										<p class="hi">{{song.upvotes.length}}</p>
@@ -131,7 +138,7 @@
 
 			</div>
 			</div>
-			<audio id = "audioElement" autoplay="false" src="{{main.nowPlaying.songUrl}}">
+			<audio id = "audioElement" autoplay="false" src="{{main.isStreaming ? main.nowPlaying.songUrl : ''}}">
 				Oh No! Your browser doesn't support audio
 			</audio>
 		</script>

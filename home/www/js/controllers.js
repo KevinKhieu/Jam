@@ -24,7 +24,11 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		$scope.main.searchList = [];
 		$scope.main.imgURL = "img/noImg.png";
 
+		$scope.main.queuedSong = null;		// STORES QUEUED SONG ID
+		$scope.main.currDropdown = null;
+
 		$scope.main.thisIsHost = document.getElementById("THIS_IS_HOST") != null;
+		$scope.main.isStreaming = false;
 
 		/* EVENT HANDLERS */
 
@@ -53,14 +57,14 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			 || $event.target.parentElement.classList.contains('add')
 			 || $event.target.parentElement.parentElement.classList.contains('add')
 			) {
-				// we will 'unlike' it
 				$scope.addSong($scope.main.searchList[index]);
 				$event.target.classList.remove('add')
-			 	$event.target.parentElement.classList.remove('add')
-			 	$event.target.parentElement.parentElement.classList.remove('add')
-			 	$event.target.src = "img/check.png"
+				 $event.target.parentElement.classList.remove('add')
+				 $event.target.parentElement.parentElement.classList.remove('add')
+
+				 var x = $event.target.childNodes
+				 $event.target.childNodes[1].src = "img/check.png"
 			} else {
-				// we will 'like' it
 				console.log("Already added");
 			}
 
@@ -164,7 +168,7 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		};
 
 		function _synchronizeSeekPosition() {
-
+			console.log("syncing playback with host...");
 			var resumedSeekPos = $scope.main.nowPlaying.resumedSeekPos;  // seconds
 			var timeResumed = $scope.main.nowPlaying.timeResumed;  // seconds
 
@@ -194,7 +198,16 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 		}
 
 		function beginNextSong() {
-			var song = songs.popNext();
+
+			var song = null;
+			if ($scope.main.queuedSong == null) {
+				song = songs.popNext();
+			} else {
+				song = $scope.main.queuedSong;
+				$scope.main.queuedSong = null;
+				removeShimmers();
+				songs.removeById(song.id);
+			}
 			socket.emit('send:now-playing', song);
 		}
 
@@ -257,7 +270,13 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			console.log('received push:play');
 			$scope.main.nowPlaying.resumedSeekPos = data.resumedSeekPos;
 			$scope.main.nowPlaying.timeResumed = data.timeResumed;
-			play();
+
+			if(!$scope.main.nowPlaying.isPlaying) {
+				play();
+			} else {
+				// isPlaying may be true in the case that the host fired a play event
+				// for simply updating for synchronization
+			}
 		});
 
 		socket.on('push:pause', function() {
@@ -276,5 +295,61 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			console.log("sending reset");
 			socket.emit('send:reset');
 		};
+
+		$scope.main.toggleSound = function () {
+			console.log($scope.main.isStreaming);
+		};
+
+		$scope.main.showOptions = function($event, id) {
+			hideOptions();
+			var x = $event.target.parentElement.childNodes[1];
+			$scope.main.currDropdown = x;
+			console.log(x);
+				if (x.className.indexOf("w3-show") == -1) {
+						x.className += " w3-show";
+				} else {
+						x.className = x.className.replace(" w3-show", "");
+				}
+		}
+
+		function hideOptions() {
+			console.log($scope.main.currDropdown);
+			if ($scope.main.currDropdown) {
+				console.log("HI");
+				$scope.main.currDropdown.className = $scope.main.currDropdown.className.replace(" w3-show", "");
+			} else {
+				console.log("BYE");
+			}
+		}
+
+		function removeShimmers() {
+			var x = document.getElementsByClassName("shimmer");
+			if (x.length == 0) return;
+			console.log(x)
+			for (var i = 0; i < x.length; i++) {
+				x[i].className = x[i].className.replace(" shimmer", "");
+			}
+		}
+
+		$scope.main.queueNext = function($event, id) {
+			console.log(id);
+			console.log(songs);
+			var result = $.grep(songs.songs, function(e){ return e.id == id; });
+			if (result.length == 1) {
+				$scope.main.queuedSong = result[0];
+				console.log($scope.main.queuedSong);
+				removeShimmers();
+				console.log($event.target.parentElement.parentElement.childNodes[5]);
+				$event.target.parentElement.parentElement.childNodes[5].className += " shimmer";
+			}
+			hideOptions();
+		}
+
+		// DOES NOT WORK TEARS
+		$scope.main.removeSong = function($event, id) {
+			console.log(id);
+			songs.removeById(id);
+			hideOptions();
+		}
 }
 ]);
