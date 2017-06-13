@@ -326,8 +326,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			hideOptions();
 		}
 
+		// DOES NOT WORK TEARS
 		$scope.main.removeSong = function($event, id) {
 			console.log(id);
+			songs.removeById(id);
 			hideOptions();
 		}
 }
