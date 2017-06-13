@@ -44,6 +44,12 @@
 				</div>
 				<p class = "songname">{{main.nowPlaying.songName.toUpperCase()}}</p>
 				<p class = "songartist">{{main.nowPlaying.artist.toUpperCase()}}</p>
+
+				<label class="switch">
+					<input id = "playCheck" type="checkbox" ng-click = "main.toggleSound()">
+					<div class="slider round"></div>
+				</label>
+				<p class="playCaption">Play Music On This Device</p>
 			</div>
 
 			<div class="right w3-col w3-container l3">

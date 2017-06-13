@@ -260,5 +260,14 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 			console.log("sending reset");
 			socket.emit('send:reset');
 		};
+
+		$scope.main.toggleSound = function () {
+			if (document.getElementById('playCheck').checked) 
+			  {
+			      console.log("checked");
+			  } else {
+			      console.log("unchecked");
+			  }
+		}
 }
 ]);
