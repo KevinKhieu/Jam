@@ -11,13 +11,13 @@ function($stateProvider, $urlRouterProvider, $locationProvider) {
 
 	$stateProvider
 		.state('client', {
-			url: '/client/:roomId',
+			url: '/app/:roomId',
 			templateUrl: '/client.html',
 			controller: 'MainController'
 		})
 
 		.state('host', {
-			url: '/host/:roomId',
+			url: '/host/:roomId/:hostId',
 			templateUrl: '/host.html',
 			controller: 'MainController'
 		})
@@ -28,6 +28,6 @@ function($stateProvider, $urlRouterProvider, $locationProvider) {
 			controller: 'LandingController'
 		});
 
-	$urlRouterProvider.otherwise('landing');
+	$urlRouterProvider.otherwise('/landing');
  	// $locationProvider.html5Mode(true);
 }]);

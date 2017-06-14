@@ -9,12 +9,12 @@ jamApp.controller('MainController', [
 	'$stateParams',
 	'$resource',
 	function($scope, songs, socket, socket_controller, $location, $stateParams, $resource) {
-
+		//console.log($stateParams.hostId);
 		$scope.main = {};
+		var hostId = $stateParams.hostId;
 		var roomId = $stateParams.roomId;
-		if (!roomId) {		// CHECK IF ROOM ID IS LEGIT
-			$location.path("/landing");
-		}
+
+		
 		console.log(roomId);
 		// $scope.main.nowPlaying = {
 		// 	songName: "",
@@ -35,6 +35,24 @@ jamApp.controller('MainController', [
 
 		$scope.main.thisIsHost = document.getElementById("THIS_IS_HOST") != null;
 		$scope.main.isStreaming = false;
+
+		if ($scope.main.thisIsHost) {
+			console.log("here")
+			if (!hostId || !roomId || invalidHostId(hostId) || invalidRoomId(roomId)) {
+				$location.path("/landing");
+			}
+		} else {
+			if (!roomId || invalidRoomId(roomId)) {
+				$location.path("/landing");
+			}
+		}
+		function invalidHostId(id) {
+			return false;
+		}
+
+		function invalidRoomId(id) {
+			return false;
+		}
 
 		/* EVENT HANDLERS */
 		$scope.main.toggleClick = function($event, id) {

@@ -30,5 +30,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/KevinKhieu/Jam"
+  },
+  "devDependencies": {
+    "connect-modrewrite": "^0.10.1"
   }
 }
