@@ -7,7 +7,8 @@ var mongoose = require('mongoose');
 
 // Entry Schema used in backend
 var roomSchema = new mongoose.Schema({
-	name: String
+	roomName: String,
+	hostKey: String
 });
 
 // Create model for schema

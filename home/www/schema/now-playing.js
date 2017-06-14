@@ -75,7 +75,6 @@ var NowPlaying = {};
 
 NowPlaying.init = function(io) {
 	NowPlaying.io = io;
-	NowPlaying.reset();
 };
 
 NowPlaying.create = function(roomId, callback) {
@@ -88,6 +87,11 @@ NowPlaying.get = function(roomId, callback) {
 		if(err) {
 			console.log(err.message);
 		} else {
+			// console.log("getting NowPlaying entry for room " + roomId);
+			// console.dir(np);
+			// NowPlayingModel.find({}, function(err, nps) {
+			// 	console.dir(nps);
+			// });
 			callback(np);
 		}
 	});
@@ -97,7 +101,7 @@ NowPlaying.get = function(roomId, callback) {
 NowPlaying.set = function(newNowPlaying, roomId) {
 	NowPlaying.get(roomId, function(np) {
 		np.cycle(newNowPlaying, function(err, np) {
-			console.log("Broadcasting push:now-playing...");
+			console.log("Set now playing: broadcasting push:now-playing for room " + roomId);
 			NowPlaying.io.in(roomId).emit('push:now-playing', np);
 		});
 	});
@@ -105,6 +109,8 @@ NowPlaying.set = function(newNowPlaying, roomId) {
 
 NowPlaying.push = function(roomId, transport) {
 	NowPlaying.get(roomId, function(np) {
+		console.log("pushing NowPlaying entry for room " + roomId);
+		// console.dir(np);
 		transport.emit('push:now-playing', np);
 	});
 };
@@ -116,7 +122,7 @@ NowPlaying.clear = function(roomId) {
 NowPlaying.reset = function() {
 	NowPlayingModel.remove({}, function(err) {
 		if(err) console.log(err);
-		else console.log('successfully cleared NowPlaying table.');
+		else console.log('  successfully cleared NowPlaying table');
 	});
 	// NowPlaying.get(function(np) {
 	// 	np.reset(function(err, np) {

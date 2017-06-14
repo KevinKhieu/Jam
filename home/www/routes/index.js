@@ -69,14 +69,10 @@ NowPlaying.init(io);
 
 // Set handlers for socket events
 io.sockets.on('connection', function(socket) {
+	console.log('a user connected');
 
+	var ip = getIP(socket);
 	var roomId = "";
-
-	socket.on('send:join-room', function(room) {
-		console.log("client joining room " + room.url);
-		socket.join(room.url);
-		roomId = room.url;
-	});
 
 	var is_room_host = false;
 	socket.on('send:i-am-room-host', function() {
@@ -84,13 +80,17 @@ io.sockets.on('connection', function(socket) {
 		console.log('room host connected');
 	});
 
-	var ip = getIP(socket);
-	socket.emit('send:your-ip', ip);
+	socket.on('send:join-room', function(data) {
+		// set room id
+		console.log("client joining room " + data.roomId);
+		socket.join(data.roomId);
+		roomId = data.roomId;
 
-	console.log('a user connected with IP ' + ip + '.');
-
-	pushQueue(socket, roomId);
-	NowPlaying.push(roomId, socket);
+		// push room data to client
+		// socket.emit('send:your-ip', ip);
+		pushQueue(socket, roomId);
+		NowPlaying.push(roomId, socket);
+	});
 
 	socket.on('disconnect', function() {
 		console.log('a user disconnected');
@@ -143,7 +143,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on('send:now-playing', function(data) {
 
 		if(data) {  // True unless we've reached the end of the queue
-			console.log('now playing: ' + data.id);
+			console.log('now playing: ' + data.id + " in room " + roomId);
 			Entry.findOne({ id:data.id, roomId:roomId }).remove(function(err) {
 				if(err) {
 					handleError(socket, err.message, "DB: Failed to remove now-playing song from queue.");
@@ -222,25 +222,28 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('send:create-room', function(data) {
 		console.log('received room creation request');
-		Room.findOne({name: data.name}, function(err, room) {
+		Room.findOne({roomName: data.roomName}, function(err, room) {
 			if(err) {
 				handleError(socket, err.message, "Error searching for room with name " + data.name);
 			} else {
 				if(room) {
 					// room is already taken
-					socket.emit('respond:create-room', {url: null});
+					console.log('room already exists');
+					socket.emit('respond:create-room', {roomName: null});
 				} else {
 					// create new room
-					room = new Room({name: data.name});
+					room = new Room(data);
 					room.save(function(err, room) {
 						if(err) {
 							handleError(socket, err.message, "Error creating room");
 						} else {
-							NowPlaying.create(data.name, function(err, np) {
+							NowPlaying.create(data.roomName, function(err, np) {
 								if(err) {
 									handleError(socket, err.message, "Error creating NowPlaying entry for new room");
 								} else {
-									socket.emit('respond:create-room', {url:room.url});
+									// console.log("np for room " + room.roomName);
+									// console.dir(np);
+									socket.emit('respond:create-room', room);
 								}
 							});
 						}
@@ -251,11 +254,17 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	socket.on('get:room-exists', function(data) {
-		Room.findOne({name: data.name}, function(err, room) {
+		console.log("received get:room-exists");
+		Room.findOne(data, function(err, room) {
 			if(err) {
 				handleError(socket, err.message, "Error searching for room with name " + data.name);
 			} else {
-				socket.emit('respond:room-exists', {exists: room != null});
+				// console.log("found room: " + room);
+				// console.dir(data);
+				socket.emit('respond:room-exists', {
+					exists: room != null,
+					roomName: data.roomName
+				});
 			}
 		});
 	});
@@ -269,15 +278,21 @@ io.sockets.on('connection', function(socket) {
 			if (err) {
 				return handleError(socket, err.message, "Failed to remove all songs from database.");
 			}
-			console.log('  successfully removed all songs from database');
+			console.log('  successfully cleared song table');
 
-			pushQueue(io.in(roomId), roomId);
+			// pushQueue(io.in(roomId), roomId);
 			// TODO: forward changes to all rooms, not just the one who initiated
 		});
 
 		// reset now playing
 		NowPlaying.reset();
 
-		// reset rooms TODO
+		// reset rooms
+		Room.remove({}, function(err) {
+			if(err) {
+				return handleError(socket, err.message, "Failed to remove all rooms from database.");
+			}
+			console.log('  successfully cleared room table');
+		})
 	});
 })};

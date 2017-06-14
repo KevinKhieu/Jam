@@ -70,5 +70,8 @@ Room Creation
 			DONE add roomId to NowPlaying
 		DONE server-side socket handlers for room events
 		DONE join room on connect, send all io.emits to particular rooms
-		update socket events according to socketio-api-routing.txt
-			host key for room
+		DONE update socket events according to socketio-api-routing.txt
+			DONE host key for room
+		if you type invalid room into address bar, go to landing page
+		if you type incorrect room password into address bar, go to landing page
+		Option to log into room as host from landing page?

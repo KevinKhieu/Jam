@@ -8,11 +8,11 @@ that initiated the change.
 
 // Send client's IP to client
 send:your-ip (server -> client) {ip}
+send:join-room (client -> server) {roomId}
+	sent when MainController loads
 // Tell server whether this client is room host
 send:i-am-room-host (host-client -> server) {}
-	sent in response to the your-ip event
-send:join-room (client -> server) {room}
-	sent in response to the your-ip event
+	sent when MainController loads, if client is a host
 
 
 /** Playlist control **/
@@ -72,6 +72,7 @@ respond:create-room (server -> client) {roomName: name or null, hostKey: name or
 // Check whether a particular room exists
 get:room-exists (client -> server) {roomName} DEFAULT_ROOM
 respond:room-exists (server -> client) {roomName, exists} DEFAULT_ROOM
+
 
 /** Debugging **/
 send:reset (client -> server) {}

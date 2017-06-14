@@ -14,7 +14,12 @@ jamApp.controller('MainController', [
 		var hostId = $stateParams.hostId;
 		var roomId = $stateParams.roomId;
 
-		
+		// initial socket events to send
+		socket.emit('send:join-room', {roomId: roomId});
+		if(document.getElementById("THIS_IS_HOST")) {
+			socket.emit("send:i-am-room-host");
+		}
+
 		console.log(roomId);
 		// $scope.main.nowPlaying = {
 		// 	songName: "",
@@ -92,7 +97,7 @@ jamApp.controller('MainController', [
 			 	} else {
 			 		$event.target.src = "img/check.png"
 			 	}
-			
+
 			} else {
 				console.log("Already added");
 			}
@@ -250,7 +255,7 @@ jamApp.controller('MainController', [
 			beginNextSong();
 		};
 
-		aud.onended = function() { 
+		aud.onended = function() {
 			beginNextSong();
 		};
 
@@ -348,12 +353,12 @@ jamApp.controller('MainController', [
 		}
 
 		function hideOptions() {
-			console.log($scope.main.currDropdown);
+			// console.log($scope.main.currDropdown);
 			if ($scope.main.currDropdown) {
-				console.log("HI");
+				// console.log("HI");
 				$scope.main.currDropdown.className = $scope.main.currDropdown.className.replace(" w3-show", "");
 			} else {
-				console.log("BYE");
+				// console.log("BYE");
 			}
 		}
 
