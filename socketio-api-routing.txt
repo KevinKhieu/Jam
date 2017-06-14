@@ -73,6 +73,10 @@ respond:create-room (server -> client) {roomName: name or null, hostKey: name or
 get:room-exists (client -> server) {roomName} DEFAULT_ROOM
 respond:room-exists (server -> client) {roomName, exists} DEFAULT_ROOM
 
+// Check whether a particular room exists and has the given keyCode
+get:host-exists (client -> server) {roomName, hostKey}
+respond:host-exists (client -> server) {roomName, isCorrectKey}
+
 
 /** Debugging **/
 send:reset (client -> server) {}
