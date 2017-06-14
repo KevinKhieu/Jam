@@ -253,6 +253,16 @@ io.sockets.on('connection', function(socket) {
 		});
 	});
 
+	socket.on('get:room-exists', function(data) {
+		Room.findOne({name: data.name}, function(err, room) {
+			if(err) {
+				handleError(socket, err.message, "Error searching for room with name " + data.name);
+			} else {
+				socket.emit('respond:room-exists', {exists: room != null});
+			}
+		});
+	});
+
 	// RESET
 	socket.on('send:reset', function() {
 		console.log("RESETTING DB...");
