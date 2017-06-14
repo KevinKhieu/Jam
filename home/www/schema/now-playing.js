@@ -100,6 +100,7 @@ NowPlaying.get = function(roomId, callback) {
 /* Sets AND pushes NowPlaying to all connected clients */
 NowPlaying.set = function(newNowPlaying, roomId) {
 	NowPlaying.get(roomId, function(np) {
+		if(np == null) return;  // can happen if access a room that doesn't exist
 		np.cycle(newNowPlaying, function(err, np) {
 			console.log("Set now playing: broadcasting push:now-playing for room " + roomId);
 			NowPlaying.io.in(roomId).emit('push:now-playing', np);

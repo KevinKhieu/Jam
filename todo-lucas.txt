@@ -74,4 +74,5 @@ Room Creation
 			DONE host key for room
 		if you type invalid room into address bar, go to landing page
 		if you type incorrect room password into address bar, go to landing page
+		check to make sure given room name is alphanumeric
 		Option to log into room as host from landing page?
