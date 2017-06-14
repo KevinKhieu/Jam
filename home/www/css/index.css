@@ -654,4 +654,13 @@ input:checked + .slider:before {
 	.slider.round:before {
 	  border-radius: 50%;
 	}
+
+	.songImg {
+		display: inline;
+		margin: 0 auto;
+		height: 650px;
+		width: auto;
+		z-index: 1;
+		position: absolute;
+	}
 }
