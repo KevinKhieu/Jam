@@ -3,8 +3,7 @@
 // var Song = require('../schema/Songs');
 var Entry = require('../schema/entry');
 var NowPlaying = require('../schema/now-playing');
-var LastPlayed = require('../schema/last-played');
-var hardcodedMusicData = require('../data.json');
+var Room = require('../schema/room');
 var googlePlayAPI = require('../google-music/googleMusic');
 var PlayMusic = require('../google-music/play');
 
@@ -220,6 +219,30 @@ io.sockets.on('connection', function(socket) {
 		googlePlayAPI.search(pm, data.query, function(results) {
 			results = filterUniques(results);
 			socket.emit('send:search', {results: results});
+		});
+	});
+
+	socket.on('send:create-room', function(data) {
+		console.log('received room creation request');
+		Room.findOne({name: data.name}, function(err, room) {
+			if(err) {
+				handleError(socket, err.message, "Error searching for room with name " + data.name);
+			} else {
+				if(room) {
+					// room is already taken
+					socket.emit('respond:create-room', {url: null});
+				} else {
+					// create new room
+					room = new Room({name: data.name, url: data.name});
+					room.save(function(err, room) {
+						if(err) {
+							handleError(socket, err.message, "Error creating room");
+						} else {
+							socket.emit('respond:create-room', {url:room.url});
+						}
+					});
+				}
+			}
 		});
 	});
 

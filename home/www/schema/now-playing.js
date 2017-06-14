@@ -107,6 +107,7 @@ NowPlaying.clear = function() {
 };
 
 NowPlaying.reset = function() {
+	// TODO: need to remove the np entry then recreate it
 	NowPlaying.get(function(np) {
 		np.reset(function(err, np) {
 			console.log("successfully reset Now Playing in database");

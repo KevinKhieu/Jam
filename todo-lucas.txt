@@ -42,9 +42,28 @@ Frontend stuff
 	Seek bar
 	song info on hover
 
-Maybe later
+Extras
 	add album to song display, that will solve much of the problem of duplicates
-	host admin privileges
+	DONE host admin privileges
 		remove songs, queue songs
 	allow clients to ctrl music
-	build room creation / multiple rooms
+
+Room Creation
+	Manny
+		localhost:3000 - generates random url and redirects you there
+			then on receive socket ip, get url and tell server the url
+		localhost:3000/random-url
+			client view of that room
+		localhost:3000/lsmtkkxa.html/random-url
+			host view of that room
+	Kevin
+		home screen with buttons for room creation and joining a room
+			room creation: form where you input the name
+				sends to server asking if available
+					server returns null if not available
+					server returns new url if available
+				redirects if receive new url
+			join room: redirect to given room
+	Lucas
+		database pluralization
+		DONE server-side socket handler
