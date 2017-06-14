@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('controller', ['songServices', 'ngResource']).controller('LandingController', [
+jamApp.controller('LandingController', [
 	'$scope',
 	'songs',
 	'socket',

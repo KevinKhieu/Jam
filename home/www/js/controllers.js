@@ -1,15 +1,21 @@
 'use strict';
 
-angular.module('controller', ['songServices', 'ngResource']).controller('MainController', [
+jamApp.controller('MainController', [
 	'$scope',
 	'songs',
 	'socket',
 	'socket-controller',
+	'$location',
+	'$stateParams',
 	'$resource',
-	function($scope, songs, socket, socket_controller, $resource) {
+	function($scope, songs, socket, socket_controller, $location, $stateParams, $resource) {
 
 		$scope.main = {};
-
+		var roomId = $stateParams.roomId;
+		if (!roomId) {		// CHECK IF ROOM ID IS LEGIT
+			$location.path("/landing");
+		}
+		console.log(roomId);
 		// $scope.main.nowPlaying = {
 		// 	songName: "",
 		// 	artist: ""
@@ -223,6 +229,10 @@ angular.module('controller', ['songServices', 'ngResource']).controller('MainCon
 
 			var aud = document.getElementById("audioElement");
 			aud.onended = function() { $scope.$apply(beginNextSong) };
+			beginNextSong();
+		};
+
+		aud.onended = function() { 
 			beginNextSong();
 		};
 

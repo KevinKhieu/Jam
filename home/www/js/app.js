@@ -2,19 +2,32 @@
 
 /* Entry point for Angular app. */
 
-var jamApp = angular.module('jamApp', ['controller', 'ui.router']);
+var jamApp = angular.module('jamApp', ['ui.router', 'songServices', 'ngResource']);
 
 jamApp.config([
 '$stateProvider',
-'$urlRouterProvider',
-function($stateProvider, $urlRouterProvider) {
+'$urlRouterProvider','$locationProvider',
+function($stateProvider, $urlRouterProvider, $locationProvider) {
 
 	$stateProvider
-		.state('home', {
-			url: '/home',
-			templateUrl: '/home.html',
+		.state('client', {
+			url: '/client/:roomId',
+			templateUrl: '/client.html',
 			controller: 'MainController'
+		})
+
+		.state('host', {
+			url: '/host/:roomId',
+			templateUrl: '/host.html',
+			controller: 'MainController'
+		})
+
+		.state('landing', {
+			url: '/landing',
+			templateUrl: '/landing.html',
+			controller: 'LandingController'
 		});
 
-	$urlRouterProvider.otherwise('home');
+	$urlRouterProvider.otherwise('landing');
+ 	// $locationProvider.html5Mode(true);
 }]);
