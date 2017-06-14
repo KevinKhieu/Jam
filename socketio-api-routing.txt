@@ -11,6 +11,8 @@ send:your-ip (server -> client) {ip}
 // Tell server whether this client is room host
 send:i-am-room-host (host-client -> server) {}
 	sent in response to the your-ip event
+send:join-room (client -> server) {room}
+	sent in response to the your-ip event
 
 
 /** Playlist control **/

@@ -67,3 +67,4 @@ Room Creation
 	Lucas
 		database pluralization
 		DONE server-side socket handler
+		DONE join room on connect, send all io.emits to particular rooms
