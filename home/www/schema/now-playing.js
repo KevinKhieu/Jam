@@ -21,6 +21,8 @@ var NO_LAST_PLAYED = {
 };
 
 var nowPlayingSchema = new mongoose.Schema({
+	roomId: String,
+
 	/// NOW PLAYING ///
 
 	id: String,  // If id === '', then there is no song currently playing.

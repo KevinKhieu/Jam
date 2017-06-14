@@ -46,7 +46,6 @@ Extras
 	add album to song display, that will solve much of the problem of duplicates
 	DONE host admin privileges
 		remove songs, queue songs
-	allow clients to ctrl music
 
 Room Creation
 	Manny
@@ -66,5 +65,5 @@ Room Creation
 			join room: redirect to given room
 	Lucas
 		database pluralization
-		DONE server-side socket handler
+		DONE server-side socket handlers for room events
 		DONE join room on connect, send all io.emits to particular rooms

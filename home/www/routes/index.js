@@ -23,11 +23,11 @@ function handleError(transport, reason, message, code) {
 		transport.emit('server-error', {"reason": reason, "message": message, "code": code});
 }
 
-function pushQueue(transport) {
+function pushQueue(transport, roomId) {
 	/* Gets the entire song queue from the database and emits it via the given
 	 * transport as a push:queue. The transport should either be a socket, or the
 	 * io object itself. A socket to send to that socket; io to send to all sockets. */
-	Entry.find(function(err, songs) {
+	Entry.find({roomId: roomId}, function(err, songs) {
 		if(err) {
 			handleError(transport, err.message, "Failed to retrieve song list.");
 		} else {
@@ -37,10 +37,10 @@ function pushQueue(transport) {
 	});
 }
 
-function applyVote(n, songId, ip, transport) {
+function applyVote(n, songId, ip, transport, roomId) {
 	console.log('user at ip ' + ip + ' ' + n + 'voted ' + songId);
 
-	Entry.findOne({'id': songId}, function(err, song) {
+	Entry.findOne({id: songId, roomId: roomId}, function(err, song) {
 		if(err) {
 			handleError(transport, err.message, "Failed to find song with given id to " + n + "vote.");
 		} else {
@@ -70,12 +70,12 @@ NowPlaying.init(io);
 // Set handlers for socket events
 io.sockets.on('connection', function(socket) {
 
-	var room_id = "";
+	var roomId = "";
 
 	socket.on('send:join-room', function(room) {
 		console.log("client joining room " + room.url);
 		socket.join(room.url);
-		room_id = room.url;
+		roomId = room.url;
 	});
 
 	var is_room_host = false;
@@ -89,7 +89,7 @@ io.sockets.on('connection', function(socket) {
 
 	console.log('a user connected with IP ' + ip + '.');
 
-	pushQueue(socket);
+	pushQueue(socket, roomId);
 	NowPlaying.push(socket);
 
 	socket.on('disconnect', function() {
@@ -103,13 +103,14 @@ io.sockets.on('connection', function(socket) {
 	// ADDING SONG //
 	socket.on('send:add-song', function(song) {
 		console.log("received send:add-song: " + song.songName + " by " + song.artist);
+		song.roomId = roomId;
 		var song = new Entry(song);
 		song.save(function(err, song) {
 			if(err){
 				handleError(socket, err.message, "Failed to add song to list.");
 			} else {
 				console.log("Broadcasting push:add-song...");
-				io.in(room_id).emit('push:add-song', song);
+				io.in(roomId).emit('push:add-song', song);
 			}
 		});
 	});
@@ -117,24 +118,24 @@ io.sockets.on('connection', function(socket) {
 	// REMOVING SONG //
 	socket.on('send:remove-song', function(data) {
 		console.log('removing song: ' + data.id);
-		Entry.findOne({ id:data.id }).remove(function(err) {
+		Entry.findOne({ id:data.id, roomId:roomId }).remove(function(err) {
 			if(err) {
 				handleError(socket, err.message, "DB: Failed to remove song from queue.");
 			} else {
 				console.log("Successfully removed song from DB queue.");
-				io.in(room_id).emit('push:remove-song', data);
+				io.in(roomId).emit('push:remove-song', data);
 			}
 		});
 	});
 
 	// UPVOTING //
 	socket.on('send:upvote', function(data) {
-		applyVote('up', data.id, ip, io.in(room_id));
+		applyVote('up', data.id, ip, io.in(roomId), roomId);
 	});
 
 	// DOWNVOTING //
 	socket.on('send:downvote', function(data) {
-		applyVote('down', data.id, ip, io.in(room_id));
+		applyVote('down', data.id, ip, io.in(roomId), roomId);
 	});
 
 	// MEDIA CONTROL FROM ROOM HOST //
@@ -143,7 +144,7 @@ io.sockets.on('connection', function(socket) {
 
 		if(data) {  // True unless we've reached the end of the queue
 			console.log('now playing: ' + data.id);
-			Entry.findOne({ id:data.id }).remove(function(err) {
+			Entry.findOne({ id:data.id, roomId:roomId }).remove(function(err) {
 				if(err) {
 					handleError(socket, err.message, "DB: Failed to remove now-playing song from queue.");
 				} else {
@@ -155,13 +156,13 @@ io.sockets.on('connection', function(socket) {
 							data.songUrl = songUrl;
 							data.albumUrl = albumUrl;
 							data.isPlaying = true;
-							NowPlaying.set(data, room_id);
+							NowPlaying.set(data, roomId);
 						});
 					});
 				}
 			});
 		} else {  // we've reached the end of the queue
-			NowPlaying.clear(room_id);
+			NowPlaying.clear(roomId);
 		}
 	});
 
@@ -189,7 +190,7 @@ io.sockets.on('connection', function(socket) {
 				// 	console.log('received play event, but was already playing, so not forwarding to clients.');
 				// 	return;
 				// }
-				socket.broadcast.to(room_id).emit('push:play', data);
+				socket.broadcast.to(roomId).emit('push:play', data);
 			});
 		});
 	});
@@ -199,7 +200,7 @@ io.sockets.on('connection', function(socket) {
 		NowPlaying.get(function(np) {
 			np.isPlaying = false;
 			np.save(function(np) {
-				socket.broadcast.to(room_id).emit('push:pause');
+				socket.broadcast.to(roomId).emit('push:pause');
 			});
 		});
 	});
@@ -274,9 +275,13 @@ io.sockets.on('connection', function(socket) {
 			}
 			console.log('  successfully removed all songs from database');
 
-			pushQueue(io.in(room_id));
+			pushQueue(io.in(roomId), roomId);
+			// TODO: forward changes to all rooms, not just the one who initiated
 		});
 
-		NowPlaying.reset(room_id);
+		// reset now playing
+		NowPlaying.reset(roomId);
+
+		// reset rooms TODO
 	});
 })};
