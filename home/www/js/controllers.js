@@ -34,6 +34,7 @@ jamApp.controller('MainController', [
 		$scope.main.searchResults = false;
 		$scope.main.searchList = [];
 		$scope.main.imgURL = "img/noImg.png";
+		$scope.main.hasPlayed = false;
 
 		$scope.main.queuedSong = null;		// STORES QUEUED SONG ID
 		$scope.main.currDropdown = null;
@@ -115,7 +116,7 @@ jamApp.controller('MainController', [
 		}
 
 		var typingTimer;                //timer identifier
-		var doneTypingInterval = 250;  //time in ms (5 seconds)
+		var doneTypingInterval = 200;  //time in ms (5 seconds)
 		// On press enter in the search bar, call search()
 		$("#search_bar").on('keyup', function (e) {
 			// if (e.keyCode == 13) {
@@ -144,8 +145,10 @@ jamApp.controller('MainController', [
 			if (el.parents('div#targetArea').length) {
 
 			} else {
+				$scope.searchString = '';
 				hideOptions();
 				$("#search_bar").value = '';
+
 				$scope.$apply(function() {
 					$scope.main.searchResults = false;
 				});
@@ -168,7 +171,15 @@ jamApp.controller('MainController', [
 			// $("#search_bar").value = '';
 			// $scope.main.searchResults = false;
 		};
+		$scope.main.audPlay = function() {
+			var aud = document.getElementById("audioElement");
+			aud.src = './music/Alive.mp3';
+			aud.play();
+			aud.pause();
+			$scope.main.hasPlayed = !$scope.main.hasPlayed;
 
+			// hi
+		}
 		// PLAYBACK SECTION //
 
 		// When host starts playing music, send timestamp for playback synchronization
@@ -338,6 +349,11 @@ jamApp.controller('MainController', [
 
 		$scope.main.toggleSound = function () {
 			console.log($scope.main.isStreaming);
+			// if (!$scope.hasPlayed) {
+			// 	aud.play();
+			// 	$scope.hasPlayed = true;
+			// 	_synchronizeSeekPosition();
+			// }
 		};
 
 		$scope.main.showOptions = function($event, id) {
@@ -345,20 +361,17 @@ jamApp.controller('MainController', [
 			var x = $event.target.parentElement.childNodes[1];
 			$scope.main.currDropdown = x;
 			console.log(x);
-				if (x.className.indexOf("w3-show") == -1) {
-						x.className += " w3-show";
-				} else {
-						x.className = x.className.replace(" w3-show", "");
-				}
+			if (x.className.indexOf("w3-show") == -1) {
+					x.className += " w3-show";
+			} else {
+					x.className = x.className.replace(" w3-show", "");
+			}
 		}
 
 		function hideOptions() {
 			// console.log($scope.main.currDropdown);
 			if ($scope.main.currDropdown) {
-				// console.log("HI");
 				$scope.main.currDropdown.className = $scope.main.currDropdown.className.replace(" w3-show", "");
-			} else {
-				// console.log("BYE");
 			}
 		}
 

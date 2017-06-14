@@ -7,74 +7,13 @@ body {
 	 background-color: #FFFFFF;
 }
 
-.songStuff {
-	display: inline-block;
-	float: right;
-	width:100%;
-}
-
-.playlistSongInfoArea {
-	float: right;
-	width: 90%;
-}
-
 .spacer {
 	height: 10px;
-}
-
-.playlistSongLikeArea {
-	float: left;
-	width: 9%;
-	height: auto;
-	-webkit-transform: translateY(10%);
-	-ms-transform: translateY(10%);
-	transform: translateY(10%);
-	position: relative;
-	margin: auto;
-	display: inline-block;
-	vertical-align: middle;
-	text-align: center;
-	z-index: 1000;
 }
 
 .hi {
 	padding-top:0px;
 	margin-top:1px;
-}
-
-.title {
-	font-family: Eurostile;
-	font-size: 31px;
-	text-align: center;
-	color: #5d5d5d;
-	margin: auto;
-	padding-top: 40px;
-}
-
-
-
-.lastPlayed {
-	font-family: Eurostile;
-	font-size: 23px;
-	width: 100%;
-	text-align: center;
-	font-weight: bold;
-	text-align: right;
-	color: #777777;
-	padding-top: 10px;
-	margin-bottom: 1px;
-	padding-right: 35px;
-	float: right;
-}
-
-.lastPlayedSection {
-	display: table;
-	float:right;
-	height: 70px;
-	width: 100%;
-	word-wrap: break-word;
-	border: 1px;
-	padding-top: 1px;
 }
 
 input[type=text].textArea4 {
@@ -386,6 +325,45 @@ html {
   cursor: pointer;
 }
 
+.button3
+{
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  color: #000;
+
+  text-align: center;
+	float: middle;
+
+  font-size: 15px;
+  font-family: "Nunito", sans-serif;
+  font-weight: 300;
+  
+  margin: auto;
+  margin-top: 50px;
+  
+  padding: 10px 10px;
+  width: 190px;
+  height:40px;
+  display: block;
+
+  background: #000;
+  border: 1px solid #000;
+  color: #FFF;
+  overflow: hidden;
+  
+  transition: all 0.5s;
+}
+
+.button3:hover, .button3:active 
+{
+  text-decoration: none;
+  color: #000;
+  border-color: #000;
+  background: #FFF;
+  cursor: pointer;
+}
+
 
 @media only screen and (max-device-width: 800px) {
 	@font-face {
@@ -403,42 +381,13 @@ html {
 		width:100%;
 	}
 
-	.playlistSongInfoArea {
-		float: right;
-		width: 90%;
-	}
-
 	.spacer {
 		height: 10px;
-	}
-
-	.playlistSongLikeArea {
-		float: left;
-		width: 9%;
-		height: auto;
-		-webkit-transform: translateY(10%);
-		-ms-transform: translateY(10%);
-		transform: translateY(10%);
-		position: relative;
-		margin: auto;
-		display: inline-block;
-		vertical-align: middle;
-		text-align: center;
-		z-index: 1000;
 	}
 
 	.hi {
 		padding-top:0px;
 		margin-top:1px;
-	}
-
-	.title {
-		font-family: Eurostile;
-		font-size: 31px;
-		text-align: center;
-		color: #5d5d5d;
-		margin: auto;
-		padding-top: 40px;
 	}
 
 	input[type=text].textArea4 {
@@ -596,6 +545,14 @@ html {
 		margin: auto;
 		margin-top: 10px;
 		padding-bottom: 10px;
+	}
+
+	.button3 {
+		width: 320px;
+		height: 70px;
+		font-size: 30px;
+		margin-top: 50px;
+		display: block;
 	}
 
 	.textArea4 {
