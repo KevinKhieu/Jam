@@ -90,13 +90,13 @@ io.sockets.on('connection', function(socket) {
 	console.log('a user connected with IP ' + ip + '.');
 
 	pushQueue(socket, roomId);
-	NowPlaying.push(socket);
+	NowPlaying.push(roomId, socket);
 
 	socket.on('disconnect', function() {
 		console.log('a user disconnected');
 		if(is_room_host) {
 			console.log('room host disconnected! Clearing now playing.');
-			NowPlaying.clear();
+			NowPlaying.clear(roomId);
 		}
 	});
 
@@ -166,19 +166,9 @@ io.sockets.on('connection', function(socket) {
 		}
 	});
 
-	// socket.on('send:resumed-time', function(data) {
-	// 	console.log('received send:resume-time: ');
-	// 	console.dir(data);
-	// 	NowPlaying.get(function(np) {
-	// 		np.resumedSeekPos = data.resumedSeekPos;
-	// 		np.timeResumed = data.timeResumed;
-	// 		np.save();
-	// 	});
-	// });
-
 	socket.on('send:play', function(data) {
 		console.log('music is now playing');
-		NowPlaying.get(function(np) {
+		NowPlaying.get(roomId, function(np) {
 			console.dir(data);
 			np.resumedSeekPos = data.resumedSeekPos;
 			np.timeResumed = data.timeResumed;
@@ -197,7 +187,7 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('send:pause', function() {
 		console.log('music is now paused');
-		NowPlaying.get(function(np) {
+		NowPlaying.get(roomId, function(np) {
 			np.isPlaying = false;
 			np.save(function(np) {
 				socket.broadcast.to(roomId).emit('push:pause');
@@ -241,12 +231,18 @@ io.sockets.on('connection', function(socket) {
 					socket.emit('respond:create-room', {url: null});
 				} else {
 					// create new room
-					room = new Room({name: data.name, url: data.name});
+					room = new Room({name: data.name});
 					room.save(function(err, room) {
 						if(err) {
 							handleError(socket, err.message, "Error creating room");
 						} else {
-							socket.emit('respond:create-room', {url:room.url});
+							NowPlaying.create(data.name, function(err, np) {
+								if(err) {
+									handleError(socket, err.message, "Error creating NowPlaying entry for new room");
+								} else {
+									socket.emit('respond:create-room', {url:room.url});
+								}
+							});
 						}
 					});
 				}
@@ -280,7 +276,7 @@ io.sockets.on('connection', function(socket) {
 		});
 
 		// reset now playing
-		NowPlaying.reset(roomId);
+		NowPlaying.reset();
 
 		// reset rooms TODO
 	});

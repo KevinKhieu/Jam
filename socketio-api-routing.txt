@@ -66,12 +66,12 @@ send:search (server -> client) {results}
 /** Room creation **/
 
 // Create a room
-send:create-room (client -> server) {name} DEFAULT_ROOM
-respond:create-room (server -> client) {url: url or none} DEFAULT_ROOM
+send:create-room (client -> server) {roomName, hostKey} DEFAULT_ROOM
+respond:create-room (server -> client) {roomName: name or null, hostKey: name or null} DEFAULT_ROOM
 
 // Check whether a particular room exists
-get:room-exists (client -> server) {name} DEFAULT_ROOM
-respond:room-exists (server -> client) {exists} DEFAULT_ROOM
+get:room-exists (client -> server) {roomName} DEFAULT_ROOM
+respond:room-exists (server -> client) {roomName, exists} DEFAULT_ROOM
 
 /** Debugging **/
 send:reset (client -> server) {}

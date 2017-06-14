@@ -78,8 +78,13 @@ NowPlaying.init = function(io) {
 	NowPlaying.reset();
 };
 
-NowPlaying.get = function(callback) {
-	NowPlayingModel.findOne(function(err, np) {
+NowPlaying.create = function(roomId, callback) {
+	var np = new NowPlayingModel({roomId: roomId});
+	np.reset(callback);  // saves automatically
+};
+
+NowPlaying.get = function(roomId, callback) {
+	NowPlayingModel.findOne({roomId:roomId}, function(err, np) {
 		if(err) {
 			console.log(err.message);
 		} else {
@@ -89,35 +94,39 @@ NowPlaying.get = function(callback) {
 };
 
 /* Sets AND pushes NowPlaying to all connected clients */
-NowPlaying.set = function(newNowPlaying, room_id) {
-	NowPlaying.get(function(np) {
+NowPlaying.set = function(newNowPlaying, roomId) {
+	NowPlaying.get(roomId, function(np) {
 		np.cycle(newNowPlaying, function(err, np) {
 			console.log("Broadcasting push:now-playing...");
-			NowPlaying.io.in(room_id).emit('push:now-playing', np);
+			NowPlaying.io.in(roomId).emit('push:now-playing', np);
 		});
 	});
 };
 
-NowPlaying.push = function(transport) {
-	NowPlaying.get(function(np) {
+NowPlaying.push = function(roomId, transport) {
+	NowPlaying.get(roomId, function(np) {
 		transport.emit('push:now-playing', np);
 	});
 };
 
-NowPlaying.clear = function(room_id) {
-	NowPlaying.set(NOTHING_PLAYING, room_id);
+NowPlaying.clear = function(roomId) {
+	NowPlaying.set(NOTHING_PLAYING, roomId);
 };
 
-NowPlaying.reset = function(room_id) {
-	NowPlaying.get(function(np) {
-		np.reset(function(err, np) {
-			console.log("successfully reset Now Playing in database");
-			if(NowPlaying.io) {
-				console.log("Broadcasting push:now-playing...");
-				NowPlaying.io.in(room_id).emit('push:now-playing', np);
-			}
-		});
+NowPlaying.reset = function() {
+	NowPlayingModel.remove({}, function(err) {
+		if(err) console.log(err);
+		else console.log('successfully cleared NowPlaying table.');
 	});
+	// NowPlaying.get(function(np) {
+	// 	np.reset(function(err, np) {
+	// 		console.log("successfully reset Now Playing in database");
+	// 		if(NowPlaying.io) {
+	// 			console.log("Broadcasting push:now-playing...");
+	// 			NowPlaying.io.in(room_id).emit('push:now-playing', np);
+	// 		}
+	// 	});
+	// });
 };
 
 module.exports = NowPlaying;

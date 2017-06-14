@@ -64,6 +64,11 @@ Room Creation
 				redirects if receive new url
 			join room: redirect to given room
 	Lucas
-		database pluralization
+		DONE database pluralization
+			DONE create Room table
+			DONE add roomId to Entry
+			DONE add roomId to NowPlaying
 		DONE server-side socket handlers for room events
 		DONE join room on connect, send all io.emits to particular rooms
+		update socket events according to socketio-api-routing.txt
+			host key for room
