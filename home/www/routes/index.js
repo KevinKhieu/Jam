@@ -279,7 +279,7 @@ io.sockets.on('connection', function(socket) {
 				// console.dir(data);
 				socket.emit('respond:host-exists', {
 					roomName: data.roomName,
-					isCorrectKey: room != null && room.hostKey === data.hostKey;
+					isCorrectKey: room != null && room.hostKey === data.hostKey
 				});
 			}
 		});
